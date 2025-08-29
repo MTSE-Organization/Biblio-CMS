@@ -1,48 +1,41 @@
+import envConfig from '@/config';
 import { storageKeys } from '@/constants';
+import { ApiConfig, Payload } from '@/types';
 import {
   getAccessTokenFromLocalStorage,
   removeAccessTokenFromLocalStorage,
-  isTokenExpired,
   getData,
-  ApiConfig
+  isTokenExpired
 } from '@/utils';
 import { getCookiesServer } from '@/utils/cookies-server.util';
 
 const isClient = () => typeof window !== 'undefined';
 
-type Payload = {
-  params?: Record<string, any>;
-  pathParams?: Record<string, string>;
-  data?: any;
-};
-
-const sendRequest = async <Response>(
+const sendRequest = async <T>(
   apiConfig: ApiConfig,
-  payload: Payload
-): Promise<{
-  data?: Response;
-  error?: any;
-}> => {
+  payload: Payload = {}
+): Promise<T> => {
   let { baseUrl, headers, method, ignoreAuth, isRequiredTenantId, isUpload } =
     apiConfig;
-  const { params = {}, pathParams = {}, data = {} } = payload;
+  const { params = {}, pathParams = {}, body = {}, options = {} } = payload;
 
   let accessToken: string | null = '';
-  let tenantId: string | null = '';
-  if (isClient()) {
-    accessToken = getAccessTokenFromLocalStorage();
-    if (isTokenExpired(accessToken)) {
-      removeAccessTokenFromLocalStorage();
+  let tenantId: string | null | undefined = '';
+  if (!ignoreAuth) {
+    if (isClient()) {
+      accessToken = getAccessTokenFromLocalStorage();
+      if (isTokenExpired(accessToken)) {
+        removeAccessTokenFromLocalStorage();
+      }
+    } else {
+      const { sessionToken } = await getCookiesServer();
+      accessToken = sessionToken;
     }
-    if (isRequiredTenantId) {
-      tenantId = getData(storageKeys.X_TENANT);
-    }
+  }
+  if (isRequiredTenantId) {
+    tenantId = getData(storageKeys.X_TENANT) || envConfig.NEXT_PUBLIC_TENANT_ID;
   } else {
-    const { sessionToken, tenantId: serverTenantId } = await getCookiesServer();
-    accessToken = sessionToken;
-    if (isRequiredTenantId) {
-      tenantId = serverTenantId;
-    }
+    tenantId = process.env.TENANT_ID;
   }
   const baseHeader: { [key: string]: string } = { ...headers };
 
@@ -55,25 +48,35 @@ const sendRequest = async <Response>(
   }
 
   Object.entries(pathParams).forEach(([key, value]) => {
-    baseUrl = baseUrl.replace(`:${key}`, value);
+    baseUrl = baseUrl.replace(`:${key}`, value.toString());
   });
 
-  if (headers['Content-Type'] === 'multipart/form-data' && isUpload) {
+  if (baseHeader['Content-Type'] === 'multipart/form-data' && isUpload) {
     const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      formData.append(key, data[key]);
+
+    Object.keys(body).forEach((key) => {
+      const value = body[key];
+
+      if (value instanceof Blob) {
+        const filename = 'upload.jpg';
+        formData.append(key, value, filename);
+      } else {
+        formData.append(key, value);
+      }
     });
+
+    delete baseHeader['Content-Type'];
 
     try {
       const response = await fetch(baseUrl, {
         method,
-        // headers: baseHeader,
+        headers: baseHeader,
         body: formData
       });
-      const result: Response = await response.json();
-      return { data: result };
+      const result = await response.json();
+      return result;
     } catch (error: any) {
-      return { error };
+      throw new Error(`Error in API request: ${error.message}`);
     }
   }
 
@@ -84,31 +87,32 @@ const sendRequest = async <Response>(
       method,
       headers: {
         ...baseHeader,
-        'Content-Type': headers['Content-Type'] || 'application/json'
+        'Content-Type': baseHeader['Content-Type'] || 'application/json'
       },
-      body: data ? JSON.stringify(data) : undefined
+      body: method !== 'GET' && body ? JSON.stringify(body) : undefined,
+      ...options
     });
 
-    const result: Response = await response.json();
-    return { data: result };
+    const result = await response.json();
+    return result;
   } catch (error: any) {
-    return { error };
+    throw new Error(`Error in API request: ${error?.cause?.code || error}`);
   }
 };
 
 const http = {
-  get<Response>(apiConfig: ApiConfig, payload: Payload) {
-    return sendRequest<Response>(apiConfig, payload);
+  get<T>(apiConfig: ApiConfig, payload?: Payload) {
+    return sendRequest<T>(apiConfig, payload);
   },
-  post<Response>(apiConfig: ApiConfig, payload: Payload) {
-    return sendRequest<Response>(apiConfig, payload);
+  post<T>(apiConfig: ApiConfig, payload?: Payload) {
+    return sendRequest<T>(apiConfig, payload);
   },
-  put<Response>(apiConfig: ApiConfig, payload: Payload) {
-    return sendRequest<Response>(apiConfig, payload);
+  put<T>(apiConfig: ApiConfig, payload?: Payload) {
+    return sendRequest<T>(apiConfig, payload);
   },
-  delete<Response>(apiConfig: ApiConfig, payload: Payload) {
-    return sendRequest<Response>(apiConfig, payload);
+  delete<T>(apiConfig: ApiConfig, payload?: Payload) {
+    return sendRequest<T>(apiConfig, payload);
   }
 };
 
-export default http;
+export { http };

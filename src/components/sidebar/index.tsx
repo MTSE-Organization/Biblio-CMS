@@ -1,226 +1,238 @@
-import {
-  Home,
-  Inbox,
-  Calendar,
-  Search,
-  Settings,
-  User2,
-  ChevronUp,
-  Plus,
-  Projector,
-  ChevronDown
-} from 'lucide-react';
-
+'use client';
+import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarSeparator
+  useSidebar
 } from '@/components/ui/sidebar';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '@/components/ui/collapsible';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { logo } from '@/assets';
+import { logoWithText } from '@/assets';
+import { FaUser } from 'react-icons/fa';
+import { IoSettings } from 'react-icons/io5';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { cn } from '@/lib';
+import { Button } from '@/components/form';
+import { useTopLoader } from 'nextjs-toploader';
+import './sidebar.css';
 
-const items = [
+type MenuItem = {
+  key: string;
+  label: string;
+  path?: string;
+  icon?: React.ElementType;
+  badge?: string | number;
+  children?: MenuItem[];
+};
+
+const menuItems: MenuItem[] = [
   {
-    title: 'Home',
-    url: '/',
-    icon: Home
+    key: 'account-management',
+    label: 'Quản lý tài khoản',
+    icon: FaUser,
+    children: [
+      {
+        key: 'account-list',
+        label: 'Tài khoản',
+        path: '/account'
+      },
+      {
+        key: 'employee-list',
+        label: 'Nhân viên',
+        path: '/employee'
+      }
+    ]
   },
   {
-    title: 'Inbox',
-    url: '/inbox',
-    icon: Inbox
-  },
-  {
-    title: 'Calendar',
-    url: '#',
-    icon: Calendar
-  },
-  {
-    title: 'Search',
-    url: '#',
-    icon: Search
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings
+    key: 'system-management',
+    label: 'Quản lý hệ thống',
+    icon: IoSettings,
+    children: [
+      {
+        key: 'permission',
+        label: 'Quyền',
+        path: '/permission'
+      }
+    ]
   }
 ];
 
+function CollapsibleMenuItem({ item }: { item: MenuItem }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const loader = useTopLoader();
+  const [open, setOpen] = useState(() => {
+    if (item.children?.some((child) => child.path === pathname)) {
+      return true;
+    }
+    return false;
+  });
+  const { state } = useSidebar();
+
+  useEffect(() => {
+    if (state === 'collapsed') {
+      setOpen(false);
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (item.children?.find((child) => child.path === pathname)) {
+      setOpen(true);
+    }
+  }, [item.children, pathname]);
+
+  const handleSubItemClick = (path?: string) => {
+    if (!path || path === pathname) return;
+    router.push(path);
+    loader.start();
+  };
+
+  return (
+    <SidebarMenuItem key={item.key}>
+      <SidebarMenuButton
+        onClick={() => setOpen((prev) => !prev)}
+        className={cn(
+          'hover:bg-sidebar! hover:bg-sidebar! active:bg-sidebar! m-1 mx-auto min-h-11 cursor-pointer rounded-none pl-8 font-normal whitespace-nowrap text-white transition-all! duration-200! ease-linear! hover:text-white active:text-white',
+          {
+            'opacity-80 hover:opacity-100': !item.children?.find(
+              (child) => child.path === pathname
+            )
+          }
+        )}
+      >
+        {item.icon && <item.icon />}
+        {item.label}
+        <ChevronDown
+          className={`ml-auto transition-transform ${open ? 'rotate-180' : ''}`}
+        />
+      </SidebarMenuButton>
+
+      <AnimatePresence initial={false}>
+        {open && item.children && (
+          <motion.div
+            key='content'
+            initial={{
+              height: 0
+            }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.1, ease: 'linear' }}
+            className={cn('overflow-hidden')}
+          >
+            <SidebarMenu
+              className={cn({
+                'bg-sidebar-active-menu': open
+              })}
+            >
+              {item.children.map((sub) =>
+                sub.children ? (
+                  <CollapsibleMenuItem key={sub.key} item={sub} />
+                ) : (
+                  <SidebarMenuItem key={sub.key}>
+                    <SidebarMenuButton
+                      className='mx-auto min-h-11 rounded-none'
+                      asChild
+                    >
+                      <Button
+                        variant={'ghost'}
+                        onClick={() => handleSubItemClick(sub.path)}
+                        className={cn(
+                          'justify-start pl-12 font-normal text-white transition-all duration-200 ease-linear hover:text-white active:text-white',
+                          {
+                            'bg-sidebar-item-active hover:bg-sidebar-item-active active:bg-sidebar-item-active':
+                              pathname === sub.path,
+                            'active:bg-sidebar-active-menu hover:bg-sidebar-active-menu opacity-65 hover:opacity-100':
+                              sub.path !== pathname
+                          }
+                        )}
+                      >
+                        {sub.icon && <sub.icon />}
+                        <span>{sub.label}</span>
+                      </Button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              )}
+            </SidebarMenu>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
+    </SidebarMenuItem>
+  );
+}
+
+const renderMenu = (items: MenuItem[]) => {
+  return (
+    <SidebarMenu>
+      {items.map((item) =>
+        item.children ? (
+          <CollapsibleMenuItem key={item.key} item={item} />
+        ) : (
+          <SidebarMenuItem key={item.key}>
+            <SidebarMenuButton className='rounded-none' asChild>
+              {item.path ? (
+                <Link href={item.path}>
+                  {item.icon && <item.icon />}
+                  <span>{item.label}</span>
+                </Link>
+              ) : (
+                <Button
+                  variant={'ghost'}
+                  className='bg-background hover:bg-background! justify-start pl-12'
+                >
+                  {item.icon && <item.icon />}
+                  <span>{item.label}</span>
+                </Button>
+              )}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )
+      )}
+    </SidebarMenu>
+  );
+};
+
 const AppSidebar = () => {
   return (
-    <Sidebar collapsible='icon'>
-      <SidebarHeader className='py-4'>
+    <Sidebar
+      className='[&_[data-sidebar="sidebar"]]:bg-sidebar group-data-[side=left]:border-none'
+      collapsible='icon'
+    >
+      <SidebarHeader className='min-h-25 px-0 py-4'>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href='/'>
-                <Image src={logo} alt='logo' width={20} height={20} />
-                <span>Biblio</span>
+            <SidebarMenuButton className='h-full' asChild>
+              <Link
+                href='/'
+                className='block! w-full! transition-all duration-200 ease-linear group-data-[collapsible=icon]:size-full! group-data-[collapsible=icon]:p-0! hover:bg-transparent!'
+              >
+                <Image
+                  src={logoWithText}
+                  alt='logo'
+                  width={250}
+                  height={50}
+                  className='mx-auto w-4/5 object-cover'
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarSeparator className='mx-0 w-full' />
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {item.title === 'Inbox' && (
-                    <SidebarMenuBadge>24</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Projects</SidebarGroupLabel>
-          <SidebarGroupAction>
-            <Plus /> <span className='sr-only'>Add Project</span>
-          </SidebarGroupAction>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href='/#'>
-                    <Projector />
-                    See All Projects
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href='/#'>
-                    <Plus />
-                    Add Project
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {/* COLLAPSABLE */}
-        <Collapsible defaultOpen className='group/collapsible'>
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>
-                Collapsable Group
-                <ChevronDown className='ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180' />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href='/#'>
-                        <Projector />
-                        See All Projects
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href='/#'>
-                        <Plus />
-                        Add Project
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        {/* NESTED */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Nested Items</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href='/#'>
-                    <Projector />
-                    See All Projects
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href='/#'>
-                        <Plus />
-                        Add Project
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href='/#'>
-                        <Plus />
-                        Add Category
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
+      <SidebarContent className='sidebar-content'>
+        <SidebarGroup className='p-0'>
+          <SidebarGroupContent>{renderMenu(menuItems)}</SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> John Doe <ChevronUp className='ml-auto' />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
-                <DropdownMenuItem>Account</DropdownMenuItem>
-                <DropdownMenuItem>Setting</DropdownMenuItem>
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 };

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ArrowLeftIcon,
-  Loader2,
   UploadIcon,
   XIcon,
   ZoomInIcon,
@@ -29,7 +28,7 @@ import { FormLabel } from '@/components/ui/form';
 import { cn } from '@/lib';
 import { useFileUpload } from '@/hooks';
 import { logger } from '@/logger';
-import { apiConfig } from '@/constants';
+import ButtonLoading from '@/loading/button-loading';
 
 type Area = { x: number; y: number; width: number; height: number };
 
@@ -78,7 +77,7 @@ async function getCroppedImg(
 }
 
 interface UploadImageFieldProps {
-  label?: string;
+  label?: React.ReactNode;
   value?: string;
   onChange?: (url: string) => void;
   required?: boolean;
@@ -185,7 +184,7 @@ export default function UploadImageField({
             {!!value ? (
               <AvatarField
                 disablePreview
-                src={`${apiConfig.imageProxy.baseUrl}${value}`}
+                // src={`${apiConfig.imageProxy.baseUrl}${value}`}
                 className='size-full object-cover'
                 size={size}
               />
@@ -246,11 +245,7 @@ export default function UploadImageField({
                 onClick={handleApply}
                 disabled={!previewUrl || loading}
               >
-                {loading ? (
-                  <Loader2 className='size-6 animate-spin stroke-2' />
-                ) : (
-                  'Áp dụng'
-                )}
+                {loading ? <ButtonLoading /> : 'Áp dụng'}
               </Button>
             </DialogTitle>
           </DialogHeader>
