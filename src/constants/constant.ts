@@ -1,0 +1,2 @@
+export const DEFAULT_TABLE_PAGE_SIZE = 5;
+export const DEFAULT_TABLE_PAGE_START = 0;

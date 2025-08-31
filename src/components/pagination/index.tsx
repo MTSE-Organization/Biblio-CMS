@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
@@ -28,7 +29,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
       <span
         key={page}
         className={cn(
-          'bg-background flex h-10 w-10 items-center justify-center rounded font-medium'
+          'bg-background text-sidebar-item-active border-sidebar-item-active flex h-8 w-8 cursor-pointer items-center justify-center rounded border font-medium'
         )}
       >
         {page}
@@ -38,7 +39,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
         key={page}
         href={createPageLink(page)}
         className={cn(
-          'bg-sidebar hover:bg-muted flex h-10 w-10 items-center justify-center rounded'
+          'hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
         )}
       >
         {page}
@@ -81,17 +82,17 @@ export default function Pagination({ totalPages }: PaginationProps) {
   const pages = getVisiblePages();
 
   return (
-    <div className='mx-auto mt-5 flex w-full items-center justify-center gap-2'>
+    <div className='mt-2 mb-5 flex w-full items-center justify-end gap-2 pr-5 text-sm'>
       {currentPage > 1 ? (
         <Link
           href={createPageLink(currentPage - 1)}
-          className='bg-sidebar hover:bg-muted flex h-10 w-10 items-center justify-center rounded'
+          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
         >
-          ‹
+          <ChevronLeft />
         </Link>
       ) : (
-        <span className='flex h-10 w-10 items-center justify-center rounded opacity-50'>
-          ‹
+        <span className='flex h-8 w-8 items-center justify-center rounded opacity-50'>
+          <ChevronLeft />
         </span>
       )}
 
@@ -99,7 +100,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
         p === '...' ? (
           <span
             key={`dots-${i}`}
-            className='text-muted-foreground flex h-10 w-10 items-center justify-center'
+            className='text-muted-foreground flex h-8 w-8 items-center justify-center'
           >
             …
           </span>
@@ -111,13 +112,13 @@ export default function Pagination({ totalPages }: PaginationProps) {
       {currentPage < totalPages ? (
         <Link
           href={createPageLink(currentPage + 1)}
-          className='bg-sidebar hover:bg-muted flex h-10 w-10 items-center justify-center rounded'
+          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
         >
-          ›
+          <ChevronRight />
         </Link>
       ) : (
-        <span className='flex h-10 w-10 items-center justify-center rounded opacity-50'>
-          ›
+        <span className='flex h-8 w-8 items-center justify-center rounded opacity-50'>
+          <ChevronRight />
         </span>
       )}
     </div>

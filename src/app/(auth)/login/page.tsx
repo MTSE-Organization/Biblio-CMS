@@ -2,7 +2,7 @@ import LoginForm from '@/app/(auth)/login/login-form';
 
 export default function LoginPage() {
   return (
-    <div>
+    <div className='flex w-full items-center justify-center'>
       <LoginForm />
     </div>
   );

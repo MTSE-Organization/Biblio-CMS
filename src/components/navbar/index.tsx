@@ -12,12 +12,28 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useEffect } from 'react';
-import { setData } from '@/utils';
+import { useLogoutMutation } from '@/queries';
+import { notify, removeData } from '@/utils';
+import { useRouter } from 'next/navigation';
+import { logger } from '@/logger';
+import { storageKeys } from '@/constants';
 
 const Navbar = () => {
-  useEffect(() => setData('theme', 'light'));
-
+  const logoutMutation = useLogoutMutation();
+  const router = useRouter();
+  const handleLogout = async () => {
+    try {
+      const res = await logoutMutation.mutateAsync();
+      if (res.result) {
+        removeData(storageKeys.ACCESS_TOKEN);
+        notify.success('Đăng xuất thành công');
+        router.push('/login');
+      }
+    } catch (error) {
+      logger.error('Error while logging out: ', error);
+      notify.error('Đăng xuất thất bại');
+    }
+  };
   return (
     <nav className='sticky top-0 z-10 flex h-16 items-center justify-between bg-white p-3'>
       {/* LEFT */}
@@ -37,11 +53,11 @@ const Navbar = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <User className='mr-2 h-[1.2rem] w-[1.2rem]' />
-              Profile
+              Hồ sơ
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut className='mr-2 h-[1.2rem] w-[1.2rem]' />
-              Logout
+              Đăng xuất
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

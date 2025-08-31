@@ -11,13 +11,19 @@ import { getCookiesServer } from '@/utils/cookies-server.util';
 
 const isClient = () => typeof window !== 'undefined';
 
-const sendRequest = async <T>(
+export const sendRequest = async <T>(
   apiConfig: ApiConfig,
   payload: Payload = {}
 ): Promise<T> => {
   let { baseUrl, headers, method, ignoreAuth, isRequiredTenantId, isUpload } =
     apiConfig;
-  const { params = {}, pathParams = {}, body = {}, options = {} } = payload;
+  const {
+    params = {},
+    pathParams = {},
+    body = {},
+    options = {},
+    authorization
+  } = payload;
 
   let accessToken: string | null = '';
   let tenantId: string | null | undefined = '';
@@ -41,6 +47,10 @@ const sendRequest = async <T>(
 
   if (!ignoreAuth && accessToken) {
     baseHeader['Authorization'] = `Bearer ${accessToken}`;
+  }
+
+  if (authorization) {
+    baseHeader['Authorization'] = authorization;
   }
 
   if (isRequiredTenantId) {

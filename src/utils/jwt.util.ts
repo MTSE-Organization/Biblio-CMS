@@ -1,13 +1,15 @@
 import { logger } from '@/logger';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
-export const decodeJwt = (token: string): JwtPayload | null => {
+export const decodeJwt = (
+  token: string
+): { exp: number; authorities: string[] } | null => {
   try {
     return jwtDecode(token);
   } catch (error) {
     logger.error('Failed to decode JWT:', error);
-    return null;
   }
+  return null;
 };
 
 export const isTokenExpired = (token: string | null): boolean => {

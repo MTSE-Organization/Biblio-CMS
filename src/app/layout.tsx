@@ -9,12 +9,20 @@ import AppSidebar from '@/components/sidebar';
 import Navbar from '@/components/navbar';
 import { AppProvider, QueryProvider } from '@/components/providers';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap'
 });
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Biblio CMS',
+    default: 'Biblio CMS'
+  }
+};
 
 export default async function RootLayout({
   children
@@ -26,13 +34,13 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning lang={'vi'}>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
-        <AppProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppProvider>
             <QueryProvider>
               <SidebarProvider
                 style={
@@ -43,16 +51,12 @@ export default async function RootLayout({
                 }
                 defaultOpen={defaultOpen}
               >
-                <AppSidebar />
-                <main className='w-full bg-gray-100'>
-                  <Navbar />
-                  <Suspense>{children}</Suspense>
-                </main>
+                <Suspense>{children}</Suspense>
               </SidebarProvider>
               <NextTopLoader />
             </QueryProvider>
-          </ThemeProvider>
-        </AppProvider>
+          </AppProvider>
+        </ThemeProvider>
         <ToastContainer />
       </body>
     </html>
