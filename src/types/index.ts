@@ -5,3 +5,4 @@ export * from './auth.type';
 export * from './store.type';
 export * from './account.type';
 export * from './menu-config.type';
+export * from './sidebar.type';
