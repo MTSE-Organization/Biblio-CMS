@@ -1,3 +1,5 @@
+import { SidebarLayout } from '@/components/layout';
+
 export default function PermissionPage() {
-  return <div>PermissionPage</div>;
+  return <SidebarLayout>PermissionPage</SidebarLayout>;
 }

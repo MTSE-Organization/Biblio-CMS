@@ -1,7 +1,9 @@
+import { SidebarLayout } from '@/components/layout';
+
 export default function AccountLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <SidebarLayout>{children}</SidebarLayout>;
 }

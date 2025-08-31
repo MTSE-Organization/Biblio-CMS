@@ -7,6 +7,7 @@ import { storageKeys } from '@/constants';
 import ButtonLoading from '@/loading/button-loading';
 import { logger } from '@/logger';
 import { useLoginMutation } from '@/queries';
+import route from '@/routes';
 import { loginSchema } from '@/schemaValidations';
 import { LoginBodyType } from '@/types/auth.type';
 import { notify, setData } from '@/utils';
@@ -21,18 +22,17 @@ export default function LoginForm() {
   const loader = useTopLoader();
   const [isFormChanged, setIsFormChanged] = useState(false);
   const defaultValues: LoginBodyType = {
-    username: '',
-    password: '',
-    grant_type: 'password'
+    email: '',
+    password: ''
   };
 
   const onSubmit = async (values: LoginBodyType) => {
     try {
       const res = await loginMutation.mutateAsync(values);
-      if (res) {
+      if (res.result) {
         notify.success('Đăng nhập thành công');
-        setData(storageKeys.ACCESS_TOKEN, res.access_token);
-        router.push('/account');
+        setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
+        router.push(route.account);
         loader.start();
       }
     } catch (error) {
@@ -46,7 +46,7 @@ export default function LoginForm() {
       defaultValues={defaultValues}
       schema={loginSchema}
       onSubmit={onSubmit}
-      className='w-100 rounded-lg border border-solid border-gray-100 px-6 py-4'
+      className='w-100 rounded-lg border border-solid border-gray-200 px-6 py-4 shadow-[0px_0px_10px_1px] shadow-slate-200'
       onChange={() => setIsFormChanged(true)}
     >
       {(form) => (
@@ -64,10 +64,10 @@ export default function LoginForm() {
           <Row>
             <Col>
               <InputField
-                name='username'
+                name='email'
                 control={form.control}
-                label='Username'
-                placeholder='Nhập username...'
+                label='Email'
+                placeholder='Nhập email...'
               />
             </Col>
           </Row>

@@ -5,11 +5,11 @@ import { http } from '@/utils';
 
 const authApiRequest = {
   login: async (body: LoginBodyType) =>
-    await http.post<LoginResType>(apiConfig.auth.api.login, {
+    await http.post<ApiResponse<LoginResType>>(apiConfig.auth.api.login, {
       body
     }),
   loginFromNextServerToServer: async (body: LoginBodyType) =>
-    await http.post<LoginResType>(apiConfig.account.login, {
+    await http.post<ApiResponse<LoginResType>>(apiConfig.auth.login, {
       body
     }),
   logout: async () =>

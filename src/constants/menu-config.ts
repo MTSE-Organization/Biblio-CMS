@@ -1,3 +1,4 @@
+import route from '@/routes';
 import { MenuItem } from '@/types';
 import { Settings, User } from 'lucide-react';
 
@@ -10,12 +11,12 @@ const menuConfig: MenuItem[] = [
       {
         key: 'account-list',
         label: 'Tài khoản',
-        path: '/account'
+        path: route.account
       },
       {
         key: 'employee-list',
         label: 'Nhân viên',
-        path: '/employee'
+        path: route.employee
       }
     ]
   },
@@ -27,7 +28,7 @@ const menuConfig: MenuItem[] = [
       {
         key: 'permission',
         label: 'Quyền',
-        path: '/permission'
+        path: route.permission
       }
     ]
   }

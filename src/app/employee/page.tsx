@@ -1,3 +1,5 @@
+import { SidebarLayout } from '@/components/layout';
+
 export default function EmployeePage() {
-  return <div>EmployeePage</div>;
+  return <SidebarLayout>EmployeePage</SidebarLayout>;
 }

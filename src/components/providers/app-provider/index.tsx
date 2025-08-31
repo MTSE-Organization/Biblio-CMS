@@ -2,6 +2,7 @@
 
 import { apiConfig, storageKeys } from '@/constants';
 import { logger } from '@/logger';
+import route from '@/routes';
 import useProfileStore from '@/store/use-profile.store';
 import { ApiResponse, ProfileResType } from '@/types';
 import { getData, http, notify } from '@/utils';
@@ -20,15 +21,15 @@ export default function AppProvider({
   const { setProfile } = useProfileStore();
   useEffect(() => {
     if (!accessToken) {
-      router.push('/login');
-    } else {
-      router.push('/account');
+      router.push(route.login);
     }
   }, [router, accessToken]);
 
   useEffect(() => setTheme('light'), [setTheme]);
 
   useEffect(() => {
+    if (!accessToken) return;
+
     const handleGetProfile = async () => {
       try {
         const res = await http.get<ApiResponse<ProfileResType>>(

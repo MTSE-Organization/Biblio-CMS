@@ -17,6 +17,7 @@ import { notify, removeData } from '@/utils';
 import { useRouter } from 'next/navigation';
 import { logger } from '@/logger';
 import { storageKeys } from '@/constants';
+import route from '@/routes';
 
 const Navbar = () => {
   const logoutMutation = useLogoutMutation();
@@ -27,7 +28,7 @@ const Navbar = () => {
       if (res.result) {
         removeData(storageKeys.ACCESS_TOKEN);
         notify.success('Đăng xuất thành công');
-        router.push('/login');
+        router.push(route.login);
       }
     } catch (error) {
       logger.error('Error while logging out: ', error);

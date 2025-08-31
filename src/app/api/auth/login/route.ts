@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const cookieStore = await cookies();
   try {
     const response = await authApiRequest.loginFromNextServerToServer(req);
-    const accessToken = response?.access_token!;
+    const accessToken = response?.data?.token!;
     cookieStore.set(storageKeys.ACCESS_TOKEN, accessToken, {
       path: '/',
       httpOnly: true,

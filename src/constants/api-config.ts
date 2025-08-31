@@ -8,11 +8,6 @@ const defineApiConfig = <T extends ApiConfigGroup>(config: T) => config;
 
 const apiConfig = defineApiConfig({
   account: {
-    login: {
-      baseUrl: `${AppConstants.apiUrl}api/token`,
-      method: 'POST',
-      headers: baseHeader
-    },
     getList: {
       baseUrl: `${AppConstants.apiUrl}v1/account/list`,
       method: 'GET',
@@ -27,6 +22,11 @@ const apiConfig = defineApiConfig({
     }
   },
   auth: {
+    login: {
+      baseUrl: `${AppConstants.apiUrl}v1/auth/login`,
+      method: 'POST',
+      headers: baseHeader
+    },
     api: {
       login: {
         baseUrl: '/api/auth/login',
@@ -38,6 +38,33 @@ const apiConfig = defineApiConfig({
         method: 'POST',
         headers: baseHeader
       }
+    }
+  },
+  group: {
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/group/create`,
+      method: 'POST',
+      headers: baseHeader
+    },
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/group/list`,
+      method: 'GET',
+      headers: baseHeader
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/group/get/:id`,
+      method: 'GET',
+      headers: baseHeader
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/update`,
+      method: 'PUT',
+      headers: baseHeader
     }
   }
 });
