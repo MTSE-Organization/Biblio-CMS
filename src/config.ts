@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const configSchema = z.object({
   NEXT_PUBLIC_NODE_ENV: z.string(),
-  NEXT_PUBLIC_API_ENDPOINT_URL: z.url().optional(),
+  NEXT_PUBLIC_API_ENDPOINT_URL: z.url(),
   NEXT_PUBLIC_TENANT_ID: z.string().min(1).max(100).optional(),
   NEXT_PUBLIC_URL: z.string().optional()
 });

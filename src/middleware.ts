@@ -1,9 +1,22 @@
-import { NextRequest } from 'next/server';
+import { storageKeys } from '@/constants';
+import { NextRequest, NextResponse } from 'next/server';
 
 const publicPaths = ['/login'];
-const privatePaths = ['/user'];
 
-export function middleware(request: NextRequest) {}
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const accessToken = request.cookies.get(storageKeys.ACCESS_TOKEN);
+  if (accessToken) {
+    if (publicPaths.some((path) => pathname.startsWith(path))) {
+      return NextResponse.redirect(new URL('/account', request.nextUrl));
+    }
+  } else {
+    if (!publicPaths.some((path) => pathname.startsWith(path))) {
+      return NextResponse.redirect(new URL('/login', request.nextUrl));
+    }
+  }
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [

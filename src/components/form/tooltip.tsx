@@ -7,7 +7,7 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip';
 
-type ToolTipProps = {
+type TooltipProps = {
   content: React.ReactNode;
   children: React.ReactNode;
   side?: 'top' | 'bottom' | 'left' | 'right';
@@ -18,10 +18,10 @@ type ToolTipProps = {
 export default function ToolTip({
   content,
   children,
-  side = 'top',
+  side = 'bottom',
   align = 'center',
-  sideOffset = 0
-}: ToolTipProps) {
+  sideOffset = -5
+}: TooltipProps) {
   return (
     <TooltipProvider>
       <Tooltip>

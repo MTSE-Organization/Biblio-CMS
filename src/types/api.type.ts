@@ -19,6 +19,7 @@ export type Payload = {
   pathParams?: Record<string, string | number>;
   body?: any;
   options?: RequestInit;
+  authorization?: string;
 };
 
 export type ApiResponse<T> = {
