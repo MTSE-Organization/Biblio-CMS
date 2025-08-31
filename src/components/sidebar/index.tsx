@@ -15,8 +15,6 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { logoWithText } from '@/assets';
-import { FaUser } from 'react-icons/fa';
-import { IoSettings } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -24,47 +22,8 @@ import { cn } from '@/lib';
 import { Button } from '@/components/form';
 import { useTopLoader } from 'nextjs-toploader';
 import './sidebar.css';
-
-type MenuItem = {
-  key: string;
-  label: string;
-  path?: string;
-  icon?: React.ElementType;
-  badge?: string | number;
-  children?: MenuItem[];
-};
-
-const menuItems: MenuItem[] = [
-  {
-    key: 'account-management',
-    label: 'Quản lý tài khoản',
-    icon: FaUser,
-    children: [
-      {
-        key: 'account-list',
-        label: 'Tài khoản',
-        path: '/account'
-      },
-      {
-        key: 'employee-list',
-        label: 'Nhân viên',
-        path: '/employee'
-      }
-    ]
-  },
-  {
-    key: 'system-management',
-    label: 'Quản lý hệ thống',
-    icon: IoSettings,
-    children: [
-      {
-        key: 'permission',
-        label: 'Quyền',
-        path: '/permission'
-      }
-    ]
-  }
-];
+import { MenuItem } from '@/types';
+import { menuConfig } from '@/constants';
 
 function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const pathname = usePathname();
@@ -230,7 +189,7 @@ const AppSidebar = () => {
       </SidebarHeader>
       <SidebarContent className='sidebar-content'>
         <SidebarGroup className='p-0'>
-          <SidebarGroupContent>{renderMenu(menuItems)}</SidebarGroupContent>
+          <SidebarGroupContent>{renderMenu(menuConfig)}</SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

@@ -10,8 +10,7 @@ const authApiRequest = {
     }),
   loginFromNextServerToServer: async (body: LoginBodyType) =>
     await http.post<LoginResType>(apiConfig.account.login, {
-      body,
-      authorization: `Basic ${Buffer.from('abc_client:abc123').toString('base64')}`
+      body
     }),
   logout: async () =>
     await http.post<ApiResponse<any>>(apiConfig.auth.api.logout)

@@ -3,13 +3,13 @@ import { Inter } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 import NextTopLoader from 'nextjs-toploader';
 import { Suspense } from 'react';
-import { cookies } from 'next/headers';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/sidebar';
 import Navbar from '@/components/navbar';
 import { AppProvider, QueryProvider } from '@/components/providers';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Metadata } from 'next';
+import { Container } from '@/components/layout';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,8 +29,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
   return (
     <html suppressHydrationWarning lang={'vi'}>
       <body className={`${inter.variable} ${inter.className} antialiased`}>
@@ -49,9 +47,13 @@ export default async function RootLayout({
                     '--sidebar-width-icon': '5rem'
                   } as React.CSSProperties
                 }
-                defaultOpen={defaultOpen}
+                defaultOpen={true}
               >
-                <Suspense>{children}</Suspense>
+                <AppSidebar />
+                <Container className='w-full bg-gray-100'>
+                  <Navbar />
+                  <Suspense>{children}</Suspense>
+                </Container>
               </SidebarProvider>
               <NextTopLoader />
             </QueryProvider>
