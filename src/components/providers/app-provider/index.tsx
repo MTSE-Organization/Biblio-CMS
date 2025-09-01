@@ -44,7 +44,7 @@ export default function AppProvider({
       }
     };
     handleGetProfile();
-  }, []);
+  }, [accessToken, setProfile]);
 
-  return <div>{children}</div>;
+  return <>{children}</>;
 }

@@ -11,77 +11,104 @@ import {
 import './base-table.css';
 
 import Pagination from '@/components/pagination';
-import { PaginationType } from '@/types';
-
-export interface Column<T> {
-  title: string;
-  dataIndex?: keyof T;
-  render?: (value: any, record: T, index: number) => React.ReactNode;
-  width?: string | number;
-  align?: 'left' | 'right' | 'center';
-}
-
-interface BaseTableProps<T> {
-  columns: Column<T>[];
-  dataSource: T[];
-  rowKey: keyof T;
-  pagination: PaginationType;
-}
+import { BaseTableProps } from '@/types';
+import { LoaderCircle } from 'lucide-react';
+import Image from 'next/image';
+import { emptyData } from '@/assets';
+import { cn } from '@/lib';
 
 export default function BaseTable<T extends Record<any, any>>({
   columns,
   dataSource,
-  rowKey,
-  pagination
+  rowKey = 'id',
+  pagination,
+  loading
 }: BaseTableProps<T>) {
-  const { current, pageSize, total } = pagination;
+  const { total } = pagination;
   return (
-    <div className='flex h-full flex-col overflow-hidden rounded-lg border bg-white text-sm'>
+    <div className='flex flex-col gap-y-5 rounded-lg bg-white pb-5 text-sm'>
       <div className='base-table flex-1'>
-        <Table className='w-full border border-gray-100'>
+        <Table className='w-full'>
           <TableHeader className='bg-gray-50'>
-            <TableRow>
-              {columns.map((col, idx) => (
-                <TableHead
-                  key={idx}
-                  className={`border border-gray-100 px-4 py-2 ${
-                    col.align ? `text-${col.align}` : 'text-left'
-                  }`}
-                  style={{ width: col.width }}
-                >
-                  {col.title}
-                </TableHead>
-              ))}
+            <TableRow className='border-b-[0.2px]'>
+              {columns.map((col, idx) => {
+                const isLast = idx === columns.length - 1;
+                return (
+                  <TableHead
+                    key={idx}
+                    className={cn(
+                      `relative bg-zinc-50 px-4 py-4 text-sm! leading-5.5 ${
+                        col.align ? `text-${col.align}` : 'text-left'
+                      }`,
+                      {
+                        'before:absolute before:top-1/2 before:right-0 before:h-1/2 before:w-0.5 before:-translate-y-1/2 before:bg-zinc-100':
+                          !isLast
+                      }
+                    )}
+                    style={{ width: col.width }}
+                  >
+                    {col.title}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {dataSource.map((row, rowIndex) => (
-              <TableRow key={String(row[rowKey])} className='hover:bg-gray-50'>
-                {columns.map((col, colIndex) => (
-                  <TableCell
-                    key={colIndex}
-                    className={`border border-gray-100 px-4 py-2 ${
-                      col.align ? `text-${col.align}` : 'text-left'
-                    }`}
-                  >
-                    {col.render
-                      ? col.render(
-                          col.dataIndex ? row[col.dataIndex] : undefined,
-                          row,
-                          rowIndex
-                        )
-                      : col.dataIndex
-                        ? row[col.dataIndex]
-                        : null}
-                  </TableCell>
-                ))}
+          <TableBody className='[&_tr:last-child]:border-b-[0.2px]'>
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className='py-8 text-center'
+                >
+                  <LoaderCircle className='mx-auto h-8 w-8 animate-spin rounded-full stroke-gray-500' />
+                </TableCell>
               </TableRow>
-            ))}
+            ) : dataSource.length > 0 ? (
+              dataSource.map((row, rowIndex) => (
+                <TableRow
+                  key={String(row[rowKey])}
+                  className='border-b-[0.2px] hover:bg-zinc-50'
+                >
+                  {columns.map((col, colIndex) => (
+                    <TableCell
+                      key={colIndex}
+                      className={`px-4 py-4 leading-8 ${
+                        col.align ? `text-${col.align}` : 'text-left'
+                      }`}
+                    >
+                      {col.render
+                        ? col.render(
+                            col.dataIndex ? row[col.dataIndex] : undefined,
+                            row,
+                            rowIndex
+                          )
+                        : col.dataIndex
+                          ? row[col.dataIndex]
+                          : null}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className='hover:bg-transparent'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='flex flex-col items-center py-4'
+                >
+                  <Image
+                    src={emptyData.src}
+                    alt='Không có dữ liệu'
+                    width={150}
+                    height={50}
+                  />
+                  Không có dữ liệu
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
-
-      <Pagination totalPages={total} />
+      {!loading && <Pagination totalPages={total} />}
     </div>
   );
 }

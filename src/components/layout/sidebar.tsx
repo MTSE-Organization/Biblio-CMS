@@ -1,4 +1,3 @@
-import Container from '@/components/layout/container';
 import Navbar from '@/components/navbar';
 import AppSidebar from '@/components/sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -19,10 +18,12 @@ export default function SidebarLayout({
       defaultOpen={true}
     >
       <AppSidebar />
-      <Container className='w-full bg-gray-100'>
-        <Navbar />
+      <div className='w-full overflow-y-hidden bg-gray-100'>
+        <div>
+          <Navbar />
+        </div>
         {children}
-      </Container>
+      </div>
     </SidebarProvider>
   );
 }

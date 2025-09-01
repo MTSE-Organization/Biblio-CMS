@@ -21,7 +21,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
     return `${pathname}?${newParams.toString()}`;
   };
 
-  if (totalPages <= 1) return null;
+  if (!totalPages || totalPages <= 1) return null;
 
   const renderPage = (page: number) => {
     const isActive = page === currentPage;
@@ -39,7 +39,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
         key={page}
         href={createPageLink(page)}
         className={cn(
-          'hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
+          'hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white transition-all duration-200 ease-linear'
         )}
       >
         {page}
@@ -82,17 +82,17 @@ export default function Pagination({ totalPages }: PaginationProps) {
   const pages = getVisiblePages();
 
   return (
-    <div className='mt-2 mb-5 flex w-full items-center justify-end gap-2 pr-5 text-sm'>
+    <div className='flex w-full items-center justify-end gap-2 pr-5 text-sm'>
       {currentPage > 1 ? (
         <Link
           href={createPageLink(currentPage - 1)}
-          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
+          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white transition-all duration-200 ease-linear'
         >
-          <ChevronLeft />
+          <ChevronLeft className='size-5!' />
         </Link>
       ) : (
-        <span className='flex h-8 w-8 items-center justify-center rounded opacity-50'>
-          <ChevronLeft />
+        <span className='flex h-8 w-8 cursor-not-allowed items-center justify-center rounded opacity-50'>
+          <ChevronLeft className='size-5!' />
         </span>
       )}
 
@@ -112,13 +112,13 @@ export default function Pagination({ totalPages }: PaginationProps) {
       {currentPage < totalPages ? (
         <Link
           href={createPageLink(currentPage + 1)}
-          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
+          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white transition-all duration-200 ease-linear'
         >
-          <ChevronRight />
+          <ChevronRight className='size-5!' />
         </Link>
       ) : (
-        <span className='flex h-8 w-8 items-center justify-center rounded opacity-50'>
-          <ChevronRight />
+        <span className='flex h-8 w-8 cursor-not-allowed items-center justify-center rounded opacity-50'>
+          <ChevronRight className='size-5!' />
         </span>
       )}
     </div>

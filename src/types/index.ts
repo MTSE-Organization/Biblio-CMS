@@ -6,3 +6,7 @@ export * from './store.type';
 export * from './account.type';
 export * from './menu-config.type';
 export * from './sidebar.type';
+export * from './group-permission.type';
+export * from './search.type';
+export * from './base-table.type';
+export * from './breadcrumb.type';

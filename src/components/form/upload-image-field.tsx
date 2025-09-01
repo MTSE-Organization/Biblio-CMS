@@ -28,7 +28,7 @@ import { FormLabel } from '@/components/ui/form';
 import { cn } from '@/lib';
 import { useFileUpload } from '@/hooks';
 import { logger } from '@/logger';
-import ButtonLoading from '@/loading/button-loading';
+import ButtonLoading from '@/components/loading/button-loading';
 
 type Area = { x: number; y: number; width: number; height: number };
 

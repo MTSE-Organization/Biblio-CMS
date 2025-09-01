@@ -69,6 +69,8 @@
   --color-sidebar: #001529;
   --color-sidebar-active-menu: #000c17;
   --color-dodger-blue: #1677ff;
+  --color-page-wrapper: #f0f2f5;
+  --color-breadcrumb: #1890ff;
 }
 
 body {

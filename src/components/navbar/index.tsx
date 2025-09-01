@@ -36,7 +36,7 @@ const Navbar = () => {
     }
   };
   return (
-    <nav className='sticky top-0 z-10 flex h-16 items-center justify-between bg-white p-3'>
+    <header className='flex h-16 items-center justify-between bg-white p-3'>
       {/* LEFT */}
       <SidebarTrigger className='[&>svg]:stroke-sidebar cursor-pointer transition-all duration-200 ease-linear hover:bg-transparent [&>svg]:size-6!' />
       {/* RIGHT */}
@@ -63,7 +63,7 @@ const Navbar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </nav>
+    </header>
   );
 };
 
