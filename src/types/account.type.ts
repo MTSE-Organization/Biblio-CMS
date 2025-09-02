@@ -1,14 +1,5 @@
-export type AccountResType = {
-  id: number;
-  status: number;
-  kind: number;
-  username: string;
-  email: string;
-  fullName: string;
-  group: Group;
-  lastLogin: string;
-  isSuperAdmin: boolean;
-};
+import { updateProfileSchema } from '@/schemaValidations/account.schema';
+import z from 'zod';
 
 export type Group = {
   id: number;
@@ -53,4 +44,8 @@ export type ProfileResType = {
   group: GroupProfile;
   lastLogin: string;
   isSuperAdmin: boolean;
+  avatarPath: string;
+  phone: string;
 };
+
+export type ProfileBodyType = z.infer<typeof updateProfileSchema>;

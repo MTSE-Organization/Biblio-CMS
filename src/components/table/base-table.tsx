@@ -53,7 +53,7 @@ export default function BaseTable<T extends Record<any, any>>({
               })}
             </TableRow>
           </TableHeader>
-          <TableBody className='[&_tr:last-child]:border-b-[0.2px]'>
+          <TableBody className='[&_tr:last-child]:border-b-none'>
             {loading ? (
               <TableRow>
                 <TableCell
@@ -64,31 +64,41 @@ export default function BaseTable<T extends Record<any, any>>({
                 </TableCell>
               </TableRow>
             ) : dataSource.length > 0 ? (
-              dataSource.map((row, rowIndex) => (
-                <TableRow
-                  key={String(row[rowKey])}
-                  className='border-b-[0.2px] hover:bg-zinc-50'
-                >
-                  {columns.map((col, colIndex) => (
-                    <TableCell
-                      key={colIndex}
-                      className={`px-4 py-4 leading-8 ${
-                        col.align ? `text-${col.align}` : 'text-left'
-                      }`}
-                    >
-                      {col.render
-                        ? col.render(
-                            col.dataIndex ? row[col.dataIndex] : undefined,
-                            row,
-                            rowIndex
-                          )
-                        : col.dataIndex
-                          ? row[col.dataIndex]
-                          : null}
-                    </TableCell>
-                  ))}
+              <>
+                {dataSource.map((row, rowIndex) => (
+                  <TableRow
+                    key={String(row[rowKey])}
+                    className='border-b-[0.2px] hover:bg-zinc-50'
+                  >
+                    {columns.map((col, colIndex) => (
+                      <TableCell
+                        key={colIndex}
+                        className={`px-4 py-4 leading-8 ${
+                          col.align ? `text-${col.align}` : 'text-left'
+                        }`}
+                      >
+                        {col.render
+                          ? col.render(
+                              col.dataIndex ? row[col.dataIndex] : undefined,
+                              row,
+                              rowIndex
+                            )
+                          : col.dataIndex
+                            ? row[col.dataIndex]
+                            : null}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+                <TableRow className='hover:bg-transparent'>
+                  <TableCell
+                    colSpan={columns.length}
+                    className='py-4 text-right'
+                  >
+                    <Pagination totalPages={total} />
+                  </TableCell>
                 </TableRow>
-              ))
+              </>
             ) : (
               <TableRow className='hover:bg-transparent'>
                 <TableCell
@@ -108,7 +118,6 @@ export default function BaseTable<T extends Record<any, any>>({
           </TableBody>
         </Table>
       </div>
-      {!loading && <Pagination totalPages={total} />}
     </div>
   );
 }

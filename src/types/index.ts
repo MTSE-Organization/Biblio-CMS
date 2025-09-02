@@ -10,3 +10,4 @@ export * from './group-permission.type';
 export * from './search.type';
 export * from './base-table.type';
 export * from './breadcrumb.type';
+export * from './file.type';

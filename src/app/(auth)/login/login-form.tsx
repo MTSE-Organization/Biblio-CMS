@@ -15,11 +15,14 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTopLoader } from 'nextjs-toploader';
 import { useState } from 'react';
+import PasswordField from '@/components/form/password-field';
+import { useProfileStore } from '@/store';
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const router = useRouter();
   const loader = useTopLoader();
+  const { setAuthenticated } = useProfileStore();
   const [isFormChanged, setIsFormChanged] = useState(false);
   const defaultValues: LoginBodyType = {
     email: '',
@@ -32,8 +35,11 @@ export default function LoginForm() {
       if (res.result) {
         notify.success('Đăng nhập thành công');
         setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
+        setAuthenticated(true);
         router.push(route.account);
         loader.start();
+      } else {
+        notify.error('Email hoặc mật khẩu không chính xác');
       }
     } catch (error) {
       logger.error('Error while logging in: ', error);
@@ -68,16 +74,18 @@ export default function LoginForm() {
                 control={form.control}
                 label='Email'
                 placeholder='Nhập email...'
+                className='focus-visible:ring-dodger-blue'
               />
             </Col>
           </Row>
           <Row>
             <Col>
-              <InputField
+              <PasswordField
                 name='password'
                 control={form.control}
                 label='Mật khẩu'
                 placeholder='Nhập mật khẩu...'
+                className='focus-visible:ring-dodger-blue'
               />
             </Col>
           </Row>

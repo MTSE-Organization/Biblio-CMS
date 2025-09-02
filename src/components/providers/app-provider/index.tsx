@@ -2,6 +2,7 @@
 
 import { apiConfig, storageKeys } from '@/constants';
 import { logger } from '@/logger';
+import { useProfileQuery } from '@/queries';
 import route from '@/routes';
 import useProfileStore from '@/store/use-profile.store';
 import { ApiResponse, ProfileResType } from '@/types';
@@ -18,7 +19,8 @@ export default function AppProvider({
   const { setTheme } = useTheme();
   const router = useRouter();
   const accessToken = getData(storageKeys.ACCESS_TOKEN);
-  const { setProfile } = useProfileStore();
+  const profileQuery = useProfileQuery();
+  const { setProfile, isAuthenticated } = useProfileStore();
   useEffect(() => {
     if (!accessToken) {
       router.push(route.login);
@@ -32,11 +34,9 @@ export default function AppProvider({
 
     const handleGetProfile = async () => {
       try {
-        const res = await http.get<ApiResponse<ProfileResType>>(
-          apiConfig.account.getProfile
-        );
-        if (res.data) {
-          setProfile(res.data);
+        const res = await profileQuery.refetch();
+        if (res.data?.data) {
+          setProfile(res.data.data);
         }
       } catch (error) {
         logger.error(`Error while getting profile: `, error);
@@ -44,7 +44,7 @@ export default function AppProvider({
       }
     };
     handleGetProfile();
-  }, [accessToken, setProfile]);
+  }, [accessToken, setProfile, profileQuery, isAuthenticated]);
 
   return <>{children}</>;
 }

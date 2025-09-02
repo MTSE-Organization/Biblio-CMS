@@ -1,19 +1,21 @@
 'use client';
 
-import { Button, ToolTip } from '@/components/form';
+import { Button, Col, InputField, Row, ToolTip } from '@/components/form';
+import { BaseForm } from '@/components/form/base-form';
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { BaseTable } from '@/components/table';
 import { Separator } from '@/components/ui/separator';
 import { DEFAULT_TABLE_PAGE_SIZE, DEFAULT_TABLE_PAGE_START } from '@/constants';
 import { useGroupListQuery } from '@/queries';
+import { groupSearchParamSchema } from '@/schemaValidations';
 import {
   Column,
   GroupResType,
   GroupSearchParamType,
   PaginationType
 } from '@/types';
-import { Edit2, Trash } from 'lucide-react';
+import { BrushCleaning, Edit2, PlusIcon, Search, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function PermissionPage() {
@@ -63,11 +65,75 @@ export default function PermissionPage() {
   useEffect(() => {
     setPagination((p) => ({ ...p, total: data?.data.totalPages! }));
   }, [data]);
+
+  const onSubmit = async (values: GroupSearchParamType) => {
+    console.log('🚀 ~ onSubmit ~ values:', values);
+  };
+
+  const defaultValues: GroupSearchParamType = {
+    name: '',
+    kind: '',
+    isSystemRole: false
+  };
+
   return (
     <PageWrapper
       breadcrumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Quyền' }]}
     >
-      <ListPageWrapper>
+      <ListPageWrapper
+        actionBar={
+          <Button className='bg-dodger-blue hover:bg-dodger-blue/80'>
+            <PlusIcon />
+            Thêm mới
+          </Button>
+        }
+        searchForm={
+          <BaseForm
+            defaultValues={defaultValues}
+            onSubmit={onSubmit}
+            schema={groupSearchParamSchema}
+          >
+            {(form) => (
+              <>
+                <Row className='gap-2'>
+                  <Col span={3}>
+                    <InputField
+                      control={form.control}
+                      name='name'
+                      placeholder='Tên quyền'
+                      className='focus-visible:ring-dodger-blue'
+                    />
+                  </Col>
+                  <Col span={3}>
+                    <InputField
+                      control={form.control}
+                      name='kind'
+                      placeholder='Quyền'
+                      className='focus-visible:ring-dodger-blue'
+                    />
+                  </Col>
+                  <Col className='w-9'>
+                    <Button
+                      type='submit'
+                      className='bg-dodger-blue hover:bg-dodger-blue/80'
+                    >
+                      <Search />
+                    </Button>
+                  </Col>
+                  <Col className='w-9'>
+                    <Button
+                      type='button'
+                      className='hover:[&>svg]:stroke-dodger-blue hover:border-dodger-blue border border-gray-300 bg-white hover:bg-transparent [&>svg]:stroke-black'
+                    >
+                      <BrushCleaning className='transition-all duration-200 ease-linear' />
+                    </Button>
+                  </Col>
+                </Row>
+              </>
+            )}
+          </BaseForm>
+        }
+      >
         <BaseTable
           columns={columns}
           dataSource={data?.data.content || []}

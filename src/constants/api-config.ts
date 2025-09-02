@@ -19,6 +19,12 @@ const apiConfig = defineApiConfig({
       method: 'GET',
       headers: baseHeader,
       permissionCode: 'ACC_V'
+    },
+    updateProfile: {
+      baseUrl: `${AppConstants.apiUrl}v1/account/update-profile`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'ACC_U'
     }
   },
   auth: {
@@ -65,6 +71,14 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/update`,
       method: 'PUT',
       headers: baseHeader
+    }
+  },
+  file: {
+    upload: {
+      baseUrl: `${AppConstants.apiUrl}v1/file/upload`,
+      method: 'POST',
+      headers: multipartHeader,
+      isUpload: true
     }
   }
 });

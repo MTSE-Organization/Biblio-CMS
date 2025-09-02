@@ -5,7 +5,8 @@ const route = defineRoute({
   account: '/account',
   employee: '/employee',
   permission: '/permission',
-  login: '/login'
+  login: '/login',
+  profile: '/profile'
 });
 
 export default route;
