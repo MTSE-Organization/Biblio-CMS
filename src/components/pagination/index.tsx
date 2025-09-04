@@ -1,27 +1,21 @@
 'use client';
 
+import { Button } from '@/components/form';
 import { cn } from '@/lib';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
 
 type PaginationProps = {
   totalPages: number;
+  changePagination: (page: number) => void;
+  currentPage: number;
 };
 
-export default function Pagination({ totalPages }: PaginationProps) {
-  const pathname = usePathname();
-  const params = useSearchParams();
-  const currentPage = Number(params.get('page') ?? 1);
-
-  const createPageLink = (page: number) => {
-    if (page === 1) return pathname;
-    const newParams = new URLSearchParams(params.toString());
-    newParams.set('page', String(page));
-    return `${pathname}?${newParams.toString()}`;
-  };
-
-  if (totalPages <= 1) return null;
+export default function Pagination({
+  totalPages,
+  changePagination,
+  currentPage
+}: PaginationProps) {
+  if (!totalPages || totalPages <= 1) return null;
 
   const renderPage = (page: number) => {
     const isActive = page === currentPage;
@@ -35,15 +29,16 @@ export default function Pagination({ totalPages }: PaginationProps) {
         {page}
       </span>
     ) : (
-      <Link
+      <Button
+        variant='ghost'
         key={page}
-        href={createPageLink(page)}
+        onClick={() => changePagination(page)}
         className={cn(
-          'hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
+          'hover:bg-muted flex h-8 w-8 items-center justify-center rounded transition-all duration-200 ease-linear'
         )}
       >
         {page}
-      </Link>
+      </Button>
     );
   };
 
@@ -82,17 +77,18 @@ export default function Pagination({ totalPages }: PaginationProps) {
   const pages = getVisiblePages();
 
   return (
-    <div className='mt-2 mb-5 flex w-full items-center justify-end gap-2 pr-5 text-sm'>
+    <div className='flex w-full items-center justify-end gap-2 pr-5 text-sm'>
       {currentPage > 1 ? (
-        <Link
-          href={createPageLink(currentPage - 1)}
-          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
+        <Button
+          variant='ghost'
+          onClick={() => changePagination(currentPage - 1)}
+          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded transition-all duration-200 ease-linear'
         >
-          <ChevronLeft />
-        </Link>
+          <ChevronLeft className='size-5!' />
+        </Button>
       ) : (
-        <span className='flex h-8 w-8 items-center justify-center rounded opacity-50'>
-          <ChevronLeft />
+        <span className='flex h-8 w-8 cursor-not-allowed items-center justify-center rounded opacity-50'>
+          <ChevronLeft className='size-5!' />
         </span>
       )}
 
@@ -110,15 +106,16 @@ export default function Pagination({ totalPages }: PaginationProps) {
       )}
 
       {currentPage < totalPages ? (
-        <Link
-          href={createPageLink(currentPage + 1)}
-          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded bg-white'
+        <Button
+          variant='ghost'
+          onClick={() => changePagination(currentPage + 1)}
+          className='hover:bg-muted flex h-8 w-8 items-center justify-center rounded transition-all duration-200 ease-linear'
         >
-          <ChevronRight />
-        </Link>
+          <ChevronRight className='size-5!' />
+        </Button>
       ) : (
-        <span className='flex h-8 w-8 items-center justify-center rounded opacity-50'>
-          <ChevronRight />
+        <span className='flex h-8 w-8 cursor-not-allowed items-center justify-center rounded opacity-50'>
+          <ChevronRight className='size-5!' />
         </span>
       )}
     </div>

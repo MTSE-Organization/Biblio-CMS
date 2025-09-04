@@ -1,0 +1,26 @@
+'use client';
+
+import { accountApiRequest } from '@/api-requests';
+import { useProfileStore } from '@/store';
+import { ProfileBodyType } from '@/types';
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+export const useProfileQuery = () => {
+  return useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => await accountApiRequest.getProfile(),
+    enabled: false
+  });
+};
+
+export const useUpdateProfileMutation = () => {
+  return useMutation({
+    mutationKey: ['update-profile'],
+    mutationFn: async (body: ProfileBodyType) =>
+      await accountApiRequest.updateProfile(body),
+    onSuccess: async () => {
+      const res = await accountApiRequest.getProfile();
+      useProfileStore.getState().setProfile(res.data!);
+    }
+  });
+};

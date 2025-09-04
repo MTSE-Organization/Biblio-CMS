@@ -1,4 +1,5 @@
 'use client';
+
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -15,80 +16,51 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { logoWithText } from '@/assets';
-import { FaUser } from 'react-icons/fa';
-import { IoSettings } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib';
 import { Button } from '@/components/form';
 import { useTopLoader } from 'nextjs-toploader';
 import './sidebar.css';
-
-type MenuItem = {
-  key: string;
-  label: string;
-  path?: string;
-  icon?: React.ElementType;
-  badge?: string | number;
-  children?: MenuItem[];
-};
-
-const menuItems: MenuItem[] = [
-  {
-    key: 'account-management',
-    label: 'Quản lý tài khoản',
-    icon: FaUser,
-    children: [
-      {
-        key: 'account-list',
-        label: 'Tài khoản',
-        path: '/account'
-      },
-      {
-        key: 'employee-list',
-        label: 'Nhân viên',
-        path: '/employee'
-      }
-    ]
-  },
-  {
-    key: 'system-management',
-    label: 'Quản lý hệ thống',
-    icon: IoSettings,
-    children: [
-      {
-        key: 'permission',
-        label: 'Quyền',
-        path: '/permission'
-      }
-    ]
-  }
-];
+import { MenuItem } from '@/types';
+import { menuConfig } from '@/constants';
+import { useSidebarStore } from '@/store';
 
 function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const pathname = usePathname();
   const router = useRouter();
   const loader = useTopLoader();
-  const [open, setOpen] = useState(() => {
-    if (item.children?.some((child) => child.path === pathname)) {
-      return true;
-    }
-    return false;
-  });
   const { state } = useSidebar();
 
+  const storeOpen = useSidebarStore((s) => s.openMenus[item.key]);
+  const toggleMenu = useSidebarStore((s) => s.toggleMenu);
+  const setMenu = useSidebarStore((s) => s.setMenu);
+
+  const isInitiallyOpen = useMemo(
+    () => item.children?.some((child) => child.path === pathname) ?? false,
+    [item.children, pathname]
+  );
+
+  const open = storeOpen ?? isInitiallyOpen;
+
   useEffect(() => {
-    if (state === 'collapsed') {
-      setOpen(false);
+    if (isInitiallyOpen) {
+      setMenu(item.key, true);
     }
-  }, [state]);
+  }, [isInitiallyOpen, item.key, setMenu]);
 
   useEffect(() => {
     if (item.children?.find((child) => child.path === pathname)) {
-      setOpen(true);
+      setMenu(item.key, true);
     }
-  }, [item.children, pathname]);
+  }, [item.children, pathname, item.key, setMenu]);
+
+  useEffect(() => {
+    if (state === 'collapsed') {
+      setMenu(item.key, false);
+    }
+  }, [state, item.key, setMenu]);
 
   const handleSubItemClick = (path?: string) => {
     if (!path || path === pathname) return;
@@ -99,9 +71,9 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   return (
     <SidebarMenuItem key={item.key}>
       <SidebarMenuButton
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => toggleMenu(item.key)}
         className={cn(
-          'hover:bg-sidebar! hover:bg-sidebar! active:bg-sidebar! m-1 mx-auto min-h-11 cursor-pointer rounded-none pl-8 font-normal whitespace-nowrap text-white transition-all! duration-200! ease-linear! hover:text-white active:text-white',
+          'hover:bg-sidebar! active:bg-sidebar! mx-auto my-1 min-h-10 cursor-pointer rounded-none pl-8 font-normal whitespace-nowrap text-white transition-all! duration-200! ease-linear! hover:text-white active:text-white',
           {
             'opacity-80 hover:opacity-100': !item.children?.find(
               (child) => child.path === pathname
@@ -112,7 +84,9 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
         {item.icon && <item.icon />}
         {item.label}
         <ChevronDown
-          className={`ml-auto transition-transform ${open ? 'rotate-180' : ''}`}
+          className={cn('ml-auto transition-transform', {
+            'rotate-180': open
+          })}
         />
       </SidebarMenuButton>
 
@@ -120,33 +94,27 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
         {open && item.children && (
           <motion.div
             key='content'
-            initial={{
-              height: 0
-            }}
+            initial={{ height: 0 }}
             animate={{ height: 'auto' }}
             exit={{ height: 0 }}
             transition={{ duration: 0.1, ease: 'linear' }}
-            className={cn('overflow-hidden')}
+            className='overflow-hidden'
           >
-            <SidebarMenu
-              className={cn({
-                'bg-sidebar-active-menu': open
-              })}
-            >
+            <SidebarMenu className={cn({ 'bg-sidebar-active-menu': open })}>
               {item.children.map((sub) =>
                 sub.children ? (
                   <CollapsibleMenuItem key={sub.key} item={sub} />
                 ) : (
                   <SidebarMenuItem key={sub.key}>
                     <SidebarMenuButton
-                      className='mx-auto min-h-11 rounded-none'
+                      className='m-1 min-h-10 rounded-none'
                       asChild
                     >
                       <Button
-                        variant={'ghost'}
+                        variant='ghost'
                         onClick={() => handleSubItemClick(sub.path)}
                         className={cn(
-                          'justify-start pl-12 font-normal text-white transition-all duration-200 ease-linear hover:text-white active:text-white',
+                          'mx-auto w-[calc(100%_-_8px)] justify-start rounded-lg pl-12 font-normal text-white transition-all duration-200 ease-linear hover:text-white active:text-white',
                           {
                             'bg-sidebar-item-active hover:bg-sidebar-item-active active:bg-sidebar-item-active':
                               pathname === sub.path,
@@ -166,41 +134,40 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
           </motion.div>
         )}
       </AnimatePresence>
+
       {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
     </SidebarMenuItem>
   );
 }
 
-const renderMenu = (items: MenuItem[]) => {
-  return (
-    <SidebarMenu>
-      {items.map((item) =>
-        item.children ? (
-          <CollapsibleMenuItem key={item.key} item={item} />
-        ) : (
-          <SidebarMenuItem key={item.key}>
-            <SidebarMenuButton className='rounded-none' asChild>
-              {item.path ? (
-                <Link href={item.path}>
-                  {item.icon && <item.icon />}
-                  <span>{item.label}</span>
-                </Link>
-              ) : (
-                <Button
-                  variant={'ghost'}
-                  className='bg-background hover:bg-background! justify-start pl-12'
-                >
-                  {item.icon && <item.icon />}
-                  <span>{item.label}</span>
-                </Button>
-              )}
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )
-      )}
-    </SidebarMenu>
-  );
-};
+const renderMenu = (items: MenuItem[]) => (
+  <SidebarMenu>
+    {items.map((item) =>
+      item.children ? (
+        <CollapsibleMenuItem key={item.key} item={item} />
+      ) : (
+        <SidebarMenuItem key={item.key}>
+          <SidebarMenuButton className='rounded-none' asChild>
+            {item.path ? (
+              <Link href={item.path}>
+                {item.icon && <item.icon />}
+                <span>{item.label}</span>
+              </Link>
+            ) : (
+              <Button
+                variant='ghost'
+                className='bg-background hover:bg-background! justify-start pl-12'
+              >
+                {item.icon && <item.icon />}
+                <span>{item.label}</span>
+              </Button>
+            )}
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )
+    )}
+  </SidebarMenu>
+);
 
 const AppSidebar = () => {
   return (
@@ -228,9 +195,10 @@ const AppSidebar = () => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className='sidebar-content'>
         <SidebarGroup className='p-0'>
-          <SidebarGroupContent>{renderMenu(menuItems)}</SidebarGroupContent>
+          <SidebarGroupContent>{renderMenu(menuConfig)}</SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

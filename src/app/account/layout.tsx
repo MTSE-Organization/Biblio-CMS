@@ -1,18 +1,9 @@
-import Navbar from '@/components/navbar';
-import AppSidebar from '@/components/sidebar';
+import { SidebarLayout } from '@/components/layout';
 
 export default function AccountLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <AppSidebar />
-      <main className='w-full bg-gray-100'>
-        <Navbar />
-        {children}
-      </main>
-    </>
-  );
+  return <SidebarLayout>{children}</SidebarLayout>;
 }

@@ -76,11 +76,15 @@ export default function InputField<T extends FieldValues>({
                 disabled={disabled}
                 readOnly={readOnly}
                 {...field}
-                className={cn(className, 'focus-visible:ring-[1px]', {
-                  'pl-10': prefixIcon,
-                  'pr-10': suffixIcon,
-                  'cursor-not-allowed opacity-50': disabled
-                })}
+                className={cn(
+                  className,
+                  'placeholder:text-gray-300 focus-visible:ring-[1px]',
+                  {
+                    'pl-10': prefixIcon,
+                    'pr-10': suffixIcon,
+                    'cursor-not-allowed opacity-50': disabled
+                  }
+                )}
               />
               {suffixIcon && (
                 <div className='text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2'>

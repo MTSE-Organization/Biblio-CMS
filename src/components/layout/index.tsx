@@ -1,1 +1,2 @@
-export { default as Container } from './container';
+export { default as PageWrapper } from './page-wrapper';
+export { default as SidebarLayout } from './sidebar';

@@ -8,16 +8,7 @@ import {
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
 import { Fragment } from 'react';
-
-type BreadcrumbType = {
-  label: string;
-  href?: string;
-};
-
-type ReusableBreadcrumbProps = {
-  items: BreadcrumbType[];
-  separator?: React.ReactNode;
-};
+import { ReusableBreadcrumbProps } from '@/types';
 
 export default function Breadcrumb({
   items,
@@ -25,7 +16,7 @@ export default function Breadcrumb({
 }: ReusableBreadcrumbProps) {
   return (
     <OriginBreadcrumb>
-      <BreadcrumbList>
+      <BreadcrumbList className='gap-1.5!'>
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           return (
@@ -33,7 +24,9 @@ export default function Breadcrumb({
               <BreadcrumbItem>
                 {item.href && !isLast ? (
                   <BreadcrumbLink asChild>
-                    <Link href={item.href}>{item.label}</Link>
+                    <Link className='text-breadcrumb' href={item.href}>
+                      {item.label}
+                    </Link>
                   </BreadcrumbLink>
                 ) : (
                   <BreadcrumbPage>{item.label}</BreadcrumbPage>

@@ -1,19 +1,17 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { Be_Vietnam_Pro } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 import NextTopLoader from 'nextjs-toploader';
 import { Suspense } from 'react';
-import { cookies } from 'next/headers';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import AppSidebar from '@/components/sidebar';
-import Navbar from '@/components/navbar';
 import { AppProvider, QueryProvider } from '@/components/providers';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Metadata } from 'next';
+import { Loader } from 'lucide-react';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-be-vietnam-pro',
   display: 'swap'
 });
 
@@ -29,33 +27,23 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
   return (
     <html suppressHydrationWarning lang={'vi'}>
-      <body className={`${inter.variable} ${inter.className} antialiased`}>
+      <body
+        className={`${beVietnamPro.variable} ${beVietnamPro.className} antialiased`}
+      >
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >
-          <AppProvider>
-            <QueryProvider>
-              <SidebarProvider
-                style={
-                  {
-                    '--sidebar-width': '20rem',
-                    '--sidebar-width-icon': '5rem'
-                  } as React.CSSProperties
-                }
-                defaultOpen={defaultOpen}
-              >
-                <Suspense>{children}</Suspense>
-              </SidebarProvider>
-              <NextTopLoader />
-            </QueryProvider>
-          </AppProvider>
+          <QueryProvider>
+            <AppProvider>
+              <Suspense>{children}</Suspense>
+              <NextTopLoader showSpinner={false} />
+            </AppProvider>
+          </QueryProvider>
         </ThemeProvider>
         <ToastContainer />
       </body>

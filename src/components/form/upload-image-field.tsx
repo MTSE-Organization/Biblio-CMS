@@ -28,7 +28,7 @@ import { FormLabel } from '@/components/ui/form';
 import { cn } from '@/lib';
 import { useFileUpload } from '@/hooks';
 import { logger } from '@/logger';
-import ButtonLoading from '@/loading/button-loading';
+import { ButtonLoading } from '@/components/loading';
 
 type Area = { x: number; y: number; width: number; height: number };
 
@@ -184,7 +184,7 @@ export default function UploadImageField({
             {!!value ? (
               <AvatarField
                 disablePreview
-                // src={`${apiConfig.imageProxy.baseUrl}${value}`}
+                src={`${value}`}
                 className='size-full object-cover'
                 size={size}
               />
@@ -241,7 +241,7 @@ export default function UploadImageField({
               </div>
               <Button
                 type='button'
-                className='-my-1 w-25'
+                className='bg-dodger-blue hover:bg-dodger-blue/80 -my-1 w-25'
                 onClick={handleApply}
                 disabled={!previewUrl || loading}
               >

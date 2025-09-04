@@ -5,13 +5,12 @@ import { http } from '@/utils';
 
 const authApiRequest = {
   login: async (body: LoginBodyType) =>
-    await http.post<LoginResType>(apiConfig.auth.api.login, {
+    await http.post<ApiResponse<LoginResType>>(apiConfig.auth.api.login, {
       body
     }),
   loginFromNextServerToServer: async (body: LoginBodyType) =>
-    await http.post<LoginResType>(apiConfig.account.login, {
-      body,
-      authorization: `Basic ${Buffer.from('abc_client:abc123').toString('base64')}`
+    await http.post<ApiResponse<LoginResType>>(apiConfig.auth.login, {
+      body
     }),
   logout: async () =>
     await http.post<ApiResponse<any>>(apiConfig.auth.api.logout)

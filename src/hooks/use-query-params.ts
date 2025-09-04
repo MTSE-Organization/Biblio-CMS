@@ -2,48 +2,49 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export type QueryParamsObject = Record<string, string | number>;
-
-const useQueryParams = () => {
-  const searchParams = useSearchParams();
+const useQueryParams = <T extends Record<string, any>>() => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const serializeParams = (
-    object: Partial<QueryParamsObject> = {}
-  ): URLSearchParams => {
-    const params = new URLSearchParams();
-    Object.keys(object).forEach((key) => {
-      const value = object[key];
-      if (value !== undefined && value !== '') {
-        params.set(key, String(value));
-      }
-    });
-    return params;
+  const getQueryParam = (key: keyof T) => {
+    return searchParams.get(String(key));
   };
 
-  const deserializeParams = (params: URLSearchParams): QueryParamsObject => {
-    const object: QueryParamsObject = {};
-    params.forEach((value, key) => {
-      if (value !== undefined && value !== '') {
-        object[key] = value;
-      }
-    });
-    return object;
-  };
+  const setQueryParam = (key: keyof T, value: T[keyof T] | null) => {
+    const params = new URLSearchParams(searchParams.toString());
 
-  const setQueryParams = (query: URLSearchParams | QueryParamsObject): void => {
-    const params =
-      query instanceof URLSearchParams ? query : serializeParams(query);
+    if (value === null || value === '') {
+      params.delete(String(key));
+    } else {
+      params.set(String(key), String(value));
+    }
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  return {
-    params: searchParams,
-    setQueryParams,
-    serializeParams,
-    deserializeParams
+  const setQueryParams = (newParams: Partial<T>) => {
+    let params: URLSearchParams;
+
+    if (Object.keys(newParams).length === 0) {
+      params = new URLSearchParams();
+    } else {
+      params = new URLSearchParams(searchParams.toString());
+
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === '') {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+    }
+
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
   };
+
+  return { getQueryParam, setQueryParam, setQueryParams, searchParams };
 };
 
 export default useQueryParams;

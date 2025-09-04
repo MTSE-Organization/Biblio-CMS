@@ -4,9 +4,9 @@ import { logoWithText } from '@/assets';
 import { Button, Col, InputField, Row } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { storageKeys } from '@/constants';
-import ButtonLoading from '@/loading/button-loading';
 import { logger } from '@/logger';
 import { useLoginMutation } from '@/queries';
+import route from '@/routes';
 import { loginSchema } from '@/schemaValidations';
 import { LoginBodyType } from '@/types/auth.type';
 import { notify, setData } from '@/utils';
@@ -14,26 +14,32 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTopLoader } from 'nextjs-toploader';
 import { useState } from 'react';
+import PasswordField from '@/components/form/password-field';
+import { useProfileStore } from '@/store';
+import { ButtonLoading } from '@/components/loading';
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const router = useRouter();
   const loader = useTopLoader();
+  const { setAuthenticated } = useProfileStore();
   const [isFormChanged, setIsFormChanged] = useState(false);
   const defaultValues: LoginBodyType = {
-    username: '',
-    password: '',
-    grant_type: 'password'
+    email: '',
+    password: ''
   };
 
   const onSubmit = async (values: LoginBodyType) => {
     try {
       const res = await loginMutation.mutateAsync(values);
-      if (res) {
+      if (res.result) {
         notify.success('Đăng nhập thành công');
-        setData(storageKeys.ACCESS_TOKEN, res.access_token);
-        router.push('/account');
+        setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
+        setAuthenticated(true);
+        router.push(route.account);
         loader.start();
+      } else {
+        notify.error('Email hoặc mật khẩu không chính xác');
       }
     } catch (error) {
       logger.error('Error while logging in: ', error);
@@ -46,7 +52,7 @@ export default function LoginForm() {
       defaultValues={defaultValues}
       schema={loginSchema}
       onSubmit={onSubmit}
-      className='w-100 rounded-lg border border-solid border-gray-100 px-6 py-4'
+      className='w-100 rounded-lg border border-solid border-gray-200 px-6 py-4 shadow-[0px_0px_10px_1px] shadow-slate-200'
       onChange={() => setIsFormChanged(true)}
     >
       {(form) => (
@@ -64,20 +70,22 @@ export default function LoginForm() {
           <Row>
             <Col>
               <InputField
-                name='username'
+                name='email'
                 control={form.control}
-                label='Username'
-                placeholder='Nhập username...'
+                label='Email'
+                placeholder='Nhập email...'
+                className='focus-visible:ring-dodger-blue'
               />
             </Col>
           </Row>
           <Row>
             <Col>
-              <InputField
+              <PasswordField
                 name='password'
                 control={form.control}
                 label='Mật khẩu'
                 placeholder='Nhập mật khẩu...'
+                className='focus-visible:ring-dodger-blue'
               />
             </Col>
           </Row>
