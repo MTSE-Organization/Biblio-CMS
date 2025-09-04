@@ -44,7 +44,7 @@ export default function AppProvider({
       }
     };
     handleGetProfile();
-  }, [accessToken, setProfile, profileQuery, isAuthenticated]);
+  }, [accessToken, setProfile, isAuthenticated]);
 
   return <>{children}</>;
 }

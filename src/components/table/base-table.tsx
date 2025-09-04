@@ -22,6 +22,7 @@ export default function BaseTable<T extends Record<any, any>>({
   dataSource,
   rowKey = 'id',
   pagination,
+  changePagination,
   loading
 }: BaseTableProps<T>) {
   const { total } = pagination;
@@ -95,7 +96,11 @@ export default function BaseTable<T extends Record<any, any>>({
                     colSpan={columns.length}
                     className='py-4 text-right'
                   >
-                    <Pagination totalPages={total} />
+                    <Pagination
+                      changePagination={changePagination}
+                      currentPage={pagination.current}
+                      totalPages={total}
+                    />
                   </TableCell>
                 </TableRow>
               </>

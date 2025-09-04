@@ -4,7 +4,6 @@ import { logoWithText } from '@/assets';
 import { Button, Col, InputField, Row } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { storageKeys } from '@/constants';
-import ButtonLoading from '@/components/loading/button-loading';
 import { logger } from '@/logger';
 import { useLoginMutation } from '@/queries';
 import route from '@/routes';
@@ -17,6 +16,7 @@ import { useTopLoader } from 'nextjs-toploader';
 import { useState } from 'react';
 import PasswordField from '@/components/form/password-field';
 import { useProfileStore } from '@/store';
+import { ButtonLoading } from '@/components/loading';
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();

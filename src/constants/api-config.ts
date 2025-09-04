@@ -63,12 +63,12 @@ const apiConfig = defineApiConfig({
       headers: baseHeader
     },
     delete: {
-      baseUrl: `${AppConstants.apiUrl}v1/delete/:id`,
+      baseUrl: `${AppConstants.apiUrl}v1/group/delete/:id`,
       method: 'DELETE',
       headers: baseHeader
     },
     update: {
-      baseUrl: `${AppConstants.apiUrl}v1/update`,
+      baseUrl: `${AppConstants.apiUrl}v1/group/update`,
       method: 'PUT',
       headers: baseHeader
     }

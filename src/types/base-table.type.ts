@@ -14,4 +14,5 @@ export type BaseTableProps<T> = {
   rowKey?: string;
   pagination: PaginationType;
   loading: boolean;
+  changePagination: (page: number) => void;
 };

@@ -25,9 +25,9 @@ const groupApiRequest = {
     await http.put<ApiResponse<any>>(apiConfig.group.update, {
       body
     }),
-  delete: async (id: number) =>
+  delete: async (id: string) =>
     await http.delete<ApiResponse<any>>(apiConfig.group.delete, {
-      params: {
+      pathParams: {
         id
       }
     })

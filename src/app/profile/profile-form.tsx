@@ -8,7 +8,7 @@ import {
   UploadImageField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
-import ButtonLoading from '@/components/loading/button-loading';
+import { ButtonLoading } from '@/components/loading';
 import { AppConstants } from '@/constants';
 import { logger } from '@/logger';
 import { useUpdateProfileMutation, useUploadImageMutation } from '@/queries';
@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function ProfileForm() {
-  const { profile } = useProfileStore();
+  const { profile, setProfile } = useProfileStore();
   const fileMutation = useUploadImageMutation();
   const profileMutation = useUpdateProfileMutation();
   const [isFormChanged, setIsFormChanged] = useState(false);

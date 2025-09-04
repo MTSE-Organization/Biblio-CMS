@@ -1,6 +1,7 @@
 'use client';
 
 import { groupApiRequest } from '@/api-requests';
+import { ErrorCode } from '@/constants';
 import { logger } from '@/logger';
 import { GroupBodyType, GroupSearchParamType } from '@/types';
 import { notify } from '@/utils';
@@ -45,18 +46,27 @@ export const useGroupMutation = (body: GroupBodyType) => {
   });
 };
 
-export const useGroupDeleteMutation = (id: number) => {
+export const useGroupDeleteMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['group-delete'],
-    mutationFn: async () => await groupApiRequest.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['group-list'] });
-      notify.success('Xóa nhóm thành công');
+    mutationFn: async (id: string) => await groupApiRequest.delete(id),
+    onSuccess: (res) => {
+      if (res.result) {
+        queryClient.invalidateQueries({ queryKey: ['group-list'] });
+        notify.success('Xóa nhóm thành công');
+      } else {
+        const errCode = res.code;
+        if (errCode === ErrorCode.GROUP_ERROR_IN_USED) {
+          notify.error('Nhóm này đang được sử dụng, không thể xóa');
+        } else {
+          notify.error('Xóa nhóm thất bại');
+        }
+      }
     },
     onError: (error) => {
       logger.error(`Error while deleting group: `, error);
-      notify.success('Xóa nhóm thất bại');
+      notify.error('Xóa nhóm thất bại');
     }
   });
 };
