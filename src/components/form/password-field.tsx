@@ -97,7 +97,7 @@ export default function PasswordField<T extends FieldValues>({
                   style={{ paddingTop: 0 }}
                   className={cn(
                     className,
-                    'py-0 placeholder:text-gray-300 focus-visible:ring-[1px]',
+                    'pt-1.5! placeholder:text-gray-300 focus-visible:ring-[1px]',
                     {
                       'cursor-not-allowed opacity-50': disabled
                     }

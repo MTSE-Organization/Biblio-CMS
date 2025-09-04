@@ -22,18 +22,22 @@ export default function DropdownAvatar() {
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
   const handleLogout = async () => {
-    try {
-      const res = await logoutMutation.mutateAsync();
-      if (res.result) {
-        removeData(storageKeys.ACCESS_TOKEN);
-        notify.success('Đăng xuất thành công');
-        router.push(route.login);
-        loader.start();
+    await logoutMutation.mutateAsync(undefined, {
+      onSuccess: (res) => {
+        if (res.result) {
+          removeData(storageKeys.ACCESS_TOKEN);
+          notify.success('Đăng xuất thành công');
+          router.push(route.login);
+          loader.start();
+        } else {
+          notify.error('Đăng xuất thất bại');
+        }
+      },
+      onError: (error) => {
+        logger.error('Error while logging out: ', error);
+        notify.error('Đăng xuất thất bại');
       }
-    } catch (error) {
-      logger.error('Error while logging out: ', error);
-      notify.error('Đăng xuất thất bại');
-    }
+    });
   };
   return (
     <div

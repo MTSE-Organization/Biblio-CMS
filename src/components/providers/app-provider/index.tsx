@@ -1,13 +1,11 @@
 'use client';
 
-import { apiConfig, storageKeys } from '@/constants';
+import { storageKeys } from '@/constants';
 import { logger } from '@/logger';
 import { useProfileQuery } from '@/queries';
 import route from '@/routes';
 import useProfileStore from '@/store/use-profile.store';
-import { ApiResponse, ProfileResType } from '@/types';
-import { getData, http, notify } from '@/utils';
-import { useTheme } from 'next-themes';
+import { getData, notify } from '@/utils';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -16,7 +14,6 @@ export default function AppProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { setTheme } = useTheme();
   const router = useRouter();
   const accessToken = getData(storageKeys.ACCESS_TOKEN);
   const profileQuery = useProfileQuery();
@@ -26,8 +23,6 @@ export default function AppProvider({
       router.push(route.login);
     }
   }, [router, accessToken]);
-
-  useEffect(() => setTheme('light'), [setTheme]);
 
   useEffect(() => {
     if (!accessToken) return;

@@ -12,7 +12,6 @@ import { LoginBodyType } from '@/types/auth.type';
 import { notify, setData } from '@/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useTopLoader } from 'nextjs-toploader';
 import { useState } from 'react';
 import PasswordField from '@/components/form/password-field';
 import { useProfileStore } from '@/store';
@@ -21,7 +20,6 @@ import { ButtonLoading } from '@/components/loading';
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const router = useRouter();
-  const loader = useTopLoader();
   const { setAuthenticated } = useProfileStore();
   const [isFormChanged, setIsFormChanged] = useState(false);
   const defaultValues: LoginBodyType = {
@@ -30,21 +28,22 @@ export default function LoginForm() {
   };
 
   const onSubmit = async (values: LoginBodyType) => {
-    try {
-      const res = await loginMutation.mutateAsync(values);
-      if (res.result) {
-        notify.success('Đăng nhập thành công');
-        setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
-        setAuthenticated(true);
-        router.push(route.account);
-        loader.start();
-      } else {
-        notify.error('Email hoặc mật khẩu không chính xác');
+    await loginMutation.mutateAsync(values, {
+      onSuccess: (res) => {
+        if (res.result) {
+          notify.success('Đăng nhập thành công');
+          setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
+          setAuthenticated(true);
+          router.push(route.permission);
+        } else {
+          notify.error('Email hoặc mật khẩu không chính xác');
+        }
+      },
+      onError: (error) => {
+        logger.error('Error while logging in: ', error);
+        notify.error('Đăng nhập thất bại');
       }
-    } catch (error) {
-      logger.error('Error while logging in: ', error);
-      notify.error('Đăng nhập thất bại');
-    }
+    });
   };
 
   return (

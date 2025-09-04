@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function ProfileForm() {
-  const { profile, setProfile } = useProfileStore();
+  const { profile } = useProfileStore();
   const fileMutation = useUploadImageMutation();
   const profileMutation = useUpdateProfileMutation();
   const [isFormChanged, setIsFormChanged] = useState(false);
@@ -52,18 +52,23 @@ export default function ProfileForm() {
     values: ProfileBodyType,
     form: UseFormReturn<ProfileBodyType>
   ) => {
-    try {
-      const res = await profileMutation.mutateAsync({ ...values, avatarPath });
-      if (res.result) {
-        notify.success('Cập nhật hồ sơ thành công');
-        setIsFormChanged(false);
-      } else {
-        notify.error('Cập nhật hồ sơ thất bại');
+    await profileMutation.mutateAsync(
+      { ...values, avatarPath },
+      {
+        onSuccess: (res) => {
+          if (res.result) {
+            notify.success('Cập nhật hồ sơ thành công');
+            setIsFormChanged(false);
+          } else {
+            notify.error('Cập nhật hồ sơ thất bại');
+          }
+        },
+        onError: (error) => {
+          logger.error('Error while updating profile: ', error);
+          notify.error('Cập nhật hồ sơ thất bại');
+        }
       }
-    } catch (error) {
-      logger.error('Error while updating profile: ', error);
-      notify.error('Cập nhật hồ sơ thất bại');
-    }
+    );
   };
 
   return (
