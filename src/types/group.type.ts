@@ -1,4 +1,5 @@
-import { groupSchema } from '@/schemaValidations';
+import { groupSchema, groupSearchParamSchema } from '@/schemaValidations';
+import { BaseSearchParamType } from '@/types/search.type';
 import z from 'zod';
 
 export type GroupResType = {
@@ -11,3 +12,6 @@ export type GroupResType = {
 };
 
 export type GroupBodyType = z.infer<typeof groupSchema>;
+
+export type GroupSearchParamType = z.infer<typeof groupSearchParamSchema> &
+    BaseSearchParamType;

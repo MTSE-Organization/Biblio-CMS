@@ -8,45 +8,31 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const usePermissionListQuery = (params?: PermissionSearchParamType) => {
     return useQuery({
-        queryKey: ['permission-list'],
+        queryKey: ['permission-list', params],
         queryFn: () => permissionApiRequest.getList(params)
     });
 };
 
 export const usePermissionQuery = (id: string) => {
     return useQuery({
-        queryKey: ['permission'],
+        queryKey: ['permission', id],
         queryFn: () => permissionApiRequest.getById(id)
     });
 };
 
 export const useCreatePermissionMutation = () => {
-    const queryClient = useQueryClient();
     return useMutation({
         mutationKey: ['permission-create'],
         mutationFn: async (body: Omit<PermissionBodyType, 'id'>) =>
-            await permissionApiRequest.create(body),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: ['permission-list'] }),
-        onError: (error) => {
-            logger.error('Error while creating permission:', error);
-            notify.error('Thêm mới quyền thất bại');
-        }
+            await permissionApiRequest.create(body)
     });
 };
 
-export const useUpdatePermissionMutation = (id: string) => {
-    const queryClient = useQueryClient();
+export const useUpdatePermissionMutation = () => {
     return useMutation({
         mutationKey: ['permission-update'],
         mutationFn: async (body: PermissionBodyType) =>
-            await permissionApiRequest.update(body),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: ['permission', id] }),
-        onError: (error) => {
-            logger.error('Error while updating permission:', error);
-            notify.error('Cập nhật  quyền thất bại');
-        }
+            await permissionApiRequest.update(body)
     });
 };
 

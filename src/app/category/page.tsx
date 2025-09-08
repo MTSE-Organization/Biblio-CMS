@@ -2,6 +2,7 @@
 
 import { Button, Col, InputField, Row, ToolTip } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
+import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { BaseTable } from '@/components/table';
 import {
@@ -20,16 +21,16 @@ import { Separator } from '@/components/ui/separator';
 import {
     DEFAULT_TABLE_PAGE_SIZE,
     DEFAULT_TABLE_PAGE_START,
-    groupKinds
+    statusOptions
 } from '@/constants';
 import { useNavigate, useQueryParams } from '@/hooks';
-import { useDeleteGroupMutation, useGroupListQuery } from '@/queries';
+import { useCategoryListQuery, useDeleteCategoryMutation } from '@/queries';
 import route from '@/routes';
-import { groupSearchParamSchema } from '@/schemaValidations';
+import { categorySearchParamSchema } from '@/schemaValidations';
 import {
+    CategoryResType,
+    CategorySearchParamType,
     Column,
-    GroupResType,
-    GroupSearchParamType,
     PaginationType
 } from '@/types';
 import {
@@ -44,48 +45,59 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-export default function GroupList() {
+export default function CategoryPage() {
     const navigate = useNavigate();
-    const [queryFilter, setQueryFilter] = useState<GroupSearchParamType>({
+    const [queryFilter, setQueryFilter] = useState<CategorySearchParamType>({
         page: DEFAULT_TABLE_PAGE_START,
         size: DEFAULT_TABLE_PAGE_SIZE
     });
     const { searchParams, setQueryParams } =
-        useQueryParams<GroupSearchParamType>();
+        useQueryParams<CategorySearchParamType>();
     const [pagination, setPagination] = useState<PaginationType>({
         current: DEFAULT_TABLE_PAGE_START + 1,
         pageSize: DEFAULT_TABLE_PAGE_SIZE,
         total: 0
     });
-    const groupListQuery = useGroupListQuery(queryFilter);
-    const deleteGroupMutation = useDeleteGroupMutation();
+
+    const categoryListQuery = useCategoryListQuery(queryFilter);
+    const deleteCategoryMutation = useDeleteCategoryMutation();
 
     const handleEdit = (id: string) => {
-        navigate(`${route.group.path}/${id}`);
+        navigate(`${route.category.path}/${id}`);
     };
 
-    const handleDelete = async (record: GroupResType) => {
-        deleteGroupMutation.mutateAsync(record.id);
+    const handleDelete = async (record: CategoryResType) => {
+        deleteCategoryMutation.mutateAsync(record.id);
     };
 
-    const columns: Column<GroupResType>[] = [
+    useEffect(() => {
+        setPagination((p) => ({
+            ...p,
+            total: categoryListQuery.data?.data.totalPages!
+        }));
+    }, [categoryListQuery.data]);
+
+    const columns: Column<CategoryResType>[] = [
         {
             title: 'Tên',
             dataIndex: 'name'
         },
         {
-            title: 'Nhóm',
-            dataIndex: 'kind',
+            title: 'Trạng thái',
+            width: 150,
+            dataIndex: 'status',
+            align: 'center',
             render: (value) => {
-                const groupKind = groupKinds.find((gk) => gk.value === value);
+                const status = statusOptions.find((st) => st.value === value);
                 return (
-                    <Badge style={{ backgroundColor: groupKind?.color }}>
-                        {groupKind?.label}
+                    <Badge
+                        className='text-sm font-normal'
+                        style={{ backgroundColor: status?.color }}
+                    >
+                        {status?.label}
                     </Badge>
                 );
-            },
-            width: 120,
-            align: 'center'
+            }
         },
         {
             title: 'Hành động',
@@ -94,7 +106,7 @@ export default function GroupList() {
             render: (_, record) => {
                 return (
                     <div className='flex items-center justify-center'>
-                        <ToolTip title='Sửa quyền'>
+                        <ToolTip title='Sửa danh mục'>
                             <Button
                                 onClick={() => handleEdit(record.id)}
                                 className='border-none bg-transparent shadow-none hover:bg-transparent'
@@ -109,7 +121,7 @@ export default function GroupList() {
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <span>
-                                    <ToolTip title='Xóa quyền'>
+                                    <ToolTip title='Xóa danh mục'>
                                         <Button className='border-none bg-transparent shadow-none hover:bg-transparent'>
                                             <Trash className='size-3.5 stroke-red-600' />
                                         </Button>
@@ -120,7 +132,7 @@ export default function GroupList() {
                                 <AlertDialogHeader>
                                     <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
                                         <Info className='size-8 fill-orange-500 stroke-white' />
-                                        Bạn có chắc chắn muốn xóa quyền này
+                                        Bạn có chắc chắn muốn xóa danh mục này
                                         không ?
                                     </AlertDialogTitle>
                                     <AlertDialogDescription></AlertDialogDescription>
@@ -151,17 +163,8 @@ export default function GroupList() {
         }
     ];
 
-    useEffect(() => {
-        setPagination((p) => ({
-            ...p,
-            total: groupListQuery.data?.data.totalPages!
-        }));
-    }, [groupListQuery.data]);
-
-    const defaultValues: GroupSearchParamType = {
+    const defaultValues: CategorySearchParamType = {
         name: ''
-        // kind: ''
-        // isSystemRole: false
     };
 
     const handleChangePagination = (page: number) => {
@@ -170,7 +173,7 @@ export default function GroupList() {
         setQueryParams({ ...searchParams, page: page });
     };
 
-    const onSubmit = async (values: GroupSearchParamType) => {
+    const onSubmit = async (values: CategorySearchParamType) => {
         const filtered = Object.entries(values).filter(
             ([, value]) =>
                 value !== null &&
@@ -181,7 +184,7 @@ export default function GroupList() {
         setQueryParams({ ...searchParams, ...Object.fromEntries(filtered) });
     };
 
-    const handleReset = (form: UseFormReturn<GroupSearchParamType>) => {
+    const handleReset = (form: UseFormReturn<CategorySearchParamType>) => {
         form.reset();
         setQueryFilter({
             page: DEFAULT_TABLE_PAGE_START,
@@ -196,72 +199,76 @@ export default function GroupList() {
     };
 
     const initialValues = useMemo(() => Object.fromEntries(searchParams), []);
+
     return (
-        <ListPageWrapper
-            actionBar={
-                <Link href={route.group.create.path}>
-                    <Button className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'>
-                        <PlusIcon />
-                        Thêm mới
-                    </Button>
-                </Link>
-            }
-            searchForm={
-                <BaseForm
-                    defaultValues={defaultValues}
-                    onSubmit={onSubmit}
-                    schema={groupSearchParamSchema}
-                    initialValues={initialValues}
-                >
-                    {(form) => (
-                        <>
-                            <Row className='gap-2'>
-                                <Col span={4}>
-                                    <InputField
-                                        control={form.control}
-                                        name='name'
-                                        placeholder='Tên quyền'
-                                        className='focus-visible:ring-dodger-blue'
-                                    />
-                                </Col>
-                                {/* <Col span={4}>
-                    <InputField
-                      control={form.control}
-                      name='kind'
-                      placeholder='Quyền'
-                      className='focus-visible:ring-dodger-blue'
-                    />
-                  </Col> */}
-                                <Col className='w-9'>
-                                    <Button
-                                        type='submit'
-                                        className='bg-dodger-blue hover:bg-dodger-blue/80'
-                                    >
-                                        <Search />
-                                    </Button>
-                                </Col>
-                                <Col className='w-9'>
-                                    <Button
-                                        type='button'
-                                        onClick={() => handleReset(form)}
-                                        className='hover:[&>svg]:stroke-dodger-blue hover:border-dodger-blue border border-gray-300 bg-white hover:bg-transparent [&>svg]:stroke-black'
-                                    >
-                                        <BrushCleaning className='transition-all duration-200 ease-linear' />
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </>
-                    )}
-                </BaseForm>
-            }
+        <PageWrapper
+            breadcrumbs={[
+                { label: 'Trang chủ', href: route.home.path },
+                { label: 'Danh mục' }
+            ]}
         >
-            <BaseTable
-                columns={columns}
-                dataSource={groupListQuery.data?.data.content || []}
-                pagination={pagination}
-                loading={groupListQuery.isLoading || groupListQuery.isFetching}
-                changePagination={handleChangePagination}
-            />
-        </ListPageWrapper>
+            <ListPageWrapper
+                actionBar={
+                    <Link href={route.category.create.path}>
+                        <Button className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'>
+                            <PlusIcon />
+                            Thêm mới
+                        </Button>
+                    </Link>
+                }
+                searchForm={
+                    <BaseForm
+                        defaultValues={defaultValues}
+                        onSubmit={onSubmit}
+                        schema={categorySearchParamSchema}
+                        initialValues={initialValues}
+                    >
+                        {(form) => (
+                            <>
+                                <Row className='gap-2'>
+                                    <Col span={4}>
+                                        <InputField
+                                            control={form.control}
+                                            name='name'
+                                            placeholder='Tên danh mục'
+                                            className='focus-visible:ring-dodger-blue'
+                                        />
+                                    </Col>
+
+                                    <Col className='w-9'>
+                                        <Button
+                                            type='submit'
+                                            className='bg-dodger-blue hover:bg-dodger-blue/80'
+                                        >
+                                            <Search />
+                                        </Button>
+                                    </Col>
+                                    <Col className='w-9'>
+                                        <Button
+                                            type='button'
+                                            onClick={() => handleReset(form)}
+                                            className='hover:[&>svg]:stroke-dodger-blue hover:border-dodger-blue border border-gray-300 bg-white hover:bg-transparent [&>svg]:stroke-black'
+                                        >
+                                            <BrushCleaning className='transition-all duration-200 ease-linear' />
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </>
+                        )}
+                    </BaseForm>
+                }
+            >
+                <BaseTable
+                    columns={columns}
+                    dataSource={categoryListQuery.data?.data.content || []}
+                    pagination={pagination}
+                    loading={
+                        categoryListQuery.isLoading ||
+                        categoryListQuery.isFetching
+                    }
+                    changePagination={handleChangePagination}
+                />
+            </ListPageWrapper>
+        </PageWrapper>
     );
 }

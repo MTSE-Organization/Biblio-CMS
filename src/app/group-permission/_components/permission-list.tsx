@@ -184,9 +184,12 @@ export default function PermissionList() {
                             className='rounded-lg border border-solid border-gray-200 text-sm'
                             key={group}
                         >
-                            <div className='flex items-center justify-between border-b border-solid border-b-gray-200 py-2 pr-2 pl-4 font-semibold'>
-                                <div>{group}</div>
-                                <ToolTip title={`Chỉnh sửa quyền ${group}`}>
+                            <div className='flex items-center justify-between border-b border-solid border-b-gray-200 py-2 pr-2 pl-4'>
+                                <div className='font-semibold'>{group}</div>
+                                <ToolTip
+                                    sideOffset={8}
+                                    title={`Chỉnh sửa ${group}`}
+                                >
                                     <Plus className='stroke-dodger-blue size-4 cursor-pointer transition-all duration-200 ease-linear hover:opacity-80' />
                                 </ToolTip>
                             </div>

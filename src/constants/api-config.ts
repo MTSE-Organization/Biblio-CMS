@@ -112,6 +112,49 @@ const apiConfig = defineApiConfig({
             headers: baseHeader,
             permissionCode: 'PER_D'
         }
+    },
+    category: {
+        getList: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/list`,
+            method: 'GET',
+            headers: baseHeader,
+            permissionCode: 'CAT_L'
+        },
+        create: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/create`,
+            method: 'POST',
+            headers: baseHeader,
+            permissionCode: 'CAT_C'
+        },
+        update: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/update`,
+            method: 'PUT',
+            headers: baseHeader,
+            permissionCode: 'CAT_U'
+        },
+        getById: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/get/:id`,
+            method: 'GET',
+            headers: baseHeader,
+            permissionCode: 'CAT_V'
+        },
+        delete: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/delete/:id`,
+            method: 'DELETE',
+            headers: baseHeader,
+            permissionCode: 'CAT_D'
+        },
+        autoComplete: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/auto-complete`,
+            method: 'GET',
+            headers: baseHeader
+        },
+        updateOrdering: {
+            baseUrl: `${AppConstants.apiUrl}v1/category/update-ordering`,
+            method: 'PUT',
+            headers: baseHeader,
+            permissionCode: 'CAT_U'
+        }
     }
 });
 

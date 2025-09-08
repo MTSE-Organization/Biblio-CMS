@@ -1,4 +1,4 @@
-import { ErrorMaps, GroupBodyType } from '@/types';
+import { CategoryBodyType, ErrorMaps, GroupBodyType } from '@/types';
 
 export const ErrorCode = {
     // Auth
@@ -16,11 +16,20 @@ export const ErrorCode = {
     // Group
     GROUP_ERROR_NOT_FOUND: 'ERROR-GROUP-0000',
     GROUP_ERROR_NAME_EXISTS: 'ERROR-GROUP-0001',
-    GROUP_ERROR_IN_USED: 'ERROR-GROUP-0002'
+    GROUP_ERROR_IN_USED: 'ERROR-GROUP-0002',
+
+    // Category
+    CATEGORY_ERROR_NAME_EXISTS: 'ERROR-CATEGORY-0001'
 } as const;
 
 export const groupErrorMaps: ErrorMaps<GroupBodyType> = {
     [ErrorCode.GROUP_ERROR_NAME_EXISTS]: [
         ['name', { type: 'manual', message: 'Tên nhóm đã tồn tại' }]
+    ]
+};
+
+export const categoryErrorMaps: ErrorMaps<CategoryBodyType> = {
+    [ErrorCode.CATEGORY_ERROR_NAME_EXISTS]: [
+        ['name', { type: 'manual', message: 'Tên danh mục tồn tại' }]
     ]
 };

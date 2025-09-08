@@ -1,4 +1,5 @@
 import { permissionSchema } from '@/schemaValidations';
+import { BaseSearchParamType } from '@/types/search.type';
 import z from 'zod';
 
 export type PermissionResType = {
@@ -13,3 +14,5 @@ export type PermissionResType = {
 };
 
 export type PermissionBodyType = z.infer<typeof permissionSchema>;
+
+export type PermissionSearchParamType = BaseSearchParamType;
