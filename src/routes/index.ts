@@ -27,6 +27,15 @@ const route = defineRoute({
     },
     profile: {
         path: '/profile'
+    },
+    category: {
+        path: '/category',
+        create: {
+            path: '/category/create'
+        }
+    },
+    product: {
+        path: '/product'
     }
 });
 

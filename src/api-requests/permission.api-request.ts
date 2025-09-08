@@ -20,7 +20,7 @@ const permissionApiRequest = {
         await http.get<ApiResponse<PermissionResType>>(
             apiConfig.permission.getById,
             {
-                params: { id }
+                pathParams: { id }
             }
         ),
     create: async (body: Omit<PermissionBodyType, 'id'>) =>

@@ -29,32 +29,18 @@ export const useGroupQuery = (id: string) => {
 };
 
 export const useCreateGroupMutation = () => {
-    const queryClient = useQueryClient();
     return useMutation({
         mutationKey: ['group-create'],
         mutationFn: async (body: Omit<GroupBodyType, 'id'>) =>
-            await groupApiRequest.create(body),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: ['group-list'] }),
-        onError: (error) => {
-            logger.error('Error while creating group:', error);
-            notify.error('Thêm mới nhóm quyền thất bại');
-        }
+            await groupApiRequest.create(body)
     });
 };
 
-export const useUpdateGroupMutation = (id: string) => {
-    const queryClient = useQueryClient();
+export const useUpdateGroupMutation = () => {
     return useMutation({
         mutationKey: ['group-update'],
         mutationFn: async (body: GroupBodyType) =>
-            await groupApiRequest.update(body),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: ['group', id] }),
-        onError: (error) => {
-            logger.error('Error while updating group:', error);
-            notify.error('Cập nhật nhóm quyền thất bại');
-        }
+            await groupApiRequest.update(body)
     });
 };
 

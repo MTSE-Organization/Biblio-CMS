@@ -1,6 +1,6 @@
 import route from '@/routes';
 import { MenuItem } from '@/types';
-import { Settings, User } from 'lucide-react';
+import { BookOpen, Settings, User } from 'lucide-react';
 
 const menuConfig: MenuItem[] = [
     {
@@ -18,6 +18,19 @@ const menuConfig: MenuItem[] = [
                 label: 'Nhân viên',
                 path: route.employee.path
             }
+        ]
+    },
+    {
+        key: 'product-management',
+        label: 'Quản lý sách',
+        icon: BookOpen,
+        children: [
+            {
+                key: 'category-list',
+                label: 'Danh mục sách',
+                path: route.category.path
+            },
+            { key: 'product-list', label: 'Sách', path: route.product.path }
         ]
     },
     {

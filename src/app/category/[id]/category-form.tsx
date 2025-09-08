@@ -6,70 +6,79 @@ import {
     Col,
     InputField,
     Row,
-    TextAreaField
+    TextAreaField,
+    UploadImageField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { CircleLoading } from '@/components/loading';
-import { groupErrorMaps, groupKinds } from '@/constants';
+import { AppConstants, categoryErrorMaps, statusOptions } from '@/constants';
 import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
 import {
-    useCreateGroupMutation,
-    useGroupQuery,
-    useUpdateGroupMutation
+    useCategoryQuery,
+    useCreateCategoryMutation,
+    useUpdateCategoryMutation,
+    useUploadImageMutation
 } from '@/queries';
 import route from '@/routes';
-import { groupSchema } from '@/schemaValidations';
-import { GroupBodyType } from '@/types';
+import { categorySchema } from '@/schemaValidations';
+import { CategoryBodyType } from '@/types';
 import { applyFormErrors, notify } from '@/utils';
-import { omit } from 'lodash';
 import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-export default function GroupForm() {
+export default function CategoryForm() {
     const [isFormChanged, setIsFormChanged] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>('');
     const { id } = useParams<{ id: string }>();
     const isCreate = id === 'create';
-    const groupQuery = useGroupQuery(id);
-    const group = groupQuery.data?.data;
-    const createGroupMutation = useCreateGroupMutation();
-    const updateGroupMutation = useUpdateGroupMutation();
+    const categoryQuery = useCategoryQuery(id);
+    const category = categoryQuery.data?.data;
+    const uploadImageMutation = useUploadImageMutation();
+    const createCategoryMutation = useCreateCategoryMutation();
+    const updateCategoryMutation = useUpdateCategoryMutation();
     const navigate = useNavigate();
-    const defaultValues: GroupBodyType = {
-        kind: 1,
+    const defaultValues: CategoryBodyType = {
         name: '',
-        permissionIds: [],
-        description: ''
+        description: '',
+        imageUrl: '',
+        status: 1
     };
 
-    const initialValues: GroupBodyType | undefined = useMemo(() => {
-        if (!group) return undefined;
+    const initialValues: CategoryBodyType | undefined = useMemo(() => {
+        if (!category) return undefined;
         return {
             ...defaultValues,
-            ...group
+            ...category
         };
-    }, [group]);
+    }, [category]);
+
+    useEffect(() => {
+        if (category?.imageUrl) setImageUrl(category?.imageUrl);
+    }, [category]);
 
     const onSubmit = async (
-        values: GroupBodyType,
-        form: UseFormReturn<GroupBodyType>
+        values: CategoryBodyType,
+        form: UseFormReturn<CategoryBodyType>
     ) => {
-        const mutation = isCreate ? createGroupMutation : updateGroupMutation;
+        const mutation = isCreate
+            ? createCategoryMutation
+            : updateCategoryMutation;
         await mutation.mutateAsync(
-            isCreate ? values : { ...omit(values, ['kind']), id },
+            isCreate ? { ...values, imageUrl } : { ...values, imageUrl, id },
             {
                 onSuccess: (res) => {
                     if (res.result) {
                         notify.success(
-                            `${isCreate ? 'Thêm mới' : 'Cập nhật'} nhóm quyền thành công`
+                            `${isCreate ? 'Thêm mới' : 'Cập nhật'} danh mục thành công`
                         );
-                        navigate(route.group.path);
+                        navigate(route.category.path);
                     } else {
                         const errCode = res.code;
                         if (errCode) {
-                            applyFormErrors(form, errCode, groupErrorMaps);
+                            applyFormErrors(form, errCode, categoryErrorMaps);
                         } else {
                             logger.error(
                                 'Error while create/update group permission:',
@@ -94,7 +103,7 @@ export default function GroupForm() {
         <BaseForm
             defaultValues={defaultValues}
             onSubmit={onSubmit}
-            schema={groupSchema}
+            schema={categorySchema}
             className='w-200 rounded-lg bg-white p-4'
             onChange={() => setIsFormChanged(true)}
             initialValues={initialValues}
@@ -102,31 +111,53 @@ export default function GroupForm() {
             {(form) => (
                 <>
                     <Row>
+                        <Col>
+                            <UploadImageField
+                                value={
+                                    imageUrl
+                                        ? `${AppConstants.contentRootUrl}${imageUrl}`
+                                        : ''
+                                }
+                                loading={uploadImageMutation.isPending}
+                                onChange={(url) => {
+                                    setImageUrl(url);
+                                    setIsFormChanged(true);
+                                }}
+                                size={100}
+                                uploadImageFn={async (file: Blob) => {
+                                    const res =
+                                        await uploadImageMutation.mutateAsync(
+                                            file
+                                        );
+                                    return res.data?.filePath ?? '';
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
                         <Col span={12}>
                             <InputField
                                 control={form.control}
                                 name='name'
-                                label='Tên nhóm'
-                                placeholder='Nhập tên nhóm'
+                                label='Tên danh mục'
+                                placeholder='Nhập tên danh mục'
                                 required
                                 className='focus-visible:ring-dodger-blue'
                             />
                         </Col>
-                        {isCreate && (
-                            <Col span={12}>
-                                <AutoCompleteField
-                                    getLabel={(option) => option.label}
-                                    getValue={(option) => option.value}
-                                    options={groupKinds}
-                                    control={form.control}
-                                    name='kind'
-                                    label='Loại'
-                                    placeholder='Chọn loại'
-                                    required
-                                    onValueChange={() => setIsFormChanged(true)}
-                                />
-                            </Col>
-                        )}
+                        <Col span={12}>
+                            <AutoCompleteField
+                                getLabel={(option) => option.label}
+                                getValue={(option) => option.value}
+                                options={statusOptions}
+                                control={form.control}
+                                name='status'
+                                label='Trạng thái'
+                                placeholder='Trạng thái'
+                                required
+                                onValueChange={() => setIsFormChanged(true)}
+                            />
+                        </Col>
                     </Row>
                     <Row>
                         <Col>
@@ -159,8 +190,8 @@ export default function GroupForm() {
                                     'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'
                                 }
                             >
-                                {createGroupMutation.isPending ||
-                                updateGroupMutation.isPending ? (
+                                {createCategoryMutation.isPending ||
+                                updateCategoryMutation.isPending ? (
                                     <CircleLoading />
                                 ) : (
                                     <>

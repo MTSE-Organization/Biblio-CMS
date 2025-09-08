@@ -1,15 +1,14 @@
-'use client';
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageWrapper } from '@/components/layout';
 import { GroupList } from '@/app/group-permission/_components';
 import PermissionList from '@/app/group-permission/_components/permission-list';
+import route from '@/routes';
 
 export default function GroupPermissionPage() {
     return (
         <PageWrapper
             breadcrumbs={[
-                { label: 'Trang chủ', href: '/' },
+                { label: 'Trang chủ', href: route.home.path },
                 { label: 'Quyền' }
             ]}
         >
