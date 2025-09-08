@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingWrapper } from '@/components/loading';
 import { storageKeys } from '@/constants';
 import { logger } from '@/logger';
 import { useProfileQuery } from '@/queries';
@@ -10,36 +11,39 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function AppProvider({
-  children
+    children
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  const router = useRouter();
-  const accessToken = getData(storageKeys.ACCESS_TOKEN);
-  const profileQuery = useProfileQuery();
-  const { setProfile, isAuthenticated } = useProfileStore();
-  useEffect(() => {
-    if (!accessToken) {
-      router.push(route.login);
-    }
-  }, [router, accessToken]);
-
-  useEffect(() => {
-    if (!accessToken) return;
-
-    const handleGetProfile = async () => {
-      try {
-        const res = await profileQuery.refetch();
-        if (res.data?.data) {
-          setProfile(res.data.data);
+    const router = useRouter();
+    const accessToken = getData(storageKeys.ACCESS_TOKEN);
+    const profileQuery = useProfileQuery();
+    const { setProfile, isAuthenticated } = useProfileStore();
+    useEffect(() => {
+        if (!accessToken) {
+            router.push(route.login.path);
         }
-      } catch (error) {
-        logger.error(`Error while getting profile: `, error);
-        notify.error('Lấy hồ sơ thất bại');
-      }
-    };
-    handleGetProfile();
-  }, [accessToken, setProfile, isAuthenticated]);
+    }, [router, accessToken]);
 
-  return <>{children}</>;
+    useEffect(() => {
+        if (!accessToken) return;
+        const handleGetProfile = async () => {
+            try {
+                const res = await profileQuery.refetch();
+                if (res.data?.data) {
+                    setProfile(res.data.data);
+                }
+            } catch (error) {
+                logger.error(`Error while getting profile: `, error);
+                notify.error('Lấy hồ sơ thất bại');
+            }
+        };
+        handleGetProfile();
+    }, [accessToken, isAuthenticated]);
+
+    return profileQuery.isLoading || profileQuery.isFetching ? (
+        <LoadingWrapper />
+    ) : (
+        children
+    );
 }

@@ -2,8 +2,9 @@ import { groupSearchParamSchema } from '@/schemaValidations';
 import z from 'zod';
 
 export type BaseSearchParamType = {
-  page?: number;
-  size?: number;
+    page?: number;
+    size?: number;
 };
 export type GroupSearchParamType = z.infer<typeof groupSearchParamSchema> &
-  BaseSearchParamType;
+    BaseSearchParamType;
+export type PermissionSearchParamType = BaseSearchParamType;
