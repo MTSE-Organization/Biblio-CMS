@@ -5,5 +5,5 @@
   "jsxSingleQuote": true,
   "trailingSpace": true,
   "semi": true,
-  "tabWidth": 2
+  "tabWidth": 4
 }
