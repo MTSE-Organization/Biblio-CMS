@@ -1,6 +1,7 @@
 'use client';
 
 import { categoryApiRequest } from '@/api-requests';
+import { ErrorCode } from '@/constants';
 import { logger } from '@/logger';
 import { CategoryBodyType, CategorySearchParamType } from '@/types';
 import { notify } from '@/utils';
@@ -63,7 +64,13 @@ export const useDeleteCategoryMutation = () => {
         });
         notify.success('Xóa danh mục thành công');
       } else {
-        notify.error('Xóa danh mục thất bại');
+        const errorCode = res.code;
+
+        if (errorCode === ErrorCode.CATEGORY_ERROR_IN_USE) {
+          notify.error('Danh mục đang được sử dụng, không thể xóa');
+        } else {
+          notify.error('Xóa danh mục thất bại');
+        }
       }
     },
     onError: (error) => {

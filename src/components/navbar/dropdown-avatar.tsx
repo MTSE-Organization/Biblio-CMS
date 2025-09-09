@@ -10,7 +10,7 @@ import { logger } from '@/logger';
 import { useLogoutMutation } from '@/queries';
 import route from '@/routes';
 import { useProfileStore } from '@/store';
-import { notify, removeData } from '@/utils';
+import { notify, removeData, renderImage } from '@/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
@@ -46,11 +46,7 @@ export default function DropdownAvatar() {
       <div className='flex cursor-pointer items-center gap-2'>
         <span className='text-sm'>{profile?.fullName}</span>
         <AvatarField
-          src={
-            profile?.avatarPath
-              ? `${AppConstants.contentRootUrl}${profile?.avatarPath}`
-              : ''
-          }
+          src={renderImage(profile?.avatarPath)}
           disablePreview
           size={35}
         />
