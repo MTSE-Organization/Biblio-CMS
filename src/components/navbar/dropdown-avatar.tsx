@@ -10,7 +10,7 @@ import { logger } from '@/logger';
 import { useLogoutMutation } from '@/queries';
 import route from '@/routes';
 import { useProfileStore } from '@/store';
-import { notify, removeData } from '@/utils';
+import { notify, removeData, renderImageUrl } from '@/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
