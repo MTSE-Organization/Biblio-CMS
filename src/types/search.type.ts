@@ -1,4 +1,4 @@
 export type BaseSearchParamType = {
-    page?: number;
-    size?: number;
+  page?: number;
+  size?: number;
 };

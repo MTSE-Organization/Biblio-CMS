@@ -9,43 +9,41 @@ import { Metadata } from 'next';
 import { LoadingWrapper } from '@/components/loading';
 
 const inter = Inter({
-    subsets: ['latin'],
-    variable: '--font-inter',
-    display: 'swap'
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
 });
 
 export const metadata: Metadata = {
-    title: {
-        template: '%s | Biblio CMS',
-        default: 'Biblio CMS'
-    }
+  title: {
+    template: '%s | Biblio CMS',
+    default: 'Biblio CMS'
+  }
 };
 
 export default async function RootLayout({
-    children
+  children
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <html suppressHydrationWarning lang={'vi'}>
-            <body
-                className={`${inter.variable} ${inter.className} antialiased`}
-            >
-                <ThemeProvider
-                    attribute='class'
-                    defaultTheme='light'
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <QueryProvider>
-                        <AppProvider>
-                            <Suspense>{children}</Suspense>
-                            <NextTopLoader showSpinner={false} />
-                        </AppProvider>
-                    </QueryProvider>
-                </ThemeProvider>
-                <ToastContainer />
-            </body>
-        </html>
-    );
+  return (
+    <html suppressHydrationWarning lang={'vi'}>
+      <body className={`${inter.variable} ${inter.className} antialiased`}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <AppProvider>
+              <Suspense>{children}</Suspense>
+              <NextTopLoader showSpinner={false} />
+            </AppProvider>
+          </QueryProvider>
+        </ThemeProvider>
+        <ToastContainer />
+      </body>
+    </html>
+  );
 }

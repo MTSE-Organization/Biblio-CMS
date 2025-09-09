@@ -2,13 +2,13 @@ import { SidebarLayout } from '@/components/layout';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Danh mục'
+  title: 'Danh mục'
 };
 
 export default function CategoryLayout({
-    children
+  children
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return <SidebarLayout>{children}</SidebarLayout>;
+  return <SidebarLayout>{children}</SidebarLayout>;
 }

@@ -1,17 +1,19 @@
 'use client';
 
 import {
-    Button,
-    Col,
-    InputField,
-    Row,
-    UploadImageField
+  Button,
+  Col,
+  InputField,
+  Row,
+  UploadImageField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { CircleLoading } from '@/components/loading';
 import { AppConstants } from '@/constants';
+import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
 import { useUpdateProfileMutation, useUploadImageMutation } from '@/queries';
+import route from '@/routes';
 import { updateProfileSchema } from '@/schemaValidations';
 import { useProfileStore } from '@/store';
 import { ProfileBodyType } from '@/types';
@@ -21,140 +23,154 @@ import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function ProfileForm() {
-    const { profile } = useProfileStore();
-    const fileMutation = useUploadImageMutation();
-    const profileMutation = useUpdateProfileMutation();
-    const [isFormChanged, setIsFormChanged] = useState(false);
-    const [avatarPath, setAvatarPath] = useState('');
+  const navigate = useNavigate();
+  const { profile } = useProfileStore();
+  const fileMutation = useUploadImageMutation();
+  const profileMutation = useUpdateProfileMutation();
+  const [isFormChanged, setIsFormChanged] = useState(false);
+  const [avatarPath, setAvatarPath] = useState('');
 
-    const defaultValues: ProfileBodyType = {
-        email: '',
-        fullName: '',
-        avatarPath: '',
-        phone: ''
-    };
+  const defaultValues: ProfileBodyType = {
+    email: '',
+    fullName: '',
+    avatarPath: '',
+    phone: ''
+  };
 
-    const initialValues: ProfileBodyType = useMemo(
-        () => ({
-            email: profile?.email ?? '',
-            fullName: profile?.fullName ?? '',
-            avatarPath: profile?.avatarPath ?? '',
-            phone: profile?.phone ?? ''
-        }),
-        [profile]
+  const initialValues: ProfileBodyType = useMemo(
+    () => ({
+      email: profile?.email ?? '',
+      fullName: profile?.fullName ?? '',
+      avatarPath: profile?.avatarPath ?? '',
+      phone: profile?.phone ?? ''
+    }),
+    [profile]
+  );
+
+  useEffect(() => {
+    if (profile?.avatarPath) setAvatarPath(profile?.avatarPath);
+  }, [profile?.avatarPath]);
+
+  const onSubmit = async (
+    values: ProfileBodyType,
+    form: UseFormReturn<ProfileBodyType>
+  ) => {
+    await profileMutation.mutateAsync(
+      { ...values, avatarPath },
+      {
+        onSuccess: (res) => {
+          if (res.result) {
+            notify.success('Cập nhật hồ sơ thành công');
+            setIsFormChanged(false);
+          } else {
+            notify.error('Cập nhật hồ sơ thất bại');
+          }
+        },
+        onError: (error) => {
+          logger.error('Error while updating profile: ', error);
+          notify.error('Cập nhật hồ sơ thất bại');
+        }
+      }
     );
+  };
 
-    useEffect(() => {
-        if (profile?.avatarPath) setAvatarPath(profile?.avatarPath);
-    }, [profile?.avatarPath]);
-
-    const onSubmit = async (
-        values: ProfileBodyType,
-        form: UseFormReturn<ProfileBodyType>
-    ) => {
-        await profileMutation.mutateAsync(
-            { ...values, avatarPath },
-            {
-                onSuccess: (res) => {
-                    if (res.result) {
-                        notify.success('Cập nhật hồ sơ thành công');
-                        setIsFormChanged(false);
-                    } else {
-                        notify.error('Cập nhật hồ sơ thất bại');
-                    }
-                },
-                onError: (error) => {
-                    logger.error('Error while updating profile: ', error);
-                    notify.error('Cập nhật hồ sơ thất bại');
+  return (
+    <BaseForm
+      defaultValues={defaultValues}
+      onSubmit={onSubmit}
+      schema={updateProfileSchema}
+      className='mx-auto w-1/2'
+      onChange={() => setIsFormChanged(true)}
+      initialValues={initialValues}
+    >
+      {(form) => (
+        <>
+          <Row>
+            <Col>
+              <UploadImageField
+                value={
+                  avatarPath
+                    ? `${AppConstants.contentRootUrl}${avatarPath}`
+                    : ''
                 }
-            }
-        );
-    };
-
-    return (
-        <BaseForm
-            defaultValues={defaultValues}
-            onSubmit={onSubmit}
-            schema={updateProfileSchema}
-            className='mx-auto w-1/2'
-            onChange={() => setIsFormChanged(true)}
-            initialValues={initialValues}
-        >
-            {(form) => (
-                <>
-                    <Row>
-                        <Col>
-                            <UploadImageField
-                                value={
-                                    avatarPath
-                                        ? `${AppConstants.contentRootUrl}${avatarPath}`
-                                        : ''
-                                }
-                                loading={fileMutation.isPending}
-                                onChange={(url) => {
-                                    setAvatarPath(url);
-                                    setIsFormChanged(true);
-                                }}
-                                size={100}
-                                uploadImageFn={async (file: Blob) => {
-                                    const res =
-                                        await fileMutation.mutateAsync(file);
-                                    return res.data?.filePath ?? '';
-                                }}
-                            />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <InputField
-                                control={form.control}
-                                name='email'
-                                label='Email'
-                                placeholder='Nhập email'
-                                className='focus-visible:ring-dodger-blue'
-                                required
-                            />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <InputField
-                                control={form.control}
-                                name='fullName'
-                                label='Họ tên'
-                                placeholder='Nhập họ tên'
-                                className='focus-visible:ring-dodger-blue'
-                                required
-                            />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <InputField
-                                control={form.control}
-                                name='phone'
-                                label='Số điện thoại'
-                                placeholder='Nhập số điện thoại'
-                                className='focus-visible:ring-dodger-blue'
-                                required
-                            />
-                        </Col>
-                    </Row>
-                    <Button
-                        disabled={!isFormChanged}
-                        className='bg-dodger-blue hover:bg-dodger-blue/80 ml-auto flex w-40'
-                    >
-                        {profileMutation.isPending ? (
-                            <CircleLoading />
-                        ) : (
-                            <>
-                                <Save />
-                                Cập nhật
-                            </>
-                        )}
-                    </Button>
-                </>
-            )}
-        </BaseForm>
-    );
+                loading={fileMutation.isPending}
+                onChange={(url) => {
+                  setAvatarPath(url);
+                  setIsFormChanged(true);
+                }}
+                size={100}
+                uploadImageFn={async (file: Blob) => {
+                  const res = await fileMutation.mutateAsync(file);
+                  return res.data?.filePath ?? '';
+                }}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <InputField
+                control={form.control}
+                name='email'
+                label='Email'
+                placeholder='Nhập email'
+                className='focus-visible:ring-dodger-blue'
+                required
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <InputField
+                control={form.control}
+                name='fullName'
+                label='Họ tên'
+                placeholder='Nhập họ tên'
+                className='focus-visible:ring-dodger-blue'
+                required
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <InputField
+                control={form.control}
+                name='phone'
+                label='Số điện thoại'
+                placeholder='Nhập số điện thoại'
+                className='focus-visible:ring-dodger-blue'
+                required
+              />
+            </Col>
+          </Row>
+          <Row className='my-0 justify-end'>
+            <Col span={4}>
+              <Button
+                onClick={() => navigate(route.home.path)}
+                type='button'
+                variant={'ghost'}
+                className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'
+              >
+                Hủy
+              </Button>
+            </Col>
+            <Col span={4}>
+              <Button
+                disabled={!isFormChanged}
+                className='bg-dodger-blue hover:bg-dodger-blue/80 flex'
+              >
+                {profileMutation.isPending ? (
+                  <CircleLoading />
+                ) : (
+                  <>
+                    <Save />
+                    Cập nhật
+                  </>
+                )}
+              </Button>
+            </Col>
+          </Row>
+        </>
+      )}
+    </BaseForm>
+  );
 }

@@ -1,52 +1,63 @@
+'use client';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageWrapper } from '@/components/layout';
 import { GroupList } from '@/app/group-permission/_components';
 import PermissionList from '@/app/group-permission/_components/permission-list';
 import route from '@/routes';
+import GroupPermissionList from '@/app/group-permission/_components/group-permission-list';
+import { useState } from 'react';
+import { getData, setData } from '@/utils';
+import { storageKeys } from '@/constants';
+import { useIsMounted } from '@/hooks';
 
 export default function GroupPermissionPage() {
-    return (
-        <PageWrapper
-            breadcrumbs={[
-                { label: 'Trang chủ', href: route.home.path },
-                { label: 'Quyền' }
-            ]}
-        >
-            <div className='rounded-lg bg-white'>
-                <Tabs defaultValue='tab-3'>
-                    <TabsList className='relative h-auto w-full justify-start gap-0.5 bg-transparent p-4 pb-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-zinc-100'>
-                        <TabsTrigger
-                            value='tab-1'
-                            className='data-[state=active]:text-dodger-blue cursor-pointer overflow-hidden rounded-b-none border-x border-t bg-zinc-50 py-2 font-normal text-black data-[state=active]:z-10 data-[state=active]:shadow-none'
-                        >
-                            Vai trò
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value='tab-2'
-                            className='data-[state=active]:text-dodger-blue cursor-pointer overflow-hidden rounded-b-none border-x border-t bg-zinc-50 py-2 font-normal text-black data-[state=active]:z-10 data-[state=active]:shadow-none'
-                        >
-                            Nhóm quyền
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value='tab-3'
-                            className='data-[state=active]:text-dodger-blue cursor-pointer overflow-hidden rounded-b-none border-x border-t bg-zinc-50 py-2 font-normal text-black data-[state=active]:z-10 data-[state=active]:shadow-none'
-                        >
-                            Quyền
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value='tab-1'>
-                        <p className='text-muted-foreground p-4 text-center text-xs'>
-                            Content for Tab 1
-                        </p>
-                    </TabsContent>
-                    <TabsContent value='tab-2'>
-                        <GroupList />
-                    </TabsContent>
-                    <TabsContent value='tab-3'>
-                        <PermissionList />
-                    </TabsContent>
-                </Tabs>
-            </div>
-        </PageWrapper>
-    );
+  const [activeTab, setActiveTab] = useState(
+    getData(storageKeys.ACTIVE_GROUP_TAB) || 'tab-1'
+  );
+  const isMounted = useIsMounted();
+
+  const tabs = [
+    { value: 'tab-1', label: 'Vai trò', component: <GroupList /> },
+    {
+      value: 'tab-2',
+      label: 'Nhóm quyền',
+      component: <GroupPermissionList />
+    },
+    { value: 'tab-3', label: 'Quyền', component: <PermissionList /> }
+  ];
+
+  if (!isMounted) return null;
+
+  return (
+    <PageWrapper
+      breadcrumbs={[
+        { label: 'Trang chủ', href: route.home.path },
+        { label: 'Quyền' }
+      ]}
+    >
+      <div className='rounded-lg bg-white'>
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+          <TabsList className='relative h-auto w-full justify-start gap-0.5 bg-transparent p-4 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-zinc-100'>
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                onClick={() => setData(storageKeys.ACTIVE_GROUP_TAB, tab.value)}
+                className='data-[state=active]:text-dodger-blue cursor-pointer overflow-hidden rounded-b-none border-x border-t bg-zinc-50 py-2 font-normal text-black data-[state=active]:z-10 data-[state=active]:shadow-none'
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {tabs.map((tab) => (
+            <TabsContent key={tab.value} className='mt-0' value={tab.value}>
+              {tab.component}
+            </TabsContent>
+          ))}
+        </Tabs>
+      </div>
+    </PageWrapper>
+  );
 }
