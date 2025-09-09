@@ -1,7 +1,8 @@
 const storageKeys = {
   ACCESS_TOKEN: 'access_token',
   REFRESH_TOKEN: 'refresh_token',
-  X_TENANT: 'X-Tenant'
+  X_TENANT: 'X-Tenant',
+  ACTIVE_GROUP_TAB: 'active_group_tab'
 };
 
 export default storageKeys;

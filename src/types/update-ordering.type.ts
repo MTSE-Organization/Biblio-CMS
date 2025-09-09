@@ -1,4 +1,4 @@
 export type UpdateOrderingType = {
-    id: string;
-    ordering: number;
+  id: string;
+  ordering: number;
 };

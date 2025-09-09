@@ -4,15 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useTopLoader } from 'nextjs-toploader';
 
 const useNavigate = () => {
-    const router = useRouter();
-    const loading = useTopLoader();
+  const router = useRouter();
+  const loading = useTopLoader();
 
-    const navigate = (path: string) => {
-        router.push(path);
-        loading.start();
-    };
+  const navigate = (path: string) => {
+    router.push(path);
+    loading.start();
+  };
 
-    return navigate;
+  return navigate;
 };
 
 export default useNavigate;
