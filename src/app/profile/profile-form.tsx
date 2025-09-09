@@ -16,7 +16,7 @@ import route from '@/routes';
 import { updateProfileSchema } from '@/schemaValidations';
 import { useProfileStore } from '@/store';
 import { ProfileBodyType } from '@/types';
-import { notify, renderImage } from '@/utils';
+import { notify, renderImageUrl } from '@/utils';
 import { Save } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -87,7 +87,7 @@ export default function ProfileForm() {
           <Row>
             <Col>
               <UploadImageField
-                value={renderImage(avatarPath)}
+                value={renderImageUrl(avatarPath)}
                 loading={fileMutation.isPending}
                 onChange={(url) => {
                   setAvatarPath(url);

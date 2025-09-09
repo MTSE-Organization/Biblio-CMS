@@ -11,12 +11,7 @@ import {
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { CircleLoading } from '@/components/loading';
-import {
-  AppConstants,
-  categoryErrorMaps,
-  STATUS_ACTIVE,
-  statusOptions
-} from '@/constants';
+import { categoryErrorMaps, STATUS_ACTIVE, statusOptions } from '@/constants';
 import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
 import {
@@ -28,7 +23,7 @@ import {
 import route from '@/routes';
 import { categorySchema } from '@/schemaValidations';
 import { CategoryBodyType } from '@/types';
-import { applyFormErrors, notify, renderImage } from '@/utils';
+import { applyFormErrors, notify, renderImageUrl } from '@/utils';
 import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -112,7 +107,7 @@ export default function CategoryForm() {
           <Row>
             <Col>
               <UploadImageField
-                value={renderImage(imageUrl)}
+                value={renderImageUrl(imageUrl)}
                 loading={uploadImageMutation.isPending}
                 onChange={(url) => {
                   setImageUrl(url);

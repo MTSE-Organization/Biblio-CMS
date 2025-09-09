@@ -41,7 +41,7 @@ import {
   Column,
   PaginationType
 } from '@/types';
-import { renderImage } from '@/utils';
+import { renderImageUrl } from '@/utils';
 import {
   BrushCleaning,
   Edit2,
@@ -100,7 +100,7 @@ export default function CategoryPage() {
           })}
           previewClassName='rounded'
           disablePreview={!value}
-          src={renderImage(value)}
+          src={renderImageUrl(value)}
         />
       )
     },
