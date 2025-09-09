@@ -4,13 +4,13 @@ import { AvatarField } from '@/components/form';
 import List from '@/components/list';
 import ListItem from '@/components/list/ListItem';
 import { CircleLoading } from '@/components/loading';
-import { AppConstants, storageKeys } from '@/constants';
+import { storageKeys } from '@/constants';
 import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
 import { useLogoutMutation } from '@/queries';
 import route from '@/routes';
 import { useProfileStore } from '@/store';
-import { notify, removeData } from '@/utils';
+import { notify, removeData, renderImageUrl } from '@/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
@@ -46,11 +46,7 @@ export default function DropdownAvatar() {
       <div className='flex cursor-pointer items-center gap-2'>
         <span className='text-sm'>{profile?.fullName}</span>
         <AvatarField
-          src={
-            profile?.avatarPath
-              ? `${AppConstants.contentRootUrl}${profile?.avatarPath}`
-              : ''
-          }
+          src={renderImageUrl(profile?.avatarPath)}
           disablePreview
           size={35}
         />

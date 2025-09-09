@@ -72,6 +72,12 @@ export default function PermissionList() {
   const groupPermissions = groupPermissionListQuery.data?.data.content || [];
   const permissions = permissionListQuery.data?.data.content || [];
 
+  const loading =
+    permissionListQuery.isLoading ||
+    groupPermissionListQuery.isLoading ||
+    permissionListQuery.isRefetching ||
+    groupPermissionListQuery.isRefetching;
+
   const groupedPermissions = (permissions || []).reduce((acc, permission) => {
     const group = permission.permissionGroup.name || 'Unknown';
     if (!acc[group]) {
@@ -177,112 +183,118 @@ export default function PermissionList() {
   return (
     <>
       <ListPageWrapper>
-        <div className='flex max-w-200 flex-col gap-y-4 px-4'>
-          {Object.keys(groupedPermissions).map((group) => {
-            const permissions = groupedPermissions[group];
-            return (
-              <div
-                className='my-4 rounded-lg border border-solid border-gray-200 text-sm'
-                key={group}
-              >
-                <div className='flex items-center justify-between border-b border-solid border-b-gray-200 py-2 pr-2 pl-4'>
-                  <div className='font-semibold'>{group}</div>
-                  <ToolTip sideOffset={8} title={`Thêm quyền`}>
-                    <Plus
-                      className='stroke-dodger-blue size-4 cursor-pointer transition-all duration-200 ease-linear hover:opacity-80'
-                      onClick={() => handleAdd(group)}
-                    />
-                  </ToolTip>
-                </div>
+        {loading ? (
+          <CircleLoading className='mt-4 size-8! stroke-black' />
+        ) : (
+          <div className='flex max-w-200 flex-col gap-y-4 px-4'>
+            {Object.keys(groupedPermissions).map((group) => {
+              const permissions = groupedPermissions[group];
+              return (
                 <div
-                  className={cn('grid gap-4 p-4', {
-                    'grid-cols-3': permissions?.length > 0
-                  })}
+                  className='my-4 rounded-lg border border-solid border-gray-200 text-sm'
+                  key={group}
                 >
-                  {permissions?.length > 0 ? (
-                    permissions.map(
-                      (permission: PermissionResType, index: number) => {
-                        return (
-                          <div
-                            className='flex items-center justify-between'
-                            key={permission.id}
-                          >
-                            {permission.name}
-                            <div className='flex items-center justify-center'>
-                              <ToolTip title={`Sửa ${permission.name}`}>
-                                <Button
-                                  className='border-none bg-transparent px-2! shadow-none hover:bg-transparent'
-                                  onClick={() => handleEdit(permission)}
-                                >
-                                  <Edit2 className='stroke-dodger-blue size-3.5' />
-                                </Button>
-                              </ToolTip>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <span>
-                                    <ToolTip title={`Xóa ${permission.name}`}>
-                                      <Button className='border-none bg-transparent px-2! shadow-none hover:bg-transparent'>
-                                        <Trash className='size-3.5 stroke-red-600' />
-                                      </Button>
-                                    </ToolTip>
-                                  </span>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className='data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-0! data-[state=closed]:slide-out-to-top-0! data-[state=open]:slide-in-from-left-0! data-[state=open]:slide-in-from-top-0! top-[30%]'>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
-                                      <Info className='size-8 fill-orange-500 stroke-white' />
-                                      Bạn có chắc chắn muốn xóa quyền này không
-                                      ?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription></AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel asChild>
-                                      <Button
-                                        variant='outline'
-                                        className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
-                                      >
-                                        Không
-                                      </Button>
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction asChild>
-                                      <Button
-                                        className='bg-dodger-blue hover:bg-dodger-blue/80 cursor-pointer transition-all duration-200 ease-linear'
-                                        onClick={() => handleDelete(permission)}
-                                      >
-                                        Có
-                                      </Button>
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                              {(index + 1) % 3 !== 0 && (
-                                <Separator
-                                  orientation='vertical'
-                                  className='ml-2 h-4! bg-gray-200'
-                                />
-                              )}
-                            </div>
-                          </div>
-                        );
-                      }
-                    )
-                  ) : (
-                    <div className='flex w-full flex-col items-center justify-center gap-y-2'>
-                      <Image
-                        src={emptyData.src}
-                        alt='Empty'
-                        width={150}
-                        height={80}
+                  <div className='flex items-center justify-between border-b border-solid border-b-gray-200 py-2 pr-2 pl-4'>
+                    <div className='font-semibold'>{group}</div>
+                    <ToolTip sideOffset={8} title={`Thêm quyền`}>
+                      <Plus
+                        className='stroke-dodger-blue size-4 cursor-pointer transition-all duration-200 ease-linear hover:opacity-80'
+                        onClick={() => handleAdd(group)}
                       />
-                      <p>Không có dữ liệu</p>
-                    </div>
-                  )}
+                    </ToolTip>
+                  </div>
+                  <div
+                    className={cn('grid gap-4 p-4', {
+                      'grid-cols-3': permissions?.length > 0
+                    })}
+                  >
+                    {permissions?.length > 0 ? (
+                      permissions.map(
+                        (permission: PermissionResType, index: number) => {
+                          return (
+                            <div
+                              className='flex items-center justify-between'
+                              key={permission.id}
+                            >
+                              {permission.name}
+                              <div className='flex items-center justify-center'>
+                                <ToolTip title={`Sửa ${permission.name}`}>
+                                  <Button
+                                    className='border-none bg-transparent px-2! shadow-none hover:bg-transparent'
+                                    onClick={() => handleEdit(permission)}
+                                  >
+                                    <Edit2 className='stroke-dodger-blue size-3.5' />
+                                  </Button>
+                                </ToolTip>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <span>
+                                      <ToolTip title={`Xóa ${permission.name}`}>
+                                        <Button className='border-none bg-transparent px-2! shadow-none hover:bg-transparent'>
+                                          <Trash className='size-3.5 stroke-red-600' />
+                                        </Button>
+                                      </ToolTip>
+                                    </span>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className='data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-0! data-[state=closed]:slide-out-to-top-0! data-[state=open]:slide-in-from-left-0! data-[state=open]:slide-in-from-top-0! top-[30%]'>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
+                                        <Info className='size-8 fill-orange-500 stroke-white' />
+                                        Bạn có chắc chắn muốn xóa quyền này
+                                        không ?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription></AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel asChild>
+                                        <Button
+                                          variant='outline'
+                                          className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
+                                        >
+                                          Không
+                                        </Button>
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction asChild>
+                                        <Button
+                                          className='bg-dodger-blue hover:bg-dodger-blue/80 cursor-pointer transition-all duration-200 ease-linear'
+                                          onClick={() =>
+                                            handleDelete(permission)
+                                          }
+                                        >
+                                          Có
+                                        </Button>
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                                {(index + 1) % 3 !== 0 && (
+                                  <Separator
+                                    orientation='vertical'
+                                    className='ml-2 h-4! bg-gray-200'
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+                      )
+                    ) : (
+                      <div className='flex w-full flex-col items-center justify-center gap-y-2'>
+                        <Image
+                          src={emptyData.src}
+                          alt='Empty'
+                          width={150}
+                          height={80}
+                        />
+                        <p>Không có dữ liệu</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </ListPageWrapper>
       <Modal open={opened} onClose={handleClose}>
         <Card className='w-175 bg-white'>

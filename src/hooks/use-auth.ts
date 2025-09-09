@@ -12,7 +12,7 @@ const useAuth = () => {
     if (decodedToken?.authorities) {
       permissionCode =
         decodedToken?.authorities?.length > 0
-          ? decodedToken?.authorities?.map((role) => role.replace(/^ROLE_/, ''))
+          ? decodedToken?.authorities?.map((role) => role)
           : [];
     }
   }

@@ -26,7 +26,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-  AppConstants,
   DEFAULT_TABLE_PAGE_SIZE,
   DEFAULT_TABLE_PAGE_START,
   statusOptions
@@ -42,6 +41,7 @@ import {
   Column,
   PaginationType
 } from '@/types';
+import { renderImageUrl } from '@/utils';
 import {
   BrushCleaning,
   Edit2,
@@ -100,7 +100,7 @@ export default function CategoryPage() {
           })}
           previewClassName='rounded'
           disablePreview={!value}
-          src={value && `${AppConstants.contentRootUrl}${value}`}
+          src={renderImageUrl(value)}
         />
       )
     },

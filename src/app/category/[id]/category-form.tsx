@@ -11,7 +11,7 @@ import {
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { CircleLoading } from '@/components/loading';
-import { AppConstants, categoryErrorMaps, statusOptions } from '@/constants';
+import { categoryErrorMaps, STATUS_ACTIVE, statusOptions } from '@/constants';
 import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
 import {
@@ -23,7 +23,7 @@ import {
 import route from '@/routes';
 import { categorySchema } from '@/schemaValidations';
 import { CategoryBodyType } from '@/types';
-import { applyFormErrors, notify } from '@/utils';
+import { applyFormErrors, notify, renderImageUrl } from '@/utils';
 import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -47,11 +47,13 @@ export default function CategoryForm() {
     status: 1
   };
 
-  const initialValues: CategoryBodyType | undefined = useMemo(() => {
-    if (!category) return undefined;
+  const initialValues: CategoryBodyType = useMemo(() => {
     return {
-      ...defaultValues,
-      ...category
+      name: category?.name ?? '',
+      description: category?.description ?? '',
+      imageUrl: category?.imageUrl ?? '',
+      status: category?.status ?? STATUS_ACTIVE,
+      ordering: category?.ordering ?? 0
     };
   }, [category]);
 
@@ -105,9 +107,7 @@ export default function CategoryForm() {
           <Row>
             <Col>
               <UploadImageField
-                value={
-                  imageUrl ? `${AppConstants.contentRootUrl}${imageUrl}` : ''
-                }
+                value={renderImageUrl(imageUrl)}
                 loading={uploadImageMutation.isPending}
                 onChange={(url) => {
                   setImageUrl(url);
@@ -164,6 +164,7 @@ export default function CategoryForm() {
               <Button
                 type='button'
                 variant={'ghost'}
+                onClick={() => navigate(route.category.path)}
                 className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'
               >
                 Hủy
