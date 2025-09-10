@@ -41,7 +41,6 @@ import { UseFormReturn } from 'react-hook-form';
 
 export default function GroupForm() {
   const navigate = useNavigate();
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const { id } = useParams<{ id: string }>();
   const isCreate = id === 'create';
 
@@ -133,7 +132,6 @@ export default function GroupForm() {
       onSubmit={onSubmit}
       schema={groupSchema}
       className='w-200 rounded-lg bg-white p-4'
-      onChange={() => setIsFormChanged(true)}
       initialValues={initialValues}
     >
       {(form) => (
@@ -160,7 +158,6 @@ export default function GroupForm() {
                   label='Loại'
                   placeholder='Chọn loại'
                   required
-                  onValueChange={() => setIsFormChanged(true)}
                 />
               </Col>
             )}
@@ -270,7 +267,7 @@ export default function GroupForm() {
             </Col>
             <Col span={4}>
               <Button
-                disabled={!isFormChanged}
+                disabled={!form.formState.isDirty}
                 type='submit'
                 className={
                   'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'

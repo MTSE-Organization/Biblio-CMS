@@ -27,7 +27,6 @@ export const validatePermission = ({
   requiredKind,
   excludeKind,
   userKind,
-  profile,
   path,
   separate
 }: {
@@ -36,7 +35,6 @@ export const validatePermission = ({
   requiredKind?: number;
   excludeKind?: string[];
   userKind?: number;
-  profile?: Record<string, string | number>;
   path?: { name: string; type: string };
   separate?: boolean;
 }) => {

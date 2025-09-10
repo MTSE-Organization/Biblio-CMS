@@ -24,7 +24,7 @@ export const useGroupQuery = (id: string) => {
   return useQuery({
     queryKey: ['group', id],
     queryFn: async () => await groupApiRequest.getById(id),
-    enabled: !!id
+    enabled: !!id && id !== 'create'
   });
 };
 
