@@ -1,4 +1,8 @@
-import { updateProfileSchema } from '@/schemaValidations/account.schema';
+import {
+  accountSearchParamSchema,
+  updateProfileSchema
+} from '@/schemaValidations/account.schema';
+import { BaseSearchParamType } from '@/types/search.type';
 import z from 'zod';
 
 export type Group = {
@@ -6,6 +10,9 @@ export type Group = {
   name: string;
   kind: number;
   subKind: number;
+  description: string;
+  isSystemRole: boolean;
+  status: number;
 };
 
 type GroupPermission = {
@@ -36,7 +43,7 @@ type GroupProfile = {
 };
 
 export type ProfileResType = {
-  id: number;
+  id: string;
   kind: number;
   username: string;
   email: string;
@@ -49,3 +56,20 @@ export type ProfileResType = {
 };
 
 export type ProfileBodyType = z.infer<typeof updateProfileSchema>;
+
+export type AccountSearchParamType = z.infer<typeof accountSearchParamSchema> &
+  BaseSearchParamType;
+
+export type AccountResType = {
+  id: string;
+  email: string;
+  fullName: string;
+  avatarPath: string;
+  phone: string;
+  kind: number;
+  isSuperAdmin: boolean;
+  group: Group;
+  createdDate: string;
+  modifiedDate: string;
+  status: number;
+};

@@ -25,6 +25,12 @@ const apiConfig = defineApiConfig({
       method: 'PUT',
       headers: baseHeader,
       permissionCode: 'ACC_U'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/account/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'ACC_D'
     }
   },
   auth: {
@@ -51,27 +57,31 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/group/create`,
       method: 'POST',
       headers: baseHeader,
-      permissionCode: 'GRP_C'
+      permissionCode: 'GR_C'
     },
     getList: {
       baseUrl: `${AppConstants.apiUrl}v1/group/list`,
       method: 'GET',
-      headers: baseHeader
+      headers: baseHeader,
+      permissionCode: 'GR_L'
     },
     getById: {
       baseUrl: `${AppConstants.apiUrl}v1/group/get/:id`,
       method: 'GET',
-      headers: baseHeader
+      headers: baseHeader,
+      permissionCode: 'GR_V'
     },
     delete: {
       baseUrl: `${AppConstants.apiUrl}v1/group/delete/:id`,
       method: 'DELETE',
-      headers: baseHeader
+      headers: baseHeader,
+      permissionCode: 'GR_D'
     },
     update: {
       baseUrl: `${AppConstants.apiUrl}v1/group/update`,
       method: 'PUT',
-      headers: baseHeader
+      headers: baseHeader,
+      permissionCode: 'GR_U'
     }
   },
   file: {
@@ -79,7 +89,8 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/file/upload`,
       method: 'POST',
       headers: multipartHeader,
-      isUpload: true
+      isUpload: true,
+      permissionCode: 'FILE_U'
     }
   },
   permission: {
@@ -162,31 +173,31 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'PER_GRP_L'
+      permissionCode: 'PER_GR_L'
     },
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/create`,
       method: 'POST',
       headers: baseHeader,
-      permissionCode: 'PER_GRP_C'
+      permissionCode: 'PER_GR_C'
     },
     update: {
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/update`,
       method: 'PUT',
       headers: baseHeader,
-      permissionCode: 'PER_GRP_U'
+      permissionCode: 'PER_GR_U'
     },
     getById: {
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/get/:id`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'PER_GRP_V'
+      permissionCode: 'PER_GR_V'
     },
     delete: {
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/delete/:id`,
       method: 'DELETE',
       headers: baseHeader,
-      permissionCode: 'PER_GRP_D'
+      permissionCode: 'PER_GR_D'
     }
   }
 });

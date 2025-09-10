@@ -64,7 +64,10 @@ export default function PermissionList() {
     size: MAX_PAGE_SIZE
   });
 
-  const permissionListQuery = usePermissionListQuery();
+  const permissionListQuery = usePermissionListQuery({
+    page: DEFAULT_TABLE_PAGE_START,
+    size: MAX_PAGE_SIZE
+  });
   const createPermissionMutation = useCreatePermissionMutation();
   const updatePermissionMutation = useUpdatePermissionMutation();
   const deletePermissionMutation = useDeletePermissionMutation();
@@ -186,7 +189,7 @@ export default function PermissionList() {
         {loading ? (
           <CircleLoading className='mt-4 size-8! stroke-black' />
         ) : (
-          <div className='flex max-w-200 flex-col gap-y-4 px-4'>
+          <div className='flex max-w-300 min-w-200 flex-col gap-y-4 px-4'>
             {Object.keys(groupedPermissions).map((group) => {
               const permissions = groupedPermissions[group];
               return (
