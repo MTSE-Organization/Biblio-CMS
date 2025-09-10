@@ -29,6 +29,12 @@ import { cn } from '@/lib';
 import { useFileUpload } from '@/hooks';
 import { logger } from '@/logger';
 import { CircleLoading } from '@/components/loading';
+import {
+  Control,
+  FieldPath,
+  FieldValues,
+  useController
+} from 'react-hook-form';
 
 type Area = { x: number; y: number; width: number; height: number };
 
@@ -76,7 +82,9 @@ async function getCroppedImg(
   }
 }
 
-interface UploadImageFieldProps {
+type UploadImageFieldProps<T extends FieldValues> = {
+  control: Control<T>;
+  name: FieldPath<T>;
   label?: React.ReactNode;
   value?: string;
   onChange?: (url: string) => void;
@@ -86,9 +94,11 @@ interface UploadImageFieldProps {
   size?: number;
   uploadImageFn: (file: Blob) => Promise<string>;
   loading?: boolean;
-}
+};
 
-export default function UploadImageField({
+export default function UploadImageField<T extends FieldValues>({
+  control,
+  name,
   label,
   value,
   onChange,
@@ -98,10 +108,14 @@ export default function UploadImageField({
   size = 70,
   uploadImageFn,
   loading
-}: UploadImageFieldProps) {
+}: UploadImageFieldProps<T>) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [zoom, setZoom] = useState(1);
+  const {
+    field: { value: fieldValue, onChange: fieldOnChange },
+    fieldState: { isDirty }
+  } = useController({ name, control });
 
   const [
     { files, isDragging },
@@ -134,6 +148,7 @@ export default function UploadImageField({
     try {
       const uploadedUrl = await uploadImageFn(croppedBlob);
       onChange?.(uploadedUrl);
+      fieldOnChange(uploadedUrl);
       setDialogOpen(false);
     } catch (error) {
       logger.error('Lỗi khi upload ảnh:', error);
@@ -142,6 +157,7 @@ export default function UploadImageField({
 
   const handleRemove = () => {
     onChange?.('');
+    fieldOnChange('');
     clearFiles();
   };
 

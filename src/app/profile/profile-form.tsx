@@ -26,7 +26,6 @@ export default function ProfileForm() {
   const { profile } = useProfileStore();
   const fileMutation = useUploadImageMutation();
   const profileMutation = useUpdateProfileMutation();
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const [avatarPath, setAvatarPath] = useState('');
 
   const defaultValues: ProfileBodyType = {
@@ -43,7 +42,7 @@ export default function ProfileForm() {
       avatarPath: profile?.avatarPath ?? '',
       phone: profile?.phone ?? ''
     }),
-    [profile]
+    [profile?.avatarPath, profile?.email, profile?.fullName, profile?.phone]
   );
 
   useEffect(() => {
@@ -60,7 +59,6 @@ export default function ProfileForm() {
         onSuccess: (res) => {
           if (res.result) {
             notify.success('Cập nhật hồ sơ thành công');
-            setIsFormChanged(false);
           } else {
             notify.error('Cập nhật hồ sơ thất bại');
           }
@@ -76,11 +74,10 @@ export default function ProfileForm() {
   return (
     <BaseForm
       defaultValues={defaultValues}
+      initialValues={initialValues}
       onSubmit={onSubmit}
       schema={updateProfileSchema}
       className='mx-auto w-1/2'
-      onChange={() => setIsFormChanged(true)}
-      initialValues={initialValues}
     >
       {(form) => (
         <>
@@ -89,9 +86,10 @@ export default function ProfileForm() {
               <UploadImageField
                 value={renderImageUrl(avatarPath)}
                 loading={fileMutation.isPending}
+                name='avatarPath'
+                control={form.control}
                 onChange={(url) => {
                   setAvatarPath(url);
-                  setIsFormChanged(true);
                 }}
                 size={100}
                 uploadImageFn={async (file: Blob) => {
@@ -150,8 +148,8 @@ export default function ProfileForm() {
             </Col>
             <Col span={4}>
               <Button
-                disabled={!isFormChanged}
-                className='bg-dodger-blue hover:bg-dodger-blue/80 flex'
+                disabled={!form.formState.isDirty || profileMutation.isPending}
+                className='bg-dodger-blue hover:bg-dodger-blue/80 flex disabled:pointer-events-auto disabled:cursor-not-allowed'
               >
                 {profileMutation.isPending ? (
                   <CircleLoading />

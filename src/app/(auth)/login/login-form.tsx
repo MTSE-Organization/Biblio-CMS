@@ -12,7 +12,6 @@ import { LoginBodyType } from '@/types/auth.type';
 import { notify, setData } from '@/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import PasswordField from '@/components/form/password-field';
 import { useProfileStore } from '@/store';
 import { CircleLoading } from '@/components/loading';
@@ -21,7 +20,6 @@ export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const router = useRouter();
   const { setAuthenticated, setLoading } = useProfileStore();
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const defaultValues: LoginBodyType = {
     email: '',
     password: ''
@@ -62,7 +60,6 @@ export default function LoginForm() {
       schema={loginSchema}
       onSubmit={onSubmit}
       className='w-100 rounded-lg border border-solid border-gray-200 px-6 py-4 shadow-[0px_0px_10px_1px] shadow-slate-200'
-      onChange={() => setIsFormChanged(true)}
     >
       {(form) => (
         <>
@@ -101,7 +98,7 @@ export default function LoginForm() {
           <Row>
             <Col>
               <Button
-                disabled={!isFormChanged || loginMutation.isPending}
+                disabled={!form.formState.isDirty || loginMutation.isPending}
                 className={
                   'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'
                 }

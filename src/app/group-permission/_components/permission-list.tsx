@@ -1,4 +1,5 @@
 'use client';
+
 import { emptyData } from '@/assets';
 import {
   AutoCompleteField,
@@ -49,11 +50,11 @@ import { Edit2, Info, Plus, Save, Trash, X } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import MediaQuery from 'react-responsive';
 
 export default function PermissionList() {
   const { opened, open, close } = useDisclosure(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const [selectedGroupPermissionId, setSelectedGroupPermissionId] =
     useState<string>('');
   const [selectedPermission, setSelectedPermission] =
@@ -171,6 +172,7 @@ export default function PermissionList() {
     setIsEditing(true);
     open();
     setSelectedPermission(record);
+    setSelectedGroupPermissionId(record.permissionGroup.id);
   };
 
   const handleDelete = async (record: PermissionResType) => {
@@ -179,7 +181,6 @@ export default function PermissionList() {
 
   const handleClose = () => {
     close();
-    setIsFormChanged(false);
     setSelectedPermission(null);
   };
 
@@ -187,7 +188,7 @@ export default function PermissionList() {
     <>
       <ListPageWrapper>
         {loading ? (
-          <CircleLoading className='mt-4 size-8! stroke-black' />
+          <CircleLoading className='mt-4 size-8! stroke-slate-500' />
         ) : (
           <div className='flex flex-col gap-y-4 px-4 py-4 max-[1560px]:max-w-300'>
             {Object.keys(groupedPermissions).map((group) => {
@@ -271,12 +272,22 @@ export default function PermissionList() {
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
                                 </AlertDialog>
-                                {(index + 1) % 3 !== 0 && (
-                                  <Separator
-                                    orientation='vertical'
-                                    className='ml-2 h-4! bg-gray-200'
-                                  />
-                                )}
+                                <MediaQuery maxWidth={1560}>
+                                  {(index + 1) % 3 !== 0 && (
+                                    <Separator
+                                      orientation='vertical'
+                                      className='ml-2 h-4! bg-gray-200'
+                                    />
+                                  )}
+                                </MediaQuery>
+                                <MediaQuery minWidth={1560}>
+                                  {(index + 1) % 4 !== 0 && (
+                                    <Separator
+                                      orientation='vertical'
+                                      className='ml-2 h-4! bg-gray-200'
+                                    />
+                                  )}
+                                </MediaQuery>
                               </div>
                             </div>
                           );
@@ -315,7 +326,6 @@ export default function PermissionList() {
               initialValues={initialValues}
               onSubmit={onSubmit}
               schema={permissionSchema}
-              onChange={() => setIsFormChanged(true)}
             >
               {(form) => (
                 <>
@@ -416,7 +426,11 @@ export default function PermissionList() {
                     </Col>
                     <Col span={4}>
                       <Button
-                        disabled={!isFormChanged}
+                        disabled={
+                          !form.formState.isDirty ||
+                          createPermissionMutation.isPending ||
+                          updatePermissionMutation.isPending
+                        }
                         type='submit'
                         className={
                           'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'

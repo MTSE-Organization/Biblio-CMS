@@ -10,7 +10,7 @@ import {
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { CircleLoading } from '@/components/loading';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   DEFAULT_TABLE_PAGE_START,
@@ -32,17 +32,19 @@ import route from '@/routes';
 import { groupSchema } from '@/schemaValidations';
 import { GroupBodyType, PermissionResType } from '@/types';
 import { applyFormErrors, notify } from '@/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { omit } from 'lodash';
 import { Save } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function GroupForm() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isCreate = id === 'create';
+  const queryClient = useQueryClient();
 
   const groupQuery = useGroupQuery(id);
   const permissionListQuery = usePermissionListQuery({
@@ -107,6 +109,7 @@ export default function GroupForm() {
             notify.success(
               `${isCreate ? 'Thêm mới' : 'Cập nhật'} nhóm quyền thành công`
             );
+            queryClient.invalidateQueries({ queryKey: ['group', id] });
             navigate(route.group.path);
           } else {
             const errCode = res.code;
@@ -129,10 +132,10 @@ export default function GroupForm() {
   return (
     <BaseForm
       defaultValues={defaultValues}
+      initialValues={initialValues}
       onSubmit={onSubmit}
       schema={groupSchema}
       className='w-200 rounded-lg bg-white p-4'
-      initialValues={initialValues}
     >
       {(form) => (
         <>
@@ -316,7 +319,11 @@ export default function GroupForm() {
             </Col>
             <Col span={4}>
               <Button
-                disabled={!form.formState.isDirty}
+                disabled={
+                  !form.formState.isDirty ||
+                  createGroupMutation.isPending ||
+                  updateGroupMutation.isPending
+                }
                 type='submit'
                 className={
                   'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'

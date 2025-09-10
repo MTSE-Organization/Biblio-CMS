@@ -24,21 +24,24 @@ import route from '@/routes';
 import { categorySchema } from '@/schemaValidations';
 import { CategoryBodyType } from '@/types';
 import { applyFormErrors, notify, renderImageUrl } from '@/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function CategoryForm() {
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>('');
+  const queryClient = useQueryClient();
   const { id } = useParams<{ id: string }>();
   const isCreate = id === 'create';
   const categoryQuery = useCategoryQuery(id);
   const category = categoryQuery.data?.data;
+
   const uploadImageMutation = useUploadImageMutation();
   const createCategoryMutation = useCreateCategoryMutation();
   const updateCategoryMutation = useUpdateCategoryMutation();
+
   const navigate = useNavigate();
   const defaultValues: CategoryBodyType = {
     name: '',
@@ -52,10 +55,14 @@ export default function CategoryForm() {
       name: category?.name ?? '',
       description: category?.description ?? '',
       imageUrl: category?.imageUrl ?? '',
-      status: category?.status ?? STATUS_ACTIVE,
-      ordering: category?.ordering ?? 0
+      status: category?.status ?? STATUS_ACTIVE
     };
-  }, [category]);
+  }, [
+    category?.description,
+    category?.imageUrl,
+    category?.name,
+    category?.status
+  ]);
 
   useEffect(() => {
     if (category?.imageUrl) setImageUrl(category?.imageUrl);
@@ -74,7 +81,7 @@ export default function CategoryForm() {
             notify.success(
               `${isCreate ? 'Thêm mới' : 'Cập nhật'} danh mục thành công`
             );
-            setIsFormChanged(false);
+            queryClient.invalidateQueries({ queryKey: ['category', id] });
             navigate(route.category.path);
           } else {
             const errCode = res.code;
@@ -97,11 +104,10 @@ export default function CategoryForm() {
   return (
     <BaseForm
       defaultValues={defaultValues}
+      initialValues={initialValues}
       onSubmit={onSubmit}
       schema={categorySchema}
       className='w-200 rounded-lg bg-white p-4'
-      onChange={() => setIsFormChanged(true)}
-      initialValues={initialValues}
     >
       {(form) => (
         <>
@@ -110,9 +116,10 @@ export default function CategoryForm() {
               <UploadImageField
                 value={renderImageUrl(imageUrl)}
                 loading={uploadImageMutation.isPending}
+                control={form.control}
+                name='imageUrl'
                 onChange={(url) => {
                   setImageUrl(url);
-                  setIsFormChanged(true);
                 }}
                 size={100}
                 uploadImageFn={async (file: Blob) => {
@@ -143,7 +150,6 @@ export default function CategoryForm() {
                 label='Trạng thái'
                 placeholder='Trạng thái'
                 required
-                onValueChange={() => setIsFormChanged(true)}
               />
             </Col>
           </Row>
@@ -173,7 +179,11 @@ export default function CategoryForm() {
             </Col>
             <Col span={4}>
               <Button
-                disabled={!isFormChanged}
+                disabled={
+                  !form.formState.isDirty ||
+                  createCategoryMutation.isPending ||
+                  updateCategoryMutation.isPending
+                }
                 type='submit'
                 className={
                   'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'
