@@ -1,5 +1,4 @@
 'use client';
-
 import {
   AvatarField,
   Button,
@@ -9,7 +8,6 @@ import {
   ToolTip
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
-import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { BaseTable } from '@/components/table';
@@ -25,73 +23,60 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
-  apiConfig,
   DEFAULT_TABLE_PAGE_SIZE,
   DEFAULT_TABLE_PAGE_START,
+  groupKinds,
   statusOptions
 } from '@/constants';
-import { useNavigate, useQueryParams } from '@/hooks';
+import { useAuth, useQueryParams } from '@/hooks';
 import { cn } from '@/lib';
-import { useCategoryListQuery, useDeleteCategoryMutation } from '@/queries';
+import { useAccountListQuery, useDeleteAccountMutation } from '@/queries';
 import route from '@/routes';
-import { categorySearchParamSchema } from '@/schemaValidations';
+import { accountSearchParamSchema } from '@/schemaValidations';
 import {
-  CategoryResType,
-  CategorySearchParamType,
+  AccountResType,
+  AccountSearchParamType,
   Column,
   PaginationType
 } from '@/types';
 import { renderImageUrl } from '@/utils';
-import {
-  BrushCleaning,
-  Edit2,
-  Info,
-  PlusIcon,
-  Search,
-  Trash
-} from 'lucide-react';
-import Link from 'next/link';
+import { BrushCleaning, Info, Search, Trash } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-export default function CategoryList() {
-  const navigate = useNavigate();
-  const [queryFilter, setQueryFilter] = useState<CategorySearchParamType>({
+export default function AccountList() {
+  const { profile } = useAuth();
+  const [queryFilter, setQueryFilter] = useState<AccountSearchParamType>({
     page: DEFAULT_TABLE_PAGE_START,
     size: DEFAULT_TABLE_PAGE_SIZE
   });
   const { searchParams, setQueryParams } =
-    useQueryParams<CategorySearchParamType>();
+    useQueryParams<AccountSearchParamType>();
   const [pagination, setPagination] = useState<PaginationType>({
     current: DEFAULT_TABLE_PAGE_START + 1,
     pageSize: DEFAULT_TABLE_PAGE_SIZE,
     total: 0
   });
 
-  const categoryListQuery = useCategoryListQuery(queryFilter);
-  const deleteCategoryMutation = useDeleteCategoryMutation();
+  const accountListQuery = useAccountListQuery(queryFilter);
+  const deleteAccountMutation = useDeleteAccountMutation();
 
-  const handleEdit = (id: string) => {
-    navigate(`${route.category.path}/${id}`);
-  };
-
-  const handleDelete = async (record: CategoryResType) => {
-    deleteCategoryMutation.mutateAsync(record.id);
+  const handleDelete = async (record: AccountResType) => {
+    deleteAccountMutation.mutateAsync(record.id);
   };
 
   useEffect(() => {
     setPagination((p) => ({
       ...p,
-      total: categoryListQuery.data?.data.totalPages ?? 0
+      total: accountListQuery.data?.data.totalPages ?? 0
     }));
-  }, [categoryListQuery.data]);
+  }, [accountListQuery.data]);
 
-  const columns: Column<CategoryResType>[] = [
+  const columns: Column<AccountResType>[] = [
     {
       title: '#',
-      dataIndex: 'imageUrl',
+      dataIndex: 'avatarPath',
       width: 100,
       align: 'center',
       render: (value) => (
@@ -108,7 +93,35 @@ export default function CategoryList() {
     },
     {
       title: 'Tên',
-      dataIndex: 'name'
+      dataIndex: 'fullName',
+      render: (value) => value ?? '---'
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      width: 180,
+      render: (value) => <span className='line-clamp-1'>{value}</span>
+    },
+    {
+      title: 'Số điện thoại',
+      dataIndex: 'phone',
+      render: (value) => value ?? '---',
+      width: 150,
+      align: 'center'
+    },
+    {
+      title: 'Vai trò',
+      dataIndex: 'kind',
+      render: (value) => {
+        const groupKind = groupKinds.find((gk) => gk.value === value);
+        return (
+          <Badge style={{ backgroundColor: groupKind?.color }}>
+            {groupKind?.label}
+          </Badge>
+        );
+      },
+      width: 120,
+      align: 'center'
     },
     {
       title: 'Trạng thái',
@@ -134,20 +147,16 @@ export default function CategoryList() {
       render: (_, record) => {
         return (
           <div className='flex items-center justify-center'>
-            <ToolTip title='Sửa danh mục'>
-              <Button
-                onClick={() => handleEdit(record.id)}
-                className='border-none bg-transparent shadow-none hover:bg-transparent'
-              >
-                <Edit2 className='stroke-dodger-blue size-3.5' />
-              </Button>
-            </ToolTip>
-            <Separator orientation='vertical' className='h-4! bg-gray-200' />
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <span>
-                  <ToolTip title='Xóa danh mục'>
-                    <Button className='border-none bg-transparent shadow-none hover:bg-transparent'>
+                  <ToolTip title='Xóa tài khoản'>
+                    <Button
+                      disabled={
+                        profile?.id === record.id || profile?.isSuperAdmin
+                      }
+                      className='border-none bg-transparent shadow-none hover:bg-transparent disabled:pointer-events-auto disabled:cursor-not-allowed'
+                    >
                       <Trash className='size-3.5 stroke-red-600' />
                     </Button>
                   </ToolTip>
@@ -157,7 +166,7 @@ export default function CategoryList() {
                 <AlertDialogHeader>
                   <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
                     <Info className='size-8 fill-orange-500 stroke-white' />
-                    Bạn có chắc chắn muốn xóa danh mục này không ?
+                    Bạn có chắc chắn muốn xóa tài khoản này không ?
                   </AlertDialogTitle>
                   <AlertDialogDescription></AlertDialogDescription>
                 </AlertDialogHeader>
@@ -193,13 +202,17 @@ export default function CategoryList() {
     setQueryParams({ ...searchParams, page: page });
   };
 
-  const defaultValues: CategorySearchParamType = {
-    name: ''
+  const defaultValues: AccountSearchParamType = {
+    fullName: '',
+    email: '',
+    isSuperAdmin: false,
+    kind: 0,
+    phone: ''
   };
 
   const initialValues = useMemo(() => Object.fromEntries(searchParams), []);
 
-  const onSubmit = async (values: CategorySearchParamType) => {
+  const onSubmit = async (values: AccountSearchParamType) => {
     const filtered = Object.entries(values).filter(
       ([, value]) =>
         value !== null && value !== undefined && value.toString().trim() !== ''
@@ -208,7 +221,7 @@ export default function CategoryList() {
     setQueryParams({ ...searchParams, ...Object.fromEntries(filtered) });
   };
 
-  const handleReset = (form: UseFormReturn<CategorySearchParamType>) => {
+  const handleReset = (form: UseFormReturn<AccountSearchParamType>) => {
     form.reset();
     setQueryFilter({
       page: DEFAULT_TABLE_PAGE_START,
@@ -226,27 +239,15 @@ export default function CategoryList() {
     <PageWrapper
       breadcrumbs={[
         { label: 'Trang chủ', href: route.home.path },
-        { label: 'Danh mục' }
+        { label: 'Tài khoản' }
       ]}
     >
       <ListPageWrapper
-        actionBar={
-          <HasPermission
-            requiredPermissions={[apiConfig.category.create.permissionCode]}
-          >
-            <Link href={route.category.create.path}>
-              <Button className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'>
-                <PlusIcon />
-                Thêm mới
-              </Button>
-            </Link>
-          </HasPermission>
-        }
         searchForm={
           <BaseForm
             defaultValues={defaultValues}
             onSubmit={onSubmit}
-            schema={categorySearchParamSchema}
+            schema={accountSearchParamSchema}
             initialValues={initialValues}
           >
             {(form) => (
@@ -255,8 +256,24 @@ export default function CategoryList() {
                   <Col span={4}>
                     <InputField
                       control={form.control}
-                      name='name'
-                      placeholder='Tên danh mục'
+                      name='fullName'
+                      placeholder='Họ tên'
+                      className='focus-visible:ring-dodger-blue'
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <InputField
+                      control={form.control}
+                      name='email'
+                      placeholder='Email'
+                      className='focus-visible:ring-dodger-blue'
+                    />
+                  </Col>{' '}
+                  <Col span={4}>
+                    <InputField
+                      control={form.control}
+                      name='phone'
+                      placeholder='Số điện thoại'
                       className='focus-visible:ring-dodger-blue'
                     />
                   </Col>
@@ -285,9 +302,9 @@ export default function CategoryList() {
       >
         <BaseTable
           columns={columns}
-          dataSource={categoryListQuery.data?.data.content || []}
+          dataSource={accountListQuery.data?.data.content || []}
           pagination={pagination}
-          loading={categoryListQuery.isLoading || categoryListQuery.isFetching}
+          loading={accountListQuery.isLoading || accountListQuery.isFetching}
           changePagination={handleChangePagination}
         />
       </ListPageWrapper>

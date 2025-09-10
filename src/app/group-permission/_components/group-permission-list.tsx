@@ -158,7 +158,7 @@ export default function GroupPermissionList() {
   useEffect(() => {
     setPagination((p) => ({
       ...p,
-      total: groupPermissionListQuery.data?.data.totalPages!
+      total: groupPermissionListQuery.data?.data.totalPages ?? 0
     }));
   }, [groupPermissionListQuery.data]);
 

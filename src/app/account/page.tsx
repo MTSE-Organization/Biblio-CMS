@@ -1,4 +1,4 @@
-import AccountList from '@/app/account/account-list';
+import AccountList from '@/app/account/_components/account-list';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 
 export default function AccountPage() {
   return (
-    <div>
+    <>
       <AccountList />
-    </div>
+    </>
   );
 }

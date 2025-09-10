@@ -159,20 +159,22 @@ export default function GroupList() {
   useEffect(() => {
     setPagination((p) => ({
       ...p,
-      total: groupListQuery.data?.data.totalPages!
+      total: groupListQuery.data?.data.totalPages ?? 0
     }));
   }, [groupListQuery.data]);
-
-  const defaultValues: GroupSearchParamType = {
-    name: '',
-    kind: ''
-  };
 
   const handleChangePagination = (page: number) => {
     setQueryFilter({ ...queryFilter, page: page - 1 });
     setPagination({ ...pagination, current: page });
     setQueryParams({ ...searchParams, page: page });
   };
+
+  const defaultValues: GroupSearchParamType = {
+    name: '',
+    kind: ''
+  };
+
+  const initialValues = useMemo(() => Object.fromEntries(searchParams), []);
 
   const onSubmit = async (values: GroupSearchParamType) => {
     const filtered = Object.entries(values).filter(
@@ -196,11 +198,6 @@ export default function GroupList() {
     });
     setQueryParams({});
   };
-
-  const initialValues = useMemo(
-    () => Object.fromEntries(searchParams),
-    [searchParams]
-  );
 
   return (
     <ListPageWrapper

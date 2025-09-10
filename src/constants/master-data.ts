@@ -1,4 +1,7 @@
 import {
+  KIND_ADMIN,
+  KIND_EMPLOYEE,
+  KIND_USER,
   STATUS_ACTIVE,
   STATUS_DELETED,
   STATUS_LOCK,
@@ -15,17 +18,17 @@ export const uploadOptions = {
 export const groupKinds = [
   {
     label: 'ADMIN',
-    value: 1,
+    value: KIND_ADMIN,
     color: '#EF4444'
   },
   {
     label: 'EMPLOYEE',
-    value: 2,
+    value: KIND_EMPLOYEE,
     color: '#3B82F6'
   },
   {
     label: 'USER',
-    value: 3,
+    value: KIND_USER,
     color: '#10B981'
   }
 ];

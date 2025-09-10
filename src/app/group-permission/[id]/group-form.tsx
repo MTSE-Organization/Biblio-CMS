@@ -181,8 +181,57 @@ export default function GroupForm() {
                 const permissions = groupedPermissions[gp];
                 return (
                   <Card key={gp} className='text-sm'>
-                    <CardHeader className='border-b px-4 py-4'>
-                      <CardTitle>{gp}</CardTitle>
+                    <CardHeader className='flex flex-row items-center gap-x-2 border-b px-4 py-2'>
+                      <Checkbox
+                        id={`select-all-${gp}`}
+                        checked={
+                          permissions.length > 0 &&
+                          permissions.every((p: PermissionResType) =>
+                            (form.watch('permissionIds') || []).includes(p.id)
+                          )
+                            ? true
+                            : (form.watch('permissionIds') || []).some((id) =>
+                                  permissions
+                                    .map((p: PermissionResType) => p.id)
+                                    .includes(id)
+                                )
+                              ? 'indeterminate'
+                              : false
+                        }
+                        onCheckedChange={(checked) => {
+                          const selected = form.watch('permissionIds') || [];
+                          if (checked === true) {
+                            const newIds = Array.from(
+                              new Set([
+                                ...selected,
+                                ...permissions.map(
+                                  (p: PermissionResType) => p.id
+                                )
+                              ])
+                            );
+                            form.setValue('permissionIds', newIds, {
+                              shouldDirty: true
+                            });
+                          } else {
+                            const newIds = selected.filter(
+                              (id) =>
+                                !permissions
+                                  .map((p: PermissionResType) => p.id)
+                                  .includes(id)
+                            );
+                            form.setValue('permissionIds', newIds, {
+                              shouldDirty: true
+                            });
+                          }
+                        }}
+                        className='data-[state=checked]:bg-dodger-blue [&>span[data-state=indeterminate]]:bg-dodger-blue mb-0! cursor-pointer transition-all duration-100 ease-linear data-[state=checked]:border-transparent data-[state=indeterminate]:bg-transparent [&>span[data-state=indeterminate]]:m-auto [&>span[data-state=indeterminate]]:h-1/2 [&>span[data-state=indeterminate]]:w-1/2 [&>span[data-state=indeterminate]>svg]:hidden'
+                      />
+                      <label
+                        className='cursor-pointer select-none'
+                        htmlFor={`select-all-${gp}`}
+                      >
+                        {gp}
+                      </label>
                     </CardHeader>
                     <CardContent className='p-4'>
                       <div
@@ -224,11 +273,11 @@ export default function GroupForm() {
                                   onCheckedChange={handleToggle}
                                   id={permission.id}
                                   className={
-                                    'data-[state=checked]:bg-dodger-blue data-[state=checked]:border-dodger-blue transition-all duration-100 ease-linear data-[state=unchecked]:text-white'
+                                    'data-[state=checked]:bg-dodger-blue data-[state=checked]:border-dodger-blue cursor-pointer transition-all duration-100 ease-linear data-[state=unchecked]:text-white'
                                   }
                                 />
                                 <label
-                                  className='cursor-pointer'
+                                  className='cursor-pointer select-none'
                                   htmlFor={permission.id}
                                 >
                                   {permission.name}

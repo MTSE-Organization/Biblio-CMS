@@ -167,10 +167,10 @@ body {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 font-normal;
+    @apply border-border outline-ring/50 font-normal focus:outline-none;
   }
   body {
-    @apply bg-background text-foreground font-normal;
+    @apply bg-background text-foreground overflow-hidden font-normal;
   }
 }
 *::selection {
