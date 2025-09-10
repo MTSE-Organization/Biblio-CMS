@@ -74,6 +74,7 @@ export default function CategoryForm() {
             notify.success(
               `${isCreate ? 'Thêm mới' : 'Cập nhật'} danh mục thành công`
             );
+            setIsFormChanged(false);
             navigate(route.category.path);
           } else {
             const errCode = res.code;

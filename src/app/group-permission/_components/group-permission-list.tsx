@@ -1,6 +1,7 @@
 'use client';
 import { Button, Col, InputField, Row, ToolTip } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
+import { HasPermission } from '@/components/has-permission';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { CircleLoading } from '@/components/loading';
 import { Modal } from '@/components/modal';
@@ -19,6 +20,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
+  apiConfig,
   DEFAULT_TABLE_PAGE_SIZE,
   DEFAULT_TABLE_PAGE_START,
   groupPermissionErrorMaps
@@ -212,13 +214,19 @@ export default function GroupPermissionList() {
     <>
       <ListPageWrapper
         actionBar={
-          <Button
-            onClick={handleAdd}
-            className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'
+          <HasPermission
+            requiredPermissions={[
+              apiConfig.groupPermission.create.permissionCode
+            ]}
           >
-            <PlusIcon />
-            Thêm mới
-          </Button>
+            <Button
+              onClick={handleAdd}
+              className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'
+            >
+              <PlusIcon />
+              Thêm mới
+            </Button>
+          </HasPermission>
         }
       >
         <BaseTable

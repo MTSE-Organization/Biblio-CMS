@@ -50,7 +50,8 @@ const apiConfig = defineApiConfig({
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/group/create`,
       method: 'POST',
-      headers: baseHeader
+      headers: baseHeader,
+      permissionCode: 'GRP_C'
     },
     getList: {
       baseUrl: `${AppConstants.apiUrl}v1/group/list`,
