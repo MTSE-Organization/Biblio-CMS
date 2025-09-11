@@ -1,4 +1,5 @@
 'use client';
+
 import { emptyData } from '@/assets';
 import {
   AutoCompleteField,
@@ -49,11 +50,11 @@ import { Edit2, Info, Plus, Save, Trash, X } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import MediaQuery from 'react-responsive';
 
 export default function PermissionList() {
   const { opened, open, close } = useDisclosure(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const [selectedGroupPermissionId, setSelectedGroupPermissionId] =
     useState<string>('');
   const [selectedPermission, setSelectedPermission] =
@@ -171,6 +172,7 @@ export default function PermissionList() {
     setIsEditing(true);
     open();
     setSelectedPermission(record);
+    setSelectedGroupPermissionId(record.permissionGroup.id);
   };
 
   const handleDelete = async (record: PermissionResType) => {
@@ -179,7 +181,6 @@ export default function PermissionList() {
 
   const handleClose = () => {
     close();
-    setIsFormChanged(false);
     setSelectedPermission(null);
   };
 
@@ -187,14 +188,14 @@ export default function PermissionList() {
     <>
       <ListPageWrapper>
         {loading ? (
-          <CircleLoading className='mt-4 size-8! stroke-black' />
+          <CircleLoading className='mt-4 size-8! stroke-slate-500' />
         ) : (
-          <div className='flex max-w-300 min-w-200 flex-col gap-y-4 px-4'>
+          <div className='flex flex-col gap-y-4 px-4 py-4 max-[1560px]:max-w-300'>
             {Object.keys(groupedPermissions).map((group) => {
               const permissions = groupedPermissions[group];
               return (
                 <div
-                  className='my-4 rounded-lg border border-solid border-gray-200 text-sm'
+                  className='rounded-lg border border-solid border-gray-200 text-sm'
                   key={group}
                 >
                   <div className='flex items-center justify-between border-b border-solid border-b-gray-200 py-2 pr-2 pl-4'>
@@ -208,7 +209,8 @@ export default function PermissionList() {
                   </div>
                   <div
                     className={cn('grid gap-4 p-4', {
-                      'grid-cols-3': permissions?.length > 0
+                      'grid-cols-4 max-[1560px]:grid-cols-3':
+                        permissions?.length > 0
                     })}
                   >
                     {permissions?.length > 0 ? (
@@ -220,10 +222,10 @@ export default function PermissionList() {
                               key={permission.id}
                             >
                               {permission.name}
-                              <div className='flex items-center justify-center'>
+                              <div className='flex items-center justify-center gap-x-4'>
                                 <ToolTip title={`Sửa ${permission.name}`}>
                                   <Button
-                                    className='border-none bg-transparent px-2! shadow-none hover:bg-transparent'
+                                    className='h-5 border-none bg-transparent p-0! shadow-none hover:bg-transparent'
                                     onClick={() => handleEdit(permission)}
                                   >
                                     <Edit2 className='stroke-dodger-blue size-3.5' />
@@ -233,7 +235,7 @@ export default function PermissionList() {
                                   <AlertDialogTrigger asChild>
                                     <span>
                                       <ToolTip title={`Xóa ${permission.name}`}>
-                                        <Button className='border-none bg-transparent px-2! shadow-none hover:bg-transparent'>
+                                        <Button className='h-5 border-none bg-transparent p-0! shadow-none hover:bg-transparent'>
                                           <Trash className='size-3.5 stroke-red-600' />
                                         </Button>
                                       </ToolTip>
@@ -270,12 +272,22 @@ export default function PermissionList() {
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
                                 </AlertDialog>
-                                {(index + 1) % 3 !== 0 && (
-                                  <Separator
-                                    orientation='vertical'
-                                    className='ml-2 h-4! bg-gray-200'
-                                  />
-                                )}
+                                <MediaQuery maxWidth={1560}>
+                                  {(index + 1) % 3 !== 0 && (
+                                    <Separator
+                                      orientation='vertical'
+                                      className='ml-2 h-4! bg-gray-200'
+                                    />
+                                  )}
+                                </MediaQuery>
+                                <MediaQuery minWidth={1560}>
+                                  {(index + 1) % 4 !== 0 && (
+                                    <Separator
+                                      orientation='vertical'
+                                      className='ml-2 h-4! bg-gray-200'
+                                    />
+                                  )}
+                                </MediaQuery>
                               </div>
                             </div>
                           );
@@ -314,7 +326,6 @@ export default function PermissionList() {
               initialValues={initialValues}
               onSubmit={onSubmit}
               schema={permissionSchema}
-              onChange={() => setIsFormChanged(true)}
             >
               {(form) => (
                 <>
@@ -415,7 +426,11 @@ export default function PermissionList() {
                     </Col>
                     <Col span={4}>
                       <Button
-                        disabled={!isFormChanged}
+                        disabled={
+                          !form.formState.isDirty ||
+                          createPermissionMutation.isPending ||
+                          updatePermissionMutation.isPending
+                        }
                         type='submit'
                         className={
                           'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'

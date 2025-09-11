@@ -12,7 +12,8 @@ import { BaseForm } from '@/components/form/base-form';
 import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
-import { BaseTable } from '@/components/table';
+import { CircleLoading } from '@/components/loading';
+import { DragDropTable } from '@/components/table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,47 +29,38 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
   apiConfig,
-  DEFAULT_TABLE_PAGE_SIZE,
   DEFAULT_TABLE_PAGE_START,
+  MAX_PAGE_SIZE,
   statusOptions
 } from '@/constants';
-import { useNavigate, useQueryParams } from '@/hooks';
+import { useDragDrop, useNavigate, useQueryParams } from '@/hooks';
 import { cn } from '@/lib';
 import { useCategoryListQuery, useDeleteCategoryMutation } from '@/queries';
 import route from '@/routes';
 import { categorySearchParamSchema } from '@/schemaValidations';
-import {
-  CategoryResType,
-  CategorySearchParamType,
-  Column,
-  PaginationType
-} from '@/types';
+import { CategoryResType, CategorySearchParamType, Column } from '@/types';
 import { renderImageUrl } from '@/utils';
 import {
   BrushCleaning,
   Edit2,
   Info,
   PlusIcon,
+  Save,
   Search,
   Trash
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function CategoryList() {
   const navigate = useNavigate();
   const [queryFilter, setQueryFilter] = useState<CategorySearchParamType>({
     page: DEFAULT_TABLE_PAGE_START,
-    size: DEFAULT_TABLE_PAGE_SIZE
+    size: MAX_PAGE_SIZE
   });
   const { searchParams, setQueryParams } =
     useQueryParams<CategorySearchParamType>();
-  const [pagination, setPagination] = useState<PaginationType>({
-    current: DEFAULT_TABLE_PAGE_START + 1,
-    pageSize: DEFAULT_TABLE_PAGE_SIZE,
-    total: 0
-  });
 
   const categoryListQuery = useCategoryListQuery(queryFilter);
   const deleteCategoryMutation = useDeleteCategoryMutation();
@@ -81,12 +73,19 @@ export default function CategoryList() {
     deleteCategoryMutation.mutateAsync(record.id);
   };
 
-  useEffect(() => {
-    setPagination((p) => ({
-      ...p,
-      total: categoryListQuery.data?.data.totalPages ?? 0
-    }));
-  }, [categoryListQuery.data]);
+  const {
+    loading,
+    sortedData,
+    isChanged,
+    setIsChanged,
+    onDragEnd,
+    handleUpdate
+  } = useDragDrop<CategoryResType>({
+    objectName: 'danh mục',
+    data: categoryListQuery.data?.data.content || [],
+    apiConfig: apiConfig.category.updateOrdering,
+    sortField: 'ordering'
+  });
 
   const columns: Column<CategoryResType>[] = [
     {
@@ -187,12 +186,6 @@ export default function CategoryList() {
     }
   ];
 
-  const handleChangePagination = (page: number) => {
-    setQueryFilter({ ...queryFilter, page: page - 1 });
-    setPagination({ ...pagination, current: page });
-    setQueryParams({ ...searchParams, page: page });
-  };
-
   const defaultValues: CategorySearchParamType = {
     name: ''
   };
@@ -212,12 +205,7 @@ export default function CategoryList() {
     form.reset();
     setQueryFilter({
       page: DEFAULT_TABLE_PAGE_START,
-      size: DEFAULT_TABLE_PAGE_SIZE
-    });
-    setPagination({
-      current: DEFAULT_TABLE_PAGE_START + 1,
-      pageSize: DEFAULT_TABLE_PAGE_SIZE,
-      total: 0
+      size: MAX_PAGE_SIZE
     });
     setQueryParams({});
   };
@@ -283,13 +271,39 @@ export default function CategoryList() {
           </BaseForm>
         }
       >
-        <BaseTable
+        <DragDropTable
           columns={columns}
-          dataSource={categoryListQuery.data?.data.content || []}
-          pagination={pagination}
-          loading={categoryListQuery.isLoading || categoryListQuery.isFetching}
-          changePagination={handleChangePagination}
+          dataSource={sortedData}
+          loading={
+            categoryListQuery.isLoading ||
+            categoryListQuery.isFetching ||
+            deleteCategoryMutation.isPending
+          }
+          onDragEnd={onDragEnd}
         />
+        {sortedData.length > 0 &&
+          !(
+            categoryListQuery.isLoading ||
+            categoryListQuery.isFetching ||
+            deleteCategoryMutation.isPending
+          ) && (
+            <div className='mr-4 flex justify-end py-4'>
+              <Button
+                onClick={handleUpdate}
+                disabled={!isChanged || loading}
+                className='bg-dodger-blue hover:bg-dodger-blue/80 w-40 disabled:pointer-events-auto disabled:cursor-not-allowed'
+              >
+                {loading ? (
+                  <CircleLoading />
+                ) : (
+                  <>
+                    <Save />
+                    Cập nhật
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
       </ListPageWrapper>
     </PageWrapper>
   );

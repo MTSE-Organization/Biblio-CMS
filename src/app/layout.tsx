@@ -6,7 +6,6 @@ import { Suspense } from 'react';
 import { AppProvider, QueryProvider } from '@/components/providers';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Metadata } from 'next';
-import { LoadingWrapper } from '@/components/loading';
 
 const inter = Inter({
   subsets: ['latin'],

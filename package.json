@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3636",
+    "dev": "next dev --turbopack --port 3000",
     "prebuild": "rimraf .next && rimraf out",
     "build": "next build",
     "start": "next start",
@@ -13,6 +13,9 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.2.1",
     "@next/bundle-analyzer": "^15.5.2",
     "@origin-space/image-cropper": "^0.1.9",
@@ -37,7 +40,6 @@
     "@tanstack/react-query-devtools": "^5.85.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.20",
-    "@vidstack/react": "^1.12.13",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
@@ -48,7 +50,6 @@
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.542.0",
-    "media-icons": "^1.1.5",
     "next": "15.5.2",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.8.16",
@@ -58,6 +59,7 @@
     "react-day-picker": "^9.9.0",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
+    "react-responsive": "^10.0.1",
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.2",
     "rimraf": "^6.0.1",

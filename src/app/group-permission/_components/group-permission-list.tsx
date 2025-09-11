@@ -41,8 +41,9 @@ import {
   GroupPermissionSearchParamType
 } from '@/types/group-permission.type';
 import { applyFormErrors, notify } from '@/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Edit2, Info, PlusIcon, Save, Trash, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 export default function GroupPermissionList() {
@@ -58,9 +59,9 @@ export default function GroupPermissionList() {
     pageSize: DEFAULT_TABLE_PAGE_SIZE,
     total: 0
   });
+  const queryClient = useQueryClient();
   const { opened, open, close } = useDisclosure(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isFormChanged, setIsFormChanged] = useState(false);
   const [selectedRow, setSelectedRow] = useState<GroupPermissionResType | null>(
     null
   );
@@ -87,7 +88,6 @@ export default function GroupPermissionList() {
 
   const handleClose = () => {
     close();
-    setIsFormChanged(false);
   };
 
   const columns: Column<GroupPermissionResType>[] = [
@@ -168,6 +168,14 @@ export default function GroupPermissionList() {
     setQueryParams({ ...searchParams, page: page });
   };
 
+  const defaultValues: GroupPermissionBodyType = { name: '' };
+  const initialValues: GroupPermissionBodyType = useMemo(
+    () => ({
+      name: selectedRow?.name || ''
+    }),
+    [selectedRow?.name]
+  );
+
   const onSubmit = async (
     values: GroupPermissionBodyType,
     form: UseFormReturn<GroupPermissionBodyType>
@@ -184,7 +192,8 @@ export default function GroupPermissionList() {
               `${!isEditing ? 'Thêm mới' : 'Cập nhật'} nhóm quyền thành công`
             );
             handleClose();
-            setIsFormChanged(false);
+            queryClient.invalidateQueries({ queryKey: ['group', values.id] });
+            queryClient.invalidateQueries({ queryKey: ['group-list'] });
             groupPermissionListQuery.refetch();
           } else {
             const errCode = res.code;
@@ -251,11 +260,10 @@ export default function GroupPermissionList() {
           </CardHeader>
           <CardContent>
             <BaseForm
-              defaultValues={{ name: '' }}
-              initialValues={{ name: selectedRow?.name || '' }}
+              defaultValues={defaultValues}
+              initialValues={initialValues}
               onSubmit={onSubmit}
               schema={groupPermissionSchema}
-              onChange={() => setIsFormChanged(true)}
             >
               {(form) => (
                 <>
@@ -284,7 +292,11 @@ export default function GroupPermissionList() {
                     </Col>
                     <Col span={4}>
                       <Button
-                        disabled={!isFormChanged}
+                        disabled={
+                          !form.formState.isDirty ||
+                          createGroupPermissionMutation.isPending ||
+                          updateGroupPermissionMutation.isPending
+                        }
                         type='submit'
                         className={
                           'bg-dodger-blue hover:bg-dodger-blue hover:opacity-80 disabled:pointer-events-auto disabled:cursor-not-allowed'

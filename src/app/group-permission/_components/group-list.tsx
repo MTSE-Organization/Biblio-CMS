@@ -216,9 +216,9 @@ export default function GroupList() {
       searchForm={
         <BaseForm
           defaultValues={defaultValues}
+          initialValues={initialValues}
           onSubmit={onSubmit}
           schema={groupSearchParamSchema}
-          initialValues={initialValues}
         >
           {(form) => (
             <>

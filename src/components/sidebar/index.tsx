@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/sidebar';
 import { logoWithText } from '@/assets';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib';
 import { Button } from '@/components/form';
@@ -26,6 +26,8 @@ import { MenuItem } from '@/types';
 import { menuConfig } from '@/constants';
 import { useSidebarStore } from '@/store';
 import { useNavigate } from '@/hooks';
+import useValidatePermission from '@/hooks/use-validate-permission';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const pathname = usePathname();
@@ -175,6 +177,55 @@ const renderMenu = (items: MenuItem[]) => (
 );
 
 const AppSidebar = () => {
+  const { hasPermission } = useValidatePermission();
+  const [clientMenu, setClientMenu] = useState<MenuItem[]>([]);
+
+  const filterMenuByPermission = useCallback(
+    (menu: MenuItem[]): MenuItem[] => {
+      return menu
+        .map((item) => {
+          let children: MenuItem[] | undefined;
+          if (item.children) {
+            children = filterMenuByPermission(item.children);
+          }
+
+          const allowed =
+            !item.permissionCode ||
+            hasPermission({ requiredPermissions: item.permissionCode });
+
+          if (!allowed && (!children || children.length === 0)) return null;
+
+          return { ...item, children };
+        })
+        .filter(Boolean) as MenuItem[];
+    },
+    [hasPermission]
+  );
+
+  useEffect(() => {
+    setClientMenu(filterMenuByPermission(menuConfig));
+  }, []);
+
+  if (!clientMenu)
+    return (
+      <Sidebar
+        className='[&_[data-sidebar="sidebar"]]:bg-sidebar group-data-[side=left]:border-none'
+        collapsible='icon'
+      >
+        <SidebarHeader className='min-h-25 px-0 py-4'>
+          <Skeleton className='mx-auto h-12 w-4/5' />
+        </SidebarHeader>
+        <SidebarContent className='sidebar-content'>
+          <SidebarGroup className='p-0'>
+            <SidebarGroupContent>
+              {[...Array(5)].map((_, idx) => (
+                <Skeleton key={idx} className='my-1 h-10 w-full rounded-md' />
+              ))}
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    );
   return (
     <Sidebar
       className='[&_[data-sidebar="sidebar"]]:bg-sidebar group-data-[side=left]:border-none'
@@ -203,7 +254,7 @@ const AppSidebar = () => {
 
       <SidebarContent className='sidebar-content'>
         <SidebarGroup className='p-0'>
-          <SidebarGroupContent>{renderMenu(menuConfig)}</SidebarGroupContent>
+          <SidebarGroupContent>{renderMenu(clientMenu)}</SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
