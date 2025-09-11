@@ -5,20 +5,23 @@ import { ApiConfig, ApiResponse } from '@/types';
 import { http, notify } from '@/utils';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 const useDragDrop = <T extends Record<string, any>>({
+  key,
   objectName,
   data,
   apiConfig,
   sortField = 'ordering'
 }: {
+  key: string;
   objectName: string;
   data: T[];
   apiConfig: ApiConfig;
   sortField?: keyof T;
 }) => {
+  const queryClient = useQueryClient();
   const [isChanged, setIsChanged] = useState<boolean>(false);
   const [draggedData, setDraggedData] = useState<T[]>([]);
 
@@ -74,20 +77,32 @@ const useDragDrop = <T extends Record<string, any>>({
       [sortField]: index
     }));
 
-    try {
-      await updateOrderingMutation.mutateAsync(dataUpdate);
+    await updateOrderingMutation.mutateAsync(dataUpdate, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [key]
+        });
+        setIsChanged(false);
 
-      setIsChanged(false);
+        notify.success(`Cập nhật thứ tự ${objectName} thành công`);
+      },
+      onError: (error) => {
+        logger.error('Error while updating ordering:', error);
+        notify.error(`Cập nhật thứ tự ${objectName} thất bại`);
 
-      notify.success(`Cập nhật thứ tự ${objectName} thành công`);
-    } catch (error) {
-      logger.error('Error while updating ordering:', error);
-      notify.error(`Cập nhật thứ tự ${objectName} thất bại`);
-
-      setIsChanged(false);
-      setDraggedData([]);
-    }
-  }, [isChanged, draggedData, sortField, objectName, updateOrderingMutation]);
+        setIsChanged(false);
+        setDraggedData([]);
+      }
+    });
+  }, [
+    draggedData,
+    isChanged,
+    key,
+    objectName,
+    queryClient,
+    sortField,
+    updateOrderingMutation
+  ]);
 
   return {
     isChanged,
