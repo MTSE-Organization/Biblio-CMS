@@ -9,6 +9,7 @@ import {
   isTokenExpired
 } from '@/utils';
 import { getCookiesServer } from '@/utils/cookies-server.util';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const isClient = () => typeof window !== 'undefined';
 
@@ -18,6 +19,7 @@ export const sendRequest = async <T>(
 ): Promise<T> => {
   let { baseUrl, headers, method, ignoreAuth, isRequiredTenantId, isUpload } =
     apiConfig;
+
   const {
     params = {},
     pathParams = {},
@@ -28,23 +30,27 @@ export const sendRequest = async <T>(
 
   let accessToken: string | null = '';
   let tenantId: string | null | undefined = '';
+
   if (!ignoreAuth) {
     if (isClient()) {
       accessToken = getAccessTokenFromLocalStorage();
       if (isTokenExpired(accessToken)) {
         removeAccessTokenFromLocalStorage();
+        accessToken = null;
       }
     } else {
       const { sessionToken } = await getCookiesServer();
       accessToken = sessionToken;
     }
   }
+
   if (isRequiredTenantId) {
     tenantId = getData(storageKeys.X_TENANT) || envConfig.NEXT_PUBLIC_TENANT_ID;
   } else {
     tenantId = process.env.TENANT_ID;
   }
-  const baseHeader: { [key: string]: string } = { ...headers };
+
+  const baseHeader: Record<string, string> = { ...headers };
 
   if (!ignoreAuth && accessToken) {
     baseHeader['Authorization'] = `Bearer ${accessToken}`;
@@ -62,58 +68,42 @@ export const sendRequest = async <T>(
     baseUrl = baseUrl.replace(`:${key}`, value.toString());
   });
 
-  if (baseHeader['Content-Type'] === 'multipart/form-data' && isUpload) {
-    const formData = new FormData();
-
-    Object.keys(body).forEach((key) => {
-      const value = body[key];
-
-      if (value instanceof Blob) {
-        const filename = 'upload.jpg';
-        formData.append(key, value, filename);
-      } else {
-        formData.append(key, value);
-      }
-    });
-
-    delete baseHeader['Content-Type'];
-
-    try {
-      const response = await fetch(baseUrl, {
-        method,
-        headers: baseHeader,
-        body: formData
-      });
-      const result = await response.json();
-      return result;
-    } catch (error: any) {
-      logger.error(
-        `Error in API request: ${error?.cause?.code || error.message || error}`
-      );
-      throw new Error(error?.cause?.code || error.message || error);
-    }
-  }
-
-  const queryParams = new URLSearchParams(params).toString();
-  const fullUrl = queryParams ? `${baseUrl}?${queryParams}` : baseUrl;
   try {
-    const response = await fetch(fullUrl, {
+    const axiosConfig: AxiosRequestConfig = {
+      url: baseUrl,
       method,
-      headers: {
-        ...baseHeader,
-        'Content-Type': baseHeader['Content-Type'] || 'application/json'
-      },
-      body: method !== 'GET' && body ? JSON.stringify(body) : undefined,
+      headers: baseHeader,
+      params,
+      timeout: 10000,
       ...options
-    });
+    };
 
-    const result = await response.json();
-    return result;
+    if (isUpload && baseHeader['Content-Type'] === 'multipart/form-data') {
+      const formData = new FormData();
+      Object.keys(body).forEach((key) => {
+        const value = body[key];
+        if (value instanceof Blob) {
+          const filename = 'upload.jpg';
+          formData.append(key, value, filename);
+        } else {
+          formData.append(key, value);
+        }
+      });
+      axiosConfig.data = formData;
+      delete axiosConfig.headers!['Content-Type'];
+    } else if (method !== 'GET') {
+      axiosConfig.data = body;
+      axiosConfig.headers = {
+        ...axiosConfig.headers,
+        'Content-Type': baseHeader['Content-Type'] || 'application/json'
+      };
+    }
+
+    const response: AxiosResponse = await axios.request<T>(axiosConfig);
+    return response.data;
   } catch (error: any) {
-    logger.error(
-      `Error in API request: ${error?.cause?.code || error.message || error}`
-    );
-    throw new Error(error?.cause?.code || error.message || error);
+    const err = error as AxiosError;
+    throw err;
   }
 };
 

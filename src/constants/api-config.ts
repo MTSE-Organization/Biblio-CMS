@@ -199,6 +199,146 @@ const apiConfig = defineApiConfig({
       headers: baseHeader,
       permissionCode: 'CAT_U'
     }
+  },
+  product: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/product/private/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PRD_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/product/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'PRD_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/product/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/product/get/private/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PRD_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/product/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'PRD_D'
+    }
+  },
+  productVariant: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PRD_VAR_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'PRD_VAR_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_VAR_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/get/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PRD_VAR_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'PRD_VAR_D'
+    }
+  },
+  productImage: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/get/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_D'
+    },
+    updateOrdering: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/update-ordering`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_U'
+    },
+    setDefault: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-image/set-default`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_IMG_D'
+    }
+  },
+  publisher: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/publisher/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PUB_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/publisher/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'PUB_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/publisher/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PUB_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/publisher/get/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'PUB_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/publisher/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'PUB_D'
+    }
   }
 });
 

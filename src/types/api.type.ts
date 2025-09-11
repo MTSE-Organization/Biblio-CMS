@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios';
+
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export type ApiConfig = {
@@ -18,7 +20,7 @@ export type Payload = {
   params?: Record<string, any>;
   pathParams?: Record<string, string | number>;
   body?: any;
-  options?: RequestInit;
+  options?: AxiosRequestConfig;
   authorization?: string;
 };
 

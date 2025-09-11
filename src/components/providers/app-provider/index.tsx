@@ -1,13 +1,11 @@
 'use client';
-
 import { LoadingWrapper } from '@/components/loading';
 import { Redirect } from '@/components/redirect';
 import { storageKeys } from '@/constants';
-import { logger } from '@/logger';
 import { useProfileQuery } from '@/queries';
 import route from '@/routes';
 import useProfileStore from '@/store/use-profile.store';
-import { getData, notify } from '@/utils';
+import { getData } from '@/utils';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -30,14 +28,9 @@ export default function AppProvider({
   useEffect(() => {
     if (!accessToken) return;
     const handleGetProfile = async () => {
-      try {
-        const res = await profileQuery.refetch();
-        if (res.data?.data) {
-          setProfile(res.data.data);
-        }
-      } catch (error) {
-        logger.error(`Error while getting profile: `, error);
-        notify.error('Lấy hồ sơ thất bại');
+      const res = await profileQuery.refetch();
+      if (res.data?.data) {
+        setProfile(res.data.data);
       }
     };
     handleGetProfile();
