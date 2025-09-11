@@ -124,7 +124,7 @@ export default function CategoryForm() {
                 }}
                 size={100}
                 uploadImageFn={async (file: Blob) => {
-                  const res = await uploadImageMutation.mutateAsync(file);
+                  const res = await uploadImageMutation.mutateAsync({ file });
                   return res.data?.filePath ?? '';
                 }}
               />
