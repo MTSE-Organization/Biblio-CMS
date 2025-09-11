@@ -3,13 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useTopLoader } from 'nextjs-toploader';
 
-const useNavigate = () => {
+const useNavigate = (startLoader: boolean = true) => {
   const router = useRouter();
   const loading = useTopLoader();
 
   const navigate = (path: string) => {
     router.push(path);
-    loading.start();
+    if (startLoader) loading.start();
   };
 
   return navigate;

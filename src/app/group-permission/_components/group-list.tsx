@@ -70,7 +70,7 @@ export default function GroupList() {
   const deleteGroupMutation = useDeleteGroupMutation();
 
   const handleEdit = (id: string) => {
-    navigate(`${route.group.path}/${id}`);
+    navigate(`${route.group.getList.path}/${id}`);
   };
 
   const handleDelete = async (record: GroupResType) => {
@@ -205,7 +205,7 @@ export default function GroupList() {
         <HasPermission
           requiredPermissions={[apiConfig.group.create.permissionCode]}
         >
-          <Link href={route.group.create.path}>
+          <Link href={`${route.group.getList.path}/create`}>
             <Button className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'>
               <PlusIcon />
               Thêm mới

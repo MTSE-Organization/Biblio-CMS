@@ -5,21 +5,25 @@ import List from '@/components/list';
 import ListItem from '@/components/list/ListItem';
 import { CircleLoading } from '@/components/loading';
 import { storageKeys } from '@/constants';
-import { useNavigate } from '@/hooks';
+import { useNavigate, useQueryParams } from '@/hooks';
 import { logger } from '@/logger';
 import { useLogoutMutation } from '@/queries';
 import route from '@/routes';
 import { useProfileStore } from '@/store';
-import { notify, removeData, renderImageUrl } from '@/utils';
+import { notify, removeData, renderImageUrl, setData } from '@/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, LogOut, User } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export default function DropdownAvatar() {
+  const navigate = useNavigate();
   const { profile } = useProfileStore();
   const [open, setOpen] = useState(false);
   const logoutMutation = useLogoutMutation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const { searchParams } = useQueryParams();
+
   const handleLogout = async () => {
     await logoutMutation.mutateAsync(undefined, {
       onSuccess: (res) => {
@@ -37,6 +41,15 @@ export default function DropdownAvatar() {
       }
     });
   };
+
+  const handleProfileClick = () => {
+    setData(
+      storageKeys.PREVIOUS_PATH,
+      `${pathname}?${searchParams.toString()}`
+    );
+    navigate(route.profile.savePage.path);
+  };
+
   return (
     <div
       className='relative z-1 flex items-center gap-4'
@@ -65,9 +78,7 @@ export default function DropdownAvatar() {
             <div className='absolute -top-2 right-9 border-r-8 border-b-8 border-l-8 border-r-transparent border-b-white border-l-transparent'></div>
             <List className='flex flex-col gap-y-2 p-1'>
               <ListItem
-                onClick={() => {
-                  navigate(route.profile.path);
-                }}
+                onClick={() => handleProfileClick()}
                 className='flex w-full cursor-pointer items-center gap-2 rounded-md bg-transparent px-2 py-2 text-sm font-normal text-black transition-all duration-200 ease-linear hover:bg-gray-100'
               >
                 <User className='size-5' /> Hồ sơ

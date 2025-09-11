@@ -110,7 +110,7 @@ export default function GroupForm() {
               `${isCreate ? 'Thêm mới' : 'Cập nhật'} nhóm quyền thành công`
             );
             queryClient.invalidateQueries({ queryKey: ['group', id] });
-            navigate(route.group.path);
+            navigate(route.group.getList.path);
           } else {
             const errCode = res.code;
             if (errCode) {
@@ -309,7 +309,7 @@ export default function GroupForm() {
           <Row className='my-0 justify-end'>
             <Col span={4}>
               <Button
-                onClick={() => navigate(route.group.path)}
+                onClick={() => navigate(route.group.getList.path)}
                 type='button'
                 variant={'ghost'}
                 className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'

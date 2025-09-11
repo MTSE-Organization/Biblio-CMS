@@ -5,3 +5,4 @@ export { default as useQueryParams } from './use-query-params';
 export { default as useNavigate } from './use-navigate';
 export { default as useDisclosure } from './use-disclosure';
 export { default as useDragDrop } from './use-drag-drop';
+export { default as useFirstActiveRoute } from './use-first-active-route';

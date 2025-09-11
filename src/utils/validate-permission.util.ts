@@ -1,5 +1,3 @@
-'use client';
-
 import { apiConfig } from '@/constants';
 
 export const ensureArray = (value: any) => {

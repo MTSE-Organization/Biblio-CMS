@@ -66,7 +66,7 @@ export default function CategoryList() {
   const deleteCategoryMutation = useDeleteCategoryMutation();
 
   const handleEdit = (id: string) => {
-    navigate(`${route.category.path}/${id}`);
+    navigate(`${route.category.getList.path}/${id}`);
   };
 
   const handleDelete = async (record: CategoryResType) => {
@@ -128,53 +128,61 @@ export default function CategoryList() {
       render: (_, record) => {
         return (
           <div className='flex items-center justify-center'>
-            <ToolTip title='Sửa danh mục'>
-              <Button
-                onClick={() => handleEdit(record.id)}
-                className='border-none bg-transparent shadow-none hover:bg-transparent'
-              >
-                <Edit2 className='stroke-dodger-blue size-3.5' />
-              </Button>
-            </ToolTip>
-            <Separator orientation='vertical' className='h-4! bg-gray-200' />
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <span>
-                  <ToolTip title='Xóa danh mục'>
-                    <Button className='border-none bg-transparent shadow-none hover:bg-transparent'>
-                      <Trash className='size-3.5 stroke-red-600' />
-                    </Button>
-                  </ToolTip>
-                </span>
-              </AlertDialogTrigger>
-              <AlertDialogContent className='data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-0! data-[state=closed]:slide-out-to-top-0! data-[state=open]:slide-in-from-left-0! data-[state=open]:slide-in-from-top-0! top-[30%]'>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
-                    <Info className='size-8 fill-orange-500 stroke-white' />
-                    Bạn có chắc chắn muốn xóa danh mục này không ?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription></AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel asChild>
-                    <Button
-                      variant='outline'
-                      className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
-                    >
-                      Không
-                    </Button>
-                  </AlertDialogCancel>
-                  <AlertDialogAction asChild>
-                    <Button
-                      onClick={() => handleDelete(record)}
-                      className='bg-dodger-blue hover:bg-dodger-blue/80 cursor-pointer transition-all duration-200 ease-linear'
-                    >
-                      Có
-                    </Button>
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <HasPermission
+              requiredPermissions={[apiConfig.category.update.permissionCode]}
+            >
+              <ToolTip title='Sửa danh mục'>
+                <Button
+                  onClick={() => handleEdit(record.id)}
+                  className='border-none bg-transparent shadow-none hover:bg-transparent'
+                >
+                  <Edit2 className='stroke-dodger-blue size-3.5' />
+                </Button>
+              </ToolTip>
+              <Separator orientation='vertical' className='h-4! bg-gray-200' />
+            </HasPermission>
+            <HasPermission
+              requiredPermissions={[apiConfig.category.delete.permissionCode]}
+            >
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <span>
+                    <ToolTip title='Xóa danh mục'>
+                      <Button className='border-none bg-transparent shadow-none hover:bg-transparent'>
+                        <Trash className='size-3.5 stroke-red-600' />
+                      </Button>
+                    </ToolTip>
+                  </span>
+                </AlertDialogTrigger>
+                <AlertDialogContent className='data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-0! data-[state=closed]:slide-out-to-top-0! data-[state=open]:slide-in-from-left-0! data-[state=open]:slide-in-from-top-0! top-[30%]'>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
+                      <Info className='size-8 fill-orange-500 stroke-white' />
+                      Bạn có chắc chắn muốn xóa danh mục này không ?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription></AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel asChild>
+                      <Button
+                        variant='outline'
+                        className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
+                      >
+                        Không
+                      </Button>
+                    </AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <Button
+                        onClick={() => handleDelete(record)}
+                        className='bg-dodger-blue hover:bg-dodger-blue/80 cursor-pointer transition-all duration-200 ease-linear'
+                      >
+                        Có
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </HasPermission>
           </div>
         );
       }
@@ -217,7 +225,7 @@ export default function CategoryList() {
           <HasPermission
             requiredPermissions={[apiConfig.category.create.permissionCode]}
           >
-            <Link href={route.category.create.path}>
+            <Link href={route.category.savePage.path}>
               <Button className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'>
                 <PlusIcon />
                 Thêm mới

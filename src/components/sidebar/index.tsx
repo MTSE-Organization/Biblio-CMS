@@ -23,11 +23,11 @@ import { cn } from '@/lib';
 import { Button } from '@/components/form';
 import './sidebar.css';
 import { MenuItem } from '@/types';
-import { menuConfig } from '@/constants';
 import { useSidebarStore } from '@/store';
 import { useNavigate } from '@/hooks';
 import useValidatePermission from '@/hooks/use-validate-permission';
 import { Skeleton } from '@/components/ui/skeleton';
+import menuConfig from '@/constants/menu-config';
 
 function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const pathname = usePathname();

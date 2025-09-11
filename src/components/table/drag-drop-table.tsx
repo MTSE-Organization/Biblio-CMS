@@ -108,7 +108,6 @@ export default function DragDropTable<T extends Record<any, any>>({
   loading,
   onDragEnd
 }: DragDropTableProps<T>) {
-  console.log('🚀 ~ DragDropTable ~ loading:', loading);
   const [rows, setRows] = useState(() => dataSource || []);
   const tableRef = useRef<HTMLDivElement>(null);
 

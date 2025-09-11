@@ -1,3 +1,10 @@
+import { LoadingWrapper } from '@/components/loading';
+import { AnimatePresence } from 'framer-motion';
+
 export default async function HomePage() {
-  return <div>Home</div>;
+  return (
+    <AnimatePresence>
+      <LoadingWrapper key='loading' />
+    </AnimatePresence>
+  );
 }

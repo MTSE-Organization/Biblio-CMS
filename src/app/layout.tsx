@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { AppProvider, QueryProvider } from '@/components/providers';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Metadata } from 'next';
+import { Redirect } from '@/components/redirect';
 
 const inter = Inter({
   subsets: ['latin'],

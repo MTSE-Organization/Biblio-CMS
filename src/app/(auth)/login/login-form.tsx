@@ -33,7 +33,7 @@ export default function LoginForm() {
           setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
           setAuthenticated(true);
           setLoading(true);
-          router.push(route.group.path);
+          router.push(route.group.getList.path);
         } else {
           const errCode = res.code;
           if (errCode) {
