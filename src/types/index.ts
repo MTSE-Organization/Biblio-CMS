@@ -14,3 +14,7 @@ export * from './file.type';
 export * from './permission.type';
 export * from './category.type';
 export * from './update-ordering.type';
+export * from './product.type';
+export * from './product-image.type';
+export * from './product-variant.type';
+export * from './publisher.type';

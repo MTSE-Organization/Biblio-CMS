@@ -63,16 +63,16 @@ export default function AccountList() {
   const accountListQuery = useAccountListQuery(queryFilter);
   const deleteAccountMutation = useDeleteAccountMutation();
 
-  const handleDelete = async (record: AccountResType) => {
-    deleteAccountMutation.mutateAsync(record.id);
-  };
-
   useEffect(() => {
     setPagination((p) => ({
       ...p,
       total: accountListQuery.data?.data.totalPages ?? 0
     }));
   }, [accountListQuery.data]);
+
+  const handleDelete = async (record: AccountResType) => {
+    deleteAccountMutation.mutateAsync(record.id);
+  };
 
   const columns: Column<AccountResType>[] = [
     {

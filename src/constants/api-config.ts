@@ -237,31 +237,31 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/product-variant/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'PRD_VAR_L'
+      permissionCode: 'PRD_V_L'
     },
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/product-variant/create`,
       method: 'POST',
       headers: baseHeader,
-      permissionCode: 'PRD_VAR_C'
+      permissionCode: 'PRD_V_C'
     },
     update: {
       baseUrl: `${AppConstants.apiUrl}v1/product-variant/update`,
       method: 'PUT',
       headers: baseHeader,
-      permissionCode: 'PRD_VAR_U'
+      permissionCode: 'PRD_V_U'
     },
     getById: {
       baseUrl: `${AppConstants.apiUrl}v1/product-variant/get/:id`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'PRD_VAR_V'
+      permissionCode: 'PRD_V_V'
     },
     delete: {
       baseUrl: `${AppConstants.apiUrl}v1/product-variant/delete/:id`,
       method: 'DELETE',
       headers: baseHeader,
-      permissionCode: 'PRD_VAR_D'
+      permissionCode: 'PRD_V_D'
     }
   },
   productImage: {

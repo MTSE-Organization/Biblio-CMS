@@ -29,7 +29,10 @@ const route = defineRoute({
     },
     savePage: {
       path: '/group-permission/:id',
-      permissionCode: [apiConfig.group.create.permissionCode]
+      permissionCode: [
+        apiConfig.group.create.permissionCode,
+        apiConfig.group.update.permissionCode
+      ]
     }
   },
   login: {
@@ -49,15 +52,23 @@ const route = defineRoute({
     },
     savePage: {
       path: '/category/:id',
-      permissionCode: [apiConfig.category.create.permissionCode]
+      permissionCode: [
+        apiConfig.category.create.permissionCode,
+        apiConfig.category.update.permissionCode
+      ]
     }
   },
   product: {
     getList: {
-      path: '/product'
+      path: '/product',
+      permissionCode: [apiConfig.product.getList.permissionCode]
     },
     savePage: {
-      path: '/product/:id'
+      path: '/product/:id',
+      permissionCode: [
+        apiConfig.product.create.permissionCode,
+        apiConfig.product.update.permissionCode
+      ]
     }
   }
 });
