@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   if (accessToken) {
     if (publicPaths.some((path) => pathname.startsWith(path))) {
       return NextResponse.redirect(
-        new URL(route.account.path, request.nextUrl)
+        new URL(route.account.getList.path, request.nextUrl)
       );
     }
   } else {

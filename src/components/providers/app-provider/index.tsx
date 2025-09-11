@@ -1,6 +1,7 @@
 'use client';
 
 import { LoadingWrapper } from '@/components/loading';
+import { Redirect } from '@/components/redirect';
 import { storageKeys } from '@/constants';
 import { logger } from '@/logger';
 import { useProfileQuery } from '@/queries';
@@ -44,6 +45,7 @@ export default function AppProvider({
 
   return (
     <>
+      <Redirect />
       {children}
       <AnimatePresence>
         {(profileQuery.isLoading || profileQuery.isFetching) && (

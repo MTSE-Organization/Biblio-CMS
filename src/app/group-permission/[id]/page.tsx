@@ -1,5 +1,6 @@
 import GroupForm from '@/app/group-permission/[id]/group-form';
 import { PageWrapper } from '@/components/layout';
+import route from '@/routes';
 
 export default async function GroupDetailPage({
   params
@@ -11,8 +12,8 @@ export default async function GroupDetailPage({
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: '/' },
-        { label: 'Nhóm quyền', href: '/group-permission' },
+        { label: 'Trang chủ', href: route.home.path },
+        { label: 'Nhóm quyền', href: route.group.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Chỉnh sửa'} quyền` }
       ]}
     >

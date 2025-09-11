@@ -1,5 +1,4 @@
 'use client';
-
 import {
   Button,
   Col,
@@ -9,6 +8,7 @@ import {
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { CircleLoading } from '@/components/loading';
+import { storageKeys } from '@/constants';
 import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
 import { useUpdateProfileMutation, useUploadImageMutation } from '@/queries';
@@ -16,7 +16,7 @@ import route from '@/routes';
 import { updateProfileSchema } from '@/schemaValidations';
 import { useProfileStore } from '@/store';
 import { ProfileBodyType } from '@/types';
-import { notify, renderImageUrl } from '@/utils';
+import { getData, notify, removeData, renderImageUrl } from '@/utils';
 import { Save } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -69,6 +69,12 @@ export default function ProfileForm() {
         }
       }
     );
+  };
+
+  const handleCancel = () => {
+    const prevPath = getData(storageKeys.PREVIOUS_PATH);
+    removeData(storageKeys.PREVIOUS_PATH);
+    navigate(prevPath ?? route.home.path);
   };
 
   return (
@@ -138,7 +144,7 @@ export default function ProfileForm() {
           <Row className='my-0 justify-end'>
             <Col span={4}>
               <Button
-                onClick={() => navigate(route.home.path)}
+                onClick={() => handleCancel()}
                 type='button'
                 variant={'ghost'}
                 className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'

@@ -7,7 +7,7 @@ export default function ProfilePage() {
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: route.account.path },
+        { label: 'Trang chủ', href: route.home.path },
         { label: 'Hồ sơ' }
       ]}
     >

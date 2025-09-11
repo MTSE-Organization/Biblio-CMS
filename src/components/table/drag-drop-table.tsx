@@ -163,7 +163,7 @@ export default function DragDropTable<T extends Record<any, any>>({
               </TableRow>
             </TableHeader>
             <TableBody className='[&_tr:last-child]:border-b'>
-              {loading && !rows.length ? (
+              {loading ? (
                 <TableRow>
                   <TableCell
                     colSpan={columns.length + (showGrip ? 1 : 0)}
@@ -191,22 +191,24 @@ export default function DragDropTable<T extends Record<any, any>>({
                   </SortableContext>
                 </>
               ) : (
-                <TableRow className='hover:bg-transparent'>
-                  <TableCell
-                    colSpan={columns.length + (showGrip ? 1 : 0)}
-                    className='py-8 text-center align-middle'
-                  >
-                    <div className='flex flex-col items-center justify-center'>
-                      <Image
-                        src={emptyData.src}
-                        alt='Không có dữ liệu'
-                        width={150}
-                        height={50}
-                      />
-                      <span>Không có dữ liệu</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                !dataSource.length && (
+                  <TableRow className='hover:bg-transparent'>
+                    <TableCell
+                      colSpan={columns.length + (showGrip ? 1 : 0)}
+                      className='py-8 text-center align-middle'
+                    >
+                      <div className='flex flex-col items-center justify-center'>
+                        <Image
+                          src={emptyData.src}
+                          alt='Không có dữ liệu'
+                          width={150}
+                          height={50}
+                        />
+                        <span>Không có dữ liệu</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
               )}
             </TableBody>
           </Table>

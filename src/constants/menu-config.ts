@@ -13,7 +13,7 @@ const menuConfig: MenuItem[] = [
       {
         key: 'account-list',
         label: 'Tài khoản',
-        path: route.account.path,
+        path: route.account.getList.path,
         permissionCode: [apiConfig.account.getList.permissionCode]
       }
       // {
@@ -32,10 +32,10 @@ const menuConfig: MenuItem[] = [
       {
         key: 'category-list',
         label: 'Danh mục sách',
-        path: route.category.path,
+        path: route.category.getList.path,
         permissionCode: [apiConfig.category.getList.permissionCode]
       },
-      { key: 'product-list', label: 'Sách', path: route.product.path }
+      { key: 'product-list', label: 'Sách', path: route.product.getList.path }
     ]
   },
   {
@@ -51,7 +51,7 @@ const menuConfig: MenuItem[] = [
       {
         key: 'permission',
         label: 'Quyền',
-        path: route.group.path,
+        path: route.group.getList.path,
         permissionCode: [apiConfig.group.getList.permissionCode]
       }
     ]

@@ -13,7 +13,7 @@ export default async function CategoryDetailPage({
     <PageWrapper
       breadcrumbs={[
         { label: 'Trang chủ', href: route.home.path },
-        { label: 'Danh mục', href: route.category.path },
+        { label: 'Danh mục', href: route.category.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Chỉnh sửa'} quyền` }
       ]}
     >

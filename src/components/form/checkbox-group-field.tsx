@@ -47,7 +47,6 @@ export default function CheckboxGroupField<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => {
-        console.log('🚀 ~ CheckboxGroupField ~ field:', field.value);
         return (
           <FormItem className={cn('space-y-2', className)}>
             {label && (

@@ -83,7 +83,7 @@ export default function CategoryForm() {
               `${isCreate ? 'Thêm mới' : 'Cập nhật'} danh mục thành công`
             );
             queryClient.invalidateQueries({ queryKey: ['category', id] });
-            navigate(route.category.path);
+            navigate(route.category.getList.path);
           } else {
             const errCode = res.code;
             if (errCode) {
@@ -172,7 +172,7 @@ export default function CategoryForm() {
               <Button
                 type='button'
                 variant={'ghost'}
-                onClick={() => navigate(route.category.path)}
+                onClick={() => navigate(route.category.getList.path)}
                 className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'
               >
                 Hủy
