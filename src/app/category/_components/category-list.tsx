@@ -276,24 +276,29 @@ export default function CategoryList() {
           }
           onDragEnd={onDragEnd}
         />
-        {sortedData.length > 0 && (
-          <div className='mr-4 flex justify-end py-4'>
-            <Button
-              onClick={handleUpdate}
-              disabled={!isChanged || loading}
-              className='bg-dodger-blue hover:bg-dodger-blue/80 w-40 disabled:pointer-events-auto disabled:cursor-not-allowed'
-            >
-              {loading ? (
-                <CircleLoading />
-              ) : (
-                <>
-                  <Save />
-                  Cập nhật
-                </>
-              )}
-            </Button>
-          </div>
-        )}
+        {sortedData.length > 1 &&
+          !(
+            categoryListQuery.isLoading ||
+            categoryListQuery.isFetching ||
+            deleteCategoryMutation.isPending
+          ) && (
+            <div className='mr-4 flex justify-end py-4'>
+              <Button
+                onClick={handleUpdate}
+                disabled={!isChanged || loading}
+                className='bg-dodger-blue hover:bg-dodger-blue/80 w-40 disabled:pointer-events-auto disabled:cursor-not-allowed'
+              >
+                {loading ? (
+                  <CircleLoading />
+                ) : (
+                  <>
+                    <Save />
+                    Cập nhật
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
       </ListPageWrapper>
     </PageWrapper>
   );
