@@ -7,6 +7,7 @@ import { useProfileQuery } from '@/queries';
 import route from '@/routes';
 import useProfileStore from '@/store/use-profile.store';
 import { getData, notify } from '@/utils';
+import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -41,9 +42,14 @@ export default function AppProvider({
     handleGetProfile();
   }, [accessToken, isAuthenticated]);
 
-  return profileQuery.isLoading || profileQuery.isFetching ? (
-    <LoadingWrapper />
-  ) : (
-    children
+  return (
+    <>
+      {children}
+      <AnimatePresence>
+        {(profileQuery.isLoading || profileQuery.isFetching) && (
+          <LoadingWrapper key='loading' />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

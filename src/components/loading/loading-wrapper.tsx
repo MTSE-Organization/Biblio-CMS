@@ -2,11 +2,7 @@
 import { Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function LoadingWrapper({
-  children
-}: {
-  children?: React.ReactNode;
-}) {
+export default function LoadingWrapper() {
   return (
     <AnimatePresence>
       <motion.div

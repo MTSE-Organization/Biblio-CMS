@@ -43,7 +43,7 @@ const useDragDrop = <T extends Record<string, any>>({
   useEffect(() => {
     setSortedData(initialSortedData);
     setIsChanged(false);
-  }, [initialSortedData]);
+  }, [data]);
 
   const onDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
