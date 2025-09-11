@@ -31,7 +31,7 @@ const useDragDrop = <T extends Record<string, any>>({
   });
 
   const sortedData = useMemo(() => {
-    if (isChanged && draggedData.length > 0) {
+    if (draggedData.length > 0) {
       return draggedData;
     }
 
@@ -42,7 +42,7 @@ const useDragDrop = <T extends Record<string, any>>({
       const bValue = b[sortField] as number;
       return aValue - bValue;
     });
-  }, [data, sortField, isChanged, draggedData]);
+  }, [data, sortField, draggedData]);
 
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -50,16 +50,7 @@ const useDragDrop = <T extends Record<string, any>>({
 
       if (!active || !over || active.id === over.id) return;
 
-      const currentData =
-        isChanged && draggedData.length > 0
-          ? draggedData
-          : data
-            ? [...data].sort((a, b) => {
-                const aValue = a[sortField] as number;
-                const bValue = b[sortField] as number;
-                return aValue - bValue;
-              })
-            : [];
+      const currentData = sortedData;
 
       const activeIndex = currentData.findIndex(
         (item) => item.id === active.id
@@ -72,7 +63,7 @@ const useDragDrop = <T extends Record<string, any>>({
       setDraggedData(newData);
       setIsChanged(true);
     },
-    [data, sortField, isChanged, draggedData]
+    [sortedData]
   );
 
   const handleUpdate = useCallback(async () => {
@@ -85,8 +76,9 @@ const useDragDrop = <T extends Record<string, any>>({
 
     try {
       await updateOrderingMutation.mutateAsync(dataUpdate);
+
       setIsChanged(false);
-      setDraggedData([]);
+
       notify.success(`Cập nhật thứ tự ${objectName} thành công`);
     } catch (error) {
       logger.error('Error while updating ordering:', error);
@@ -97,18 +89,12 @@ const useDragDrop = <T extends Record<string, any>>({
     }
   }, [isChanged, draggedData, sortField, objectName, updateOrderingMutation]);
 
-  const resetChanges = useCallback(() => {
-    setIsChanged(false);
-    setDraggedData([]);
-  }, []);
-
   return {
     isChanged,
     setIsChanged,
     sortedData,
     onDragEnd,
     handleUpdate,
-    resetChanges,
     loading: updateOrderingMutation.isPending
   };
 };
