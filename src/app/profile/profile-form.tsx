@@ -99,7 +99,9 @@ export default function ProfileForm() {
                 }}
                 size={100}
                 uploadImageFn={async (file: Blob) => {
-                  const res = await fileMutation.mutateAsync(file);
+                  const res = await fileMutation.mutateAsync({
+                    file
+                  });
                   return res.data?.filePath ?? '';
                 }}
               />

@@ -21,8 +21,8 @@ export default function LoginForm() {
   const router = useRouter();
   const { setAuthenticated, setLoading } = useProfileStore();
   const defaultValues: LoginBodyType = {
-    email: '',
-    password: ''
+    email: 'admin@example.com',
+    password: 'admin1236545'
   };
 
   const onSubmit = async (values: LoginBodyType) => {
@@ -33,13 +33,11 @@ export default function LoginForm() {
           setData(storageKeys.ACCESS_TOKEN, res.data?.token!);
           setAuthenticated(true);
           setLoading(true);
-          router.push(route.group.getList.path);
+          router.push(route.home.path);
         } else {
           const errCode = res.code;
           if (errCode) {
-            if (errCode === 'ECONNREFUSED') {
-              notify.error('Có lỗi kết nối xảy ra');
-            } else if (errCode === ErrorCode.AUTH_ERROR_UNAUTHORIZED) {
+            if (errCode === ErrorCode.AUTH_ERROR_UNAUTHORIZED) {
               notify.error('Email hoặc mật khẩu không chính xác');
             }
           } else {
