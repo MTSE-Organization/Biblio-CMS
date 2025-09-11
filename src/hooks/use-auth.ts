@@ -18,7 +18,7 @@ const useAuth = () => {
   }
 
   return {
-    isAuthenticate: !!profile,
+    isAuthenticated: !!profile,
     profile,
     kind: profile?.kind,
     permissionCode: permissionCode,

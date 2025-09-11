@@ -1,12 +1,5 @@
 import { apiConfig } from '@/constants';
 
-type RouteConfig = {
-  path: string;
-  permissionCode?: string[];
-  ignoredAuth?: boolean;
-  children?: Record<string, RouteConfig>;
-};
-
 const defineRoute = <T extends Record<string, any>>(routes: T): T => routes;
 
 const route = defineRoute({
@@ -16,6 +9,7 @@ const route = defineRoute({
   account: {
     getList: {
       path: '/account',
+      auth: true,
       permissionCode: [apiConfig.account.getList.permissionCode]
     }
   },
@@ -25,39 +19,56 @@ const route = defineRoute({
   group: {
     getList: {
       path: '/group-permission',
+      auth: true,
       permissionCode: [apiConfig.group.getList.permissionCode]
     },
     savePage: {
       path: '/group-permission/:id',
-      permissionCode: [apiConfig.group.create.permissionCode]
+      auth: true,
+      permissionCode: [
+        apiConfig.group.create.permissionCode,
+        apiConfig.group.update.permissionCode
+      ]
     }
   },
   login: {
     path: '/login',
-    ignoredAuth: true
+    auth: false
   },
   profile: {
     savePage: {
       path: '/profile',
-      permissionCode: [apiConfig.account.updateProfile.permissionCode]
+      auth: true
     }
   },
   category: {
     getList: {
       path: '/category',
+      auth: true,
       permissionCode: [apiConfig.category.getList.permissionCode]
     },
     savePage: {
       path: '/category/:id',
-      permissionCode: [apiConfig.category.create.permissionCode]
+      auth: true,
+      permissionCode: [
+        apiConfig.category.create.permissionCode,
+        apiConfig.category.update.permissionCode
+      ]
     }
   },
   product: {
     getList: {
-      path: '/product'
+      path: '/product',
+      auth: true,
+      permissionCode: [apiConfig.product.getList.permissionCode]
     },
     savePage: {
-      path: '/product/:id'
+      path: '/product/:id',
+      auth: true,
+      permissionCode: [
+        apiConfig.product.create.permissionCode,
+        apiConfig.product.update.permissionCode
+      ]
     }
   }
 });

@@ -35,7 +35,12 @@ const menuConfig: MenuItem[] = [
         path: route.category.getList.path,
         permissionCode: [apiConfig.category.getList.permissionCode]
       },
-      { key: 'product-list', label: 'Sách', path: route.product.getList.path }
+      {
+        key: 'product-list',
+        label: 'Sách',
+        path: route.product.getList.path,
+        permissionCode: [apiConfig.product.getList.permissionCode]
+      }
     ]
   },
   {

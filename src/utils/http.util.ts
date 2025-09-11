@@ -1,6 +1,5 @@
 import envConfig from '@/config';
 import { storageKeys } from '@/constants';
-import { logger } from '@/logger';
 import { ApiConfig, Payload } from '@/types';
 import {
   getAccessTokenFromLocalStorage,

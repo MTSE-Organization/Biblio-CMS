@@ -61,7 +61,6 @@ export default function CategoryList() {
   });
   const { searchParams, setQueryParams } =
     useQueryParams<CategorySearchParamType>();
-
   const categoryListQuery = useCategoryListQuery(queryFilter);
   const deleteCategoryMutation = useDeleteCategoryMutation();
 
