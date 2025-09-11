@@ -6,7 +6,7 @@ import { http, notify } from '@/utils';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 const useDragDrop = <T extends Record<string, any>>({
   objectName,
@@ -20,7 +20,7 @@ const useDragDrop = <T extends Record<string, any>>({
   sortField?: keyof T;
 }) => {
   const [isChanged, setIsChanged] = useState<boolean>(false);
-  const [sortedData, setSortedData] = useState<T[]>([]);
+  const [draggedData, setDraggedData] = useState<T[]>([]);
 
   const updateOrderingMutation = useMutation({
     mutationKey: ['updateOrdering', apiConfig.baseUrl],
@@ -30,7 +30,11 @@ const useDragDrop = <T extends Record<string, any>>({
       })
   });
 
-  const initialSortedData = useMemo(() => {
+  const sortedData = useMemo(() => {
+    if (isChanged && draggedData.length > 0) {
+      return draggedData;
+    }
+
     if (!data || data.length === 0) return [];
 
     return [...data].sort((a, b) => {
@@ -38,35 +42,43 @@ const useDragDrop = <T extends Record<string, any>>({
       const bValue = b[sortField] as number;
       return aValue - bValue;
     });
-  }, [data, sortField]);
+  }, [data, sortField, isChanged, draggedData]);
 
-  useEffect(() => {
-    setSortedData(initialSortedData);
-    setIsChanged(false);
-  }, [data]);
+  const onDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
 
-  const onDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
+      if (!active || !over || active.id === over.id) return;
 
-    if (!active || !over || active.id === over.id) return;
+      const currentData =
+        isChanged && draggedData.length > 0
+          ? draggedData
+          : data
+            ? [...data].sort((a, b) => {
+                const aValue = a[sortField] as number;
+                const bValue = b[sortField] as number;
+                return aValue - bValue;
+              })
+            : [];
 
-    setSortedData((prevData) => {
-      const activeIndex = prevData.findIndex((item) => item.id === active.id);
-      const overIndex = prevData.findIndex((item) => item.id === over.id);
+      const activeIndex = currentData.findIndex(
+        (item) => item.id === active.id
+      );
+      const overIndex = currentData.findIndex((item) => item.id === over.id);
 
-      if (activeIndex === -1 || overIndex === -1) return prevData;
+      if (activeIndex === -1 || overIndex === -1) return;
 
-      const newData = arrayMove(prevData, activeIndex, overIndex);
-      return newData;
-    });
-
-    setIsChanged(true);
-  }, []);
+      const newData = arrayMove(currentData, activeIndex, overIndex);
+      setDraggedData(newData);
+      setIsChanged(true);
+    },
+    [data, sortField, isChanged, draggedData]
+  );
 
   const handleUpdate = useCallback(async () => {
-    if (!isChanged) return;
+    if (!isChanged || draggedData.length === 0) return;
 
-    const dataUpdate = sortedData.map((item, index) => ({
+    const dataUpdate = draggedData.map((item, index) => ({
       id: item.id,
       [sortField]: index
     }));
@@ -74,22 +86,21 @@ const useDragDrop = <T extends Record<string, any>>({
     try {
       await updateOrderingMutation.mutateAsync(dataUpdate);
       setIsChanged(false);
+      setDraggedData([]);
       notify.success(`Cập nhật thứ tự ${objectName} thành công`);
     } catch (error) {
       logger.error('Error while updating ordering:', error);
       notify.error(`Cập nhật thứ tự ${objectName} thất bại`);
 
-      setSortedData(initialSortedData);
       setIsChanged(false);
+      setDraggedData([]);
     }
-  }, [
-    isChanged,
-    sortedData,
-    sortField,
-    objectName,
-    updateOrderingMutation,
-    initialSortedData
-  ]);
+  }, [isChanged, draggedData, sortField, objectName, updateOrderingMutation]);
+
+  const resetChanges = useCallback(() => {
+    setIsChanged(false);
+    setDraggedData([]);
+  }, []);
 
   return {
     isChanged,
@@ -97,6 +108,7 @@ const useDragDrop = <T extends Record<string, any>>({
     sortedData,
     onDragEnd,
     handleUpdate,
+    resetChanges,
     loading: updateOrderingMutation.isPending
   };
 };

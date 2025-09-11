@@ -15,7 +15,7 @@ import { emptyData } from '@/assets';
 import { cn } from '@/lib';
 import { CircleLoading } from '@/components/loading';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -108,7 +108,7 @@ export default function DragDropTable<T extends Record<any, any>>({
   loading,
   onDragEnd
 }: DragDropTableProps<T>) {
-  const [rows, setRows] = useState(dataSource);
+  const [rows, setRows] = useState(() => dataSource || []);
   const tableRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
@@ -119,11 +119,14 @@ export default function DragDropTable<T extends Record<any, any>>({
       }
     })
   );
-  const showGrip = dataSource.length >= 2;
+
+  const showGrip = (dataSource?.length || 0) >= 2;
 
   useEffect(() => {
-    setRows(dataSource);
-  }, [dataSource]);
+    if (JSON.stringify(dataSource) !== JSON.stringify(rows)) {
+      setRows(dataSource || []);
+    }
+  }, [dataSource, rows]);
 
   return (
     <div className='flex flex-col gap-y-5 rounded-br-lg rounded-bl-lg bg-white text-sm'>
@@ -160,7 +163,7 @@ export default function DragDropTable<T extends Record<any, any>>({
               </TableRow>
             </TableHeader>
             <TableBody className='[&_tr:last-child]:border-b'>
-              {loading ? (
+              {loading && !rows.length ? (
                 <TableRow>
                   <TableCell
                     colSpan={columns.length + (showGrip ? 1 : 0)}
