@@ -12,7 +12,7 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/account/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'ACC_L1'
+      permissionCode: 'ACC_L'
     },
     getProfile: {
       baseUrl: `${AppConstants.apiUrl}v1/account/profile`,

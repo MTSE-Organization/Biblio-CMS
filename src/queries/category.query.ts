@@ -24,7 +24,8 @@ export const useCategoryAutoQuery = (params?: CategorySearchParamType) => {
 export const useCategoryQuery = (id: string) => {
   return useQuery({
     queryKey: ['category', id],
-    queryFn: () => categoryApiRequest.getById(id)
+    queryFn: () => categoryApiRequest.getById(id),
+    enabled: !!id && id !== 'create'
   });
 };
 

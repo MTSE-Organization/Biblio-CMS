@@ -1,4 +1,5 @@
 import { PaginationType } from '@/types/table.type';
+import { DragEndEvent } from '@dnd-kit/core';
 
 export type Column<T> = {
   title: string;
@@ -15,4 +16,12 @@ export type BaseTableProps<T> = {
   pagination: PaginationType;
   loading: boolean;
   changePagination: (page: number) => void;
+};
+
+export type DragDropTableProps<T extends Record<any, any>> = {
+  columns: Column<T>[];
+  dataSource: T[];
+  rowKey?: string;
+  loading: boolean;
+  onDragEnd?: (event: DragEndEvent) => void;
 };

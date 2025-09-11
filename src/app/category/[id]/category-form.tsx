@@ -34,15 +34,16 @@ export default function CategoryForm() {
   const [imageUrl, setImageUrl] = useState<string>('');
   const queryClient = useQueryClient();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const isCreate = id === 'create';
-  const categoryQuery = useCategoryQuery(id);
-  const category = categoryQuery.data?.data;
 
-  const uploadImageMutation = useUploadImageMutation();
+  const categoryQuery = useCategoryQuery(id);
   const createCategoryMutation = useCreateCategoryMutation();
   const updateCategoryMutation = useUpdateCategoryMutation();
+  const uploadImageMutation = useUploadImageMutation();
 
-  const navigate = useNavigate();
+  const category = categoryQuery.data?.data;
+
   const defaultValues: CategoryBodyType = {
     name: '',
     description: '',
