@@ -70,6 +70,51 @@ const route = defineRoute({
         apiConfig.product.update.permissionCode
       ]
     }
+  },
+  publisher: {
+    getList: {
+      path: '/publisher',
+      auth: true,
+      permissionCode: [apiConfig.publisher.getList.permissionCode]
+    },
+    savePage: {
+      path: '/publisher/:id',
+      auth: true,
+      permissionCode: [
+        apiConfig.publisher.create.permissionCode,
+        apiConfig.publisher.update.permissionCode
+      ]
+    }
+  },
+  author: {
+    getList: {
+      path: '/author',
+      auth: true,
+      permissionCode: [apiConfig.author.getList.permissionCode]
+    },
+    savePage: {
+      path: '/author/:id',
+      auth: true,
+      permissionCode: [
+        apiConfig.author.create.permissionCode,
+        apiConfig.author.update.permissionCode
+      ]
+    }
+  },
+  translator: {
+    getList: {
+      path: '/translator',
+      auth: true,
+      permissionCode: [apiConfig.translator.getList.permissionCode]
+    },
+    savePage: {
+      path: '/translator/:id',
+      auth: true,
+      permissionCode: [
+        apiConfig.translator.create.permissionCode,
+        apiConfig.translator.update.permissionCode
+      ]
+    }
   }
 });
 
