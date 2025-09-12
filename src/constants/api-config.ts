@@ -130,7 +130,7 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'PER_GR_L'
+      permissionCode: 'PER_GR_L1'
     },
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/create`,
@@ -162,7 +162,7 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/category/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'CAT_L1'
+      permissionCode: 'CAT_L'
     },
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/category/create`,
@@ -338,6 +338,70 @@ const apiConfig = defineApiConfig({
       method: 'DELETE',
       headers: baseHeader,
       permissionCode: 'PUB_D'
+    }
+  },
+  author: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/author/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'AUTH_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/author/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'AUTH_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/author/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'AUTH_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/author/get/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'AUTH_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/author/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'AUTH_D'
+    }
+  },
+  translator: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/translator/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'TRANS_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/translator/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'TRANS_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/translator/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'TRANS_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/translator/get/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'TRANS_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/translator/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'TRANS_D'
     }
   }
 });

@@ -42,7 +42,13 @@ import {
   PaginationType
 } from '@/types';
 import { renderImageUrl } from '@/utils';
-import { BrushCleaning, Info, Search, Trash } from 'lucide-react';
+import {
+  BrushCleaning,
+  CircleUserRound,
+  Info,
+  Search,
+  Trash
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -78,17 +84,20 @@ export default function AccountList() {
     {
       title: '#',
       dataIndex: 'avatarPath',
-      width: 100,
+      width: 80,
       align: 'center',
       render: (value) => (
         <AvatarField
           size={50}
-          className={cn('mx-auto', {
+          className={cn('mx-auto rounded-full', {
             rounded: value
           })}
           previewClassName='rounded'
           disablePreview={!value}
           src={renderImageUrl(value)}
+          icon={
+            <CircleUserRound className='fill-transparent stroke-slate-800' />
+          }
         />
       )
     },

@@ -2,9 +2,10 @@
 
 import { Unauthorized } from '@/components/unauthorized';
 import route from '@/routes';
-import { useAuth, useIsMounted } from '@/hooks';
+import { useAuth } from '@/hooks';
 import { usePathname } from 'next/navigation';
 import { validatePermission } from '@/utils';
+import { useEffect, useState } from 'react';
 
 export default function PermissionGuard({
   children
@@ -16,8 +17,9 @@ export default function PermissionGuard({
     permissionCode: userPermissions,
     isAuthenticated
   } = useAuth();
+  console.log('🚀 ~ PermissionGuard ~ loading:', loading);
   const pathname = usePathname();
-  const isMounted = useIsMounted();
+  const [ready, setReady] = useState(false);
 
   function pathToRegex(path: string): RegExp {
     const regexString = path.replace(/:[^/]+/g, '[^/]+').replace(/\//g, '\\/');
@@ -48,13 +50,19 @@ export default function PermissionGuard({
     return null;
   }
 
+  useEffect(() => {
+    if (!loading) {
+      setReady(true);
+    }
+  }, [loading]);
+
   const matchedRoute = findRouteByPath(route, pathname);
 
   if (matchedRoute?.auth === false) {
     return <>{children}</>;
   }
 
-  if (loading || !isMounted) {
+  if (!ready) {
     return <></>;
   }
 

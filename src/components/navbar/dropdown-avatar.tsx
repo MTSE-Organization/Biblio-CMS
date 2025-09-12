@@ -12,7 +12,7 @@ import route from '@/routes';
 import { useProfileStore } from '@/store';
 import { notify, removeData, renderImageUrl, setData } from '@/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, LogOut, User } from 'lucide-react';
+import { ChevronDown, CircleUserRound, LogOut, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
@@ -61,7 +61,11 @@ export default function DropdownAvatar() {
         <AvatarField
           src={renderImageUrl(profile?.avatarPath)}
           disablePreview
-          size={35}
+          size={40}
+          icon={
+            <CircleUserRound className='size-8 fill-transparent stroke-gray-600 stroke-2' />
+          }
+          className='rounded-full'
         />
         <ChevronDown className='size-5' />
       </div>

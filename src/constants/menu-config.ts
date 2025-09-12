@@ -1,7 +1,7 @@
 import apiConfig from '@/constants/api-config';
 import route from '@/routes';
 import { MenuItem } from '@/types';
-import { BookOpen, Settings, User } from 'lucide-react';
+import { BookOpen, Settings, User, UsersRound } from 'lucide-react';
 
 const menuConfig: MenuItem[] = [
   {
@@ -40,6 +40,36 @@ const menuConfig: MenuItem[] = [
         label: 'Sách',
         path: route.product.getList.path,
         permissionCode: [apiConfig.product.getList.permissionCode]
+      }
+    ]
+  },
+  {
+    key: 'contributor-management',
+    label: 'Quản lý nhà đóng góp',
+    icon: UsersRound,
+    permissionCode: [
+      apiConfig.author.getList.permissionCode,
+      apiConfig.translator.getList.permissionCode,
+      apiConfig.translator.getList.permissionCode
+    ],
+    children: [
+      {
+        key: 'author-list',
+        label: 'Tác giả',
+        path: route.author.getList.path,
+        permissionCode: [apiConfig.author.getList.permissionCode]
+      },
+      {
+        key: 'translator-list',
+        label: 'Dịch giả',
+        path: route.translator.getList.path,
+        permissionCode: [apiConfig.translator.getList.permissionCode]
+      },
+      {
+        key: 'publisher-list',
+        label: 'Nhà xuất bản',
+        path: route.publisher.getList.path,
+        permissionCode: [apiConfig.publisher.getList.permissionCode]
       }
     ]
   },

@@ -28,7 +28,7 @@ export default function AppProvider({
 
   useEffect(
     () => setLoading(profileQuery.isLoading || profileQuery.isFetching),
-    []
+    [profileQuery.isFetching, profileQuery.isLoading, setLoading]
   );
 
   useEffect(() => {
