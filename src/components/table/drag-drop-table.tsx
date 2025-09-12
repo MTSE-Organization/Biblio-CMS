@@ -14,9 +14,8 @@ import { BaseTableProps, DragDropTableProps } from '@/types';
 import Image from 'next/image';
 import { emptyData } from '@/assets';
 import { cn } from '@/lib';
-import { CircleLoading } from '@/components/loading';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -36,14 +35,12 @@ function SortableRow<T extends Record<any, any>>({
   row,
   rowIndex,
   columns,
-  rowKey,
-  showGrip
+  rowKey
 }: {
   row: T;
   rowIndex: number;
   columns: BaseTableProps<T>['columns'];
   rowKey: string;
-  showGrip: boolean;
 }) {
   const {
     attributes,
@@ -70,32 +67,29 @@ function SortableRow<T extends Record<any, any>>({
       className='border-b-[0.2px] hover:bg-zinc-50'
       {...attributes}
     >
-      {showGrip && (
-        <TableCell className='w-10 px-2 py-4 text-center'>
-          <button
-            {...listeners}
-            className='mx-auto flex cursor-move items-center justify-center'
-          >
-            <Grip size={16} />
-          </button>
-        </TableCell>
-      )}
       {columns.map((col, colIndex) => (
         <TableCell
           key={colIndex}
-          className={`px-4 py-4 leading-8 ${
+          className={`h-[65px] px-4 leading-8 ${
             col.align ? `text-${col.align}` : 'text-left'
           }`}
         >
-          {col.render
-            ? col.render(
-                col.dataIndex ? row[col.dataIndex] : undefined,
-                row,
-                rowIndex
-              )
-            : col.dataIndex
-              ? row[col.dataIndex]
-              : null}
+          {col.key === 'sort' ? (
+            <button
+              {...listeners}
+              className='mx-auto flex cursor-move items-center justify-center'
+            >
+              <Grip size={16} />
+            </button>
+          ) : col.render ? (
+            col.render(
+              col.dataIndex ? row[col.dataIndex] : undefined,
+              row,
+              rowIndex
+            )
+          ) : col.dataIndex ? (
+            row[col.dataIndex]
+          ) : null}
         </TableCell>
       ))}
     </TableRow>
@@ -121,8 +115,6 @@ export default function DragDropTable<T extends Record<any, any>>({
     })
   );
 
-  const showGrip = (dataSource?.length || 0) >= 2;
-
   useEffect(() => {
     if (JSON.stringify(dataSource) !== JSON.stringify(rows)) {
       setRows(dataSource || []);
@@ -140,7 +132,6 @@ export default function DragDropTable<T extends Record<any, any>>({
           <Table className='w-full table-fixed overflow-hidden'>
             <TableHeader className='bg-gray-50'>
               <TableRow className='border-b-[0.2px]'>
-                {showGrip && <TableHead className='w-10 px-4 py-4'></TableHead>}
                 {columns.map((col, idx) => {
                   const isLast = idx === columns.length - 1;
                   return (
@@ -165,14 +156,15 @@ export default function DragDropTable<T extends Record<any, any>>({
             </TableHeader>
             <TableBody className='[&_tr:last-child]:border-b'>
               {loading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length + (showGrip ? 1 : 0)}
-                    className='py-8 text-center'
-                  >
-                    <CircleLoading className='size-8 stroke-gray-500' />
-                  </TableCell>
-                </TableRow>
+                Array.from({ length: 10 }).map((_, i) => (
+                  <TableRow key={i}>
+                    {columns.map((_, idx) => (
+                      <TableCell key={idx} className='px-4 py-4'>
+                        <div className='h-10 w-full animate-pulse rounded bg-gray-200'></div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : rows.length > 0 ? (
                 <>
                   <SortableContext
@@ -186,7 +178,6 @@ export default function DragDropTable<T extends Record<any, any>>({
                         rowIndex={idx}
                         columns={columns}
                         rowKey={rowKey}
-                        showGrip={showGrip}
                       />
                     ))}
                   </SortableContext>
@@ -194,10 +185,7 @@ export default function DragDropTable<T extends Record<any, any>>({
               ) : (
                 !dataSource.length && (
                   <TableRow className='hover:bg-transparent'>
-                    <TableCell
-                      colSpan={columns.length + (showGrip ? 1 : 0)}
-                      className='py-8 text-center align-middle'
-                    >
+                    <TableCell className='py-8 text-center align-middle'>
                       <div className='flex flex-col items-center justify-center'>
                         <Image
                           src={emptyData.src}

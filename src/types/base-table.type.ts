@@ -1,12 +1,19 @@
 import { PaginationType } from '@/types/table.type';
 import { DragEndEvent } from '@dnd-kit/core';
+import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 
 export type Column<T> = {
   title: string;
   dataIndex?: keyof T;
-  render?: (value: any, record: T, index: number) => React.ReactNode;
+  render?: (
+    value: any,
+    record: T,
+    index: number,
+    options?: { listeners: SyntheticListenerMap | undefined }
+  ) => React.ReactNode;
   width?: string | number;
   align?: 'left' | 'right' | 'center';
+  key?: string;
 };
 
 export type BaseTableProps<T> = {

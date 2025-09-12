@@ -72,32 +72,41 @@ export default function CategoryList() {
     deleteCategoryMutation.mutateAsync(record.id);
   };
 
-  const { loading, sortedData, isChanged, onDragEnd, handleUpdate } =
-    useDragDrop<CategoryResType>({
-      key: 'category-list',
-      objectName: 'danh mục',
-      data: categoryListQuery.data?.data.content || [],
-      apiConfig: apiConfig.category.updateOrdering,
-      sortField: 'ordering'
-    });
+  const {
+    sortColumn,
+    loading,
+    sortedData,
+    isChanged,
+    onDragEnd,
+    handleUpdate
+  } = useDragDrop<CategoryResType>({
+    key: 'category-list',
+    objectName: 'danh mục',
+    data: categoryListQuery.data?.data.content || [],
+    apiConfig: apiConfig.category.updateOrdering,
+    sortField: 'ordering'
+  });
 
   const columns: Column<CategoryResType>[] = [
+    sortColumn,
     {
       title: '#',
       dataIndex: 'imageUrl',
-      width: 100,
+      width: 80,
       align: 'center',
-      render: (value) => (
-        <AvatarField
-          size={50}
-          className={cn('mx-auto', {
-            rounded: value
-          })}
-          previewClassName='rounded'
-          disablePreview={!value}
-          src={renderImageUrl(value)}
-        />
-      )
+      render: (value) => {
+        return (
+          <AvatarField
+            size={50}
+            className={cn('mx-auto', {
+              rounded: value
+            })}
+            previewClassName='rounded'
+            disablePreview={!value}
+            src={renderImageUrl(value)}
+          />
+        );
+      }
     },
     {
       title: 'Tên',

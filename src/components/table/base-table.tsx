@@ -1,5 +1,4 @@
 'use client';
-
 import {
   Table,
   TableBody,
@@ -15,7 +14,6 @@ import { BaseTableProps } from '@/types';
 import Image from 'next/image';
 import { emptyData } from '@/assets';
 import { cn } from '@/lib';
-import { CircleLoading } from '@/components/loading';
 
 export default function BaseTable<T extends Record<any, any>>({
   columns,
@@ -56,14 +54,15 @@ export default function BaseTable<T extends Record<any, any>>({
           </TableHeader>
           <TableBody className='[&_tr:last-child]:border-b-none'>
             {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='py-8 text-center'
-                >
-                  <CircleLoading className='size-8 stroke-gray-500' />
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 10 }).map((_, i) => (
+                <TableRow key={i}>
+                  {columns.map((_, idx) => (
+                    <TableCell key={idx} className='px-4 py-4'>
+                      <div className='h-10 w-full animate-pulse rounded bg-gray-200'></div>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : dataSource.length > 0 ? (
               <>
                 {dataSource.map((row, rowIndex) => (
@@ -74,7 +73,7 @@ export default function BaseTable<T extends Record<any, any>>({
                     {columns.map((col, colIndex) => (
                       <TableCell
                         key={colIndex}
-                        className={`px-4 py-4 leading-8 ${
+                        className={`h-[65px] px-4 leading-8 ${
                           col.align ? `text-${col.align}` : 'text-left'
                         }`}
                       >

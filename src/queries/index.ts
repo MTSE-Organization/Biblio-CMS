@@ -1,5 +1,6 @@
 export * from './account.query';
 export * from './auth.query';
+export * from './author.query';
 export * from './category.query';
 export * from './file.query';
 export * from './group-permission.query';
@@ -9,3 +10,4 @@ export * from './product-image.query';
 export * from './product-variant.query';
 export * from './product.query';
 export * from './publisher.query';
+export * from './translator.query';

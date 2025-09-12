@@ -8,6 +8,12 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
+const sortColumn = {
+  title: '',
+  key: 'sort',
+  width: 50
+};
+
 const useDragDrop = <T extends Record<string, any>>({
   key,
   objectName,
@@ -110,7 +116,8 @@ const useDragDrop = <T extends Record<string, any>>({
     sortedData,
     onDragEnd,
     handleUpdate,
-    loading: updateOrderingMutation.isPending
+    loading: updateOrderingMutation.isPending,
+    sortColumn
   };
 };
 
