@@ -19,12 +19,17 @@ export default function AppProvider({
   const router = useRouter();
   const accessToken = getData(storageKeys.ACCESS_TOKEN);
   const profileQuery = useProfileQuery();
-  const { setProfile, isAuthenticated } = useProfileStore();
+  const { setProfile, isAuthenticated, setLoading } = useProfileStore();
   useEffect(() => {
     if (!accessToken) {
       router.push(route.login.path);
     }
   }, [router, accessToken]);
+
+  useEffect(
+    () => setLoading(profileQuery.isLoading || profileQuery.isFetching),
+    []
+  );
 
   useEffect(() => {
     if (!accessToken) return;

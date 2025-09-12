@@ -224,7 +224,7 @@ export default function CategoryList() {
           <HasPermission
             requiredPermissions={[apiConfig.category.create.permissionCode]}
           >
-            <Link href={route.category.savePage.path}>
+            <Link href={`${route.category.getList.path}/create`}>
               <Button className='bg-dodger-blue hover:bg-dodger-blue/80 font-normal'>
                 <PlusIcon />
                 Thêm mới

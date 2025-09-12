@@ -130,7 +130,7 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'PER_GR_L1'
+      permissionCode: 'PER_GR_L'
     },
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/permission-group/create`,
@@ -162,7 +162,7 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/category/list`,
       method: 'GET',
       headers: baseHeader,
-      permissionCode: 'CAT_L'
+      permissionCode: 'CAT_L1'
     },
     create: {
       baseUrl: `${AppConstants.apiUrl}v1/category/create`,
