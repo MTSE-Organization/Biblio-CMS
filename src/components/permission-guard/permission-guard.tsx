@@ -11,7 +11,11 @@ export default function PermissionGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const { permissionCode: userPermissions, isAuthenticated } = useAuth();
+  const {
+    loading,
+    permissionCode: userPermissions,
+    isAuthenticated
+  } = useAuth();
   const pathname = usePathname();
   const isMounted = useIsMounted();
 
@@ -50,6 +54,10 @@ export default function PermissionGuard({
     return <>{children}</>;
   }
 
+  if (loading || !isMounted) {
+    return <></>;
+  }
+
   if (!isAuthenticated) {
     return <Unauthorized />;
   }
@@ -60,7 +68,7 @@ export default function PermissionGuard({
     requiredPermissions.length === 0 ||
     validatePermission({ requiredPermissions, userPermissions });
 
-  if (!hasPermission && isMounted) {
+  if (!hasPermission) {
     return <Unauthorized />;
   }
 
