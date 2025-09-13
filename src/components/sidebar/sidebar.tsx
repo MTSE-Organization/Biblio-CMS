@@ -199,7 +199,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
                 exit={{ scale: 0.85, opacity: 0 }}
                 transition={{ duration: 0.1, ease: 'linear' }}
                 style={{ top: pos.y, left: pos.x }}
-                className='fixed w-40 overflow-hidden pl-1'
+                className='fixed z-10 w-40 overflow-hidden pl-1'
               >
                 <div className='bg-sidebar rounded-lg px-1'>
                   <SidebarMenu
@@ -223,7 +223,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
                                 setSidebarState('collapsed');
                               }}
                               className={cn(
-                                'mx-auto w-full justify-start rounded-lg pl-8 text-left font-normal text-white transition-all duration-200 ease-linear hover:text-white active:text-white',
+                                'mx-auto w-full justify-start rounded-lg pl-4 font-normal text-white transition-all duration-200 ease-linear hover:text-white active:text-white',
                                 {
                                   'bg-sidebar-item-active hover:bg-sidebar-item-active active:bg-sidebar-item-active':
                                     sub.path && pathname.includes(sub.path),
