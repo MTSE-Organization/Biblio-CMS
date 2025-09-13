@@ -88,7 +88,7 @@ export default function CategoryList() {
   });
 
   const columns: Column<CategoryResType>[] = [
-    sortColumn,
+    ...(sortedData.length > 1 ? [sortColumn] : []),
     {
       title: '#',
       dataIndex: 'imageUrl',

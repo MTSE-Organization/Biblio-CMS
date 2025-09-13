@@ -17,7 +17,6 @@ export default function PermissionGuard({
     permissionCode: userPermissions,
     isAuthenticated
   } = useAuth();
-  console.log('🚀 ~ PermissionGuard ~ loading:', loading);
   const pathname = usePathname();
   const [ready, setReady] = useState(false);
 
@@ -62,11 +61,7 @@ export default function PermissionGuard({
     return <>{children}</>;
   }
 
-  if (!ready) {
-    return <></>;
-  }
-
-  if (!isAuthenticated) {
+  if (!isAuthenticated && ready) {
     return <Unauthorized />;
   }
 
@@ -76,7 +71,7 @@ export default function PermissionGuard({
     requiredPermissions.length === 0 ||
     validatePermission({ requiredPermissions, userPermissions });
 
-  if (!hasPermission) {
+  if (!hasPermission && ready) {
     return <Unauthorized />;
   }
 

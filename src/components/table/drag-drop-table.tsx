@@ -185,7 +185,10 @@ export default function DragDropTable<T extends Record<any, any>>({
               ) : (
                 !dataSource.length && (
                   <TableRow className='hover:bg-transparent'>
-                    <TableCell className='py-8 text-center align-middle'>
+                    <TableCell
+                      colSpan={columns.length}
+                      className='py-8 text-center align-middle'
+                    >
                       <div className='flex flex-col items-center justify-center'>
                         <Image
                           src={emptyData.src}
