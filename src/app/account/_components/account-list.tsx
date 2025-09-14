@@ -278,7 +278,7 @@ export default function AccountList() {
                       placeholder='Email'
                       className='focus-visible:ring-dodger-blue'
                     />
-                  </Col>{' '}
+                  </Col>
                   <Col span={4}>
                     <InputField
                       control={form.control}

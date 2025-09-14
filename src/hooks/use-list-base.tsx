@@ -2,6 +2,7 @@
 
 import { Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
+import { SearchForm } from '@/components/search-form';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +14,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import { DEFAULT_TABLE_PAGE_SIZE, DEFAULT_TABLE_PAGE_START } from '@/constants';
+import {
+  DEFAULT_TABLE_PAGE_SIZE,
+  DEFAULT_TABLE_PAGE_START,
+  FieldTypes
+} from '@/constants';
 import useNavigate from '@/hooks/use-navigate';
 import useQueryParams from '@/hooks/use-query-params';
 import { logger } from '@/logger';
@@ -23,7 +28,8 @@ import {
   ApiResponseList,
   BaseSearchParamType,
   Column,
-  PaginationType
+  PaginationType,
+  SearchFormProps
 } from '@/types';
 import { http, notify } from '@/utils';
 import { Separator } from '@radix-ui/react-separator';
@@ -32,6 +38,7 @@ import { Edit2, Info, PlusIcon, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
 type HandlerType<T extends { id: string }, S extends BaseSearchParamType> = {
   changePagination: (page: number) => void;
@@ -44,6 +51,15 @@ type HandlerType<T extends { id: string }, S extends BaseSearchParamType> = {
   additionalPathParams: () => Record<string, any>;
   additionalColumns: () => React.ReactNode | any;
   renderAddButton: () => React.ReactNode | any;
+  renderSearchForm: ({
+    searchFields,
+    schema,
+    initialValues
+  }: {
+    searchFields: SearchFormProps<S>['searchFields'];
+    schema: SearchFormProps<S>['schema'];
+    initialValues: SearchFormProps<S>['initialValues'];
+  }) => React.ReactNode | any;
 };
 
 type UseListBaseProps<
@@ -80,7 +96,7 @@ export default function useListBase<
     pageSize: DEFAULT_TABLE_PAGE_SIZE,
     total: 0
   });
-  const { searchParams, setQueryParams } = useQueryParams<S>();
+  const { searchParams, setQueryParams, setQueryParam } = useQueryParams<S>();
   const queryFilter = useMemo(() => {
     return {
       ...searchParams,
@@ -127,11 +143,12 @@ export default function useListBase<
   const changePagination = (page: number) => {
     setPagination({ ...pagination, current: page });
 
-    if (page === DEFAULT_TABLE_PAGE_START + 1) {
-      const { page: _, ...rest } = searchParams;
-      setQueryParams(rest as Partial<S>);
-    } else {
-      setQueryParams({ ...searchParams, page: page });
+    setQueryParams({
+      ...searchParams,
+      page
+    } as Partial<S>);
+    if (page === 1) {
+      setQueryParam('page', null);
     }
   };
 
@@ -290,6 +307,66 @@ export default function useListBase<
     );
   };
 
+  const handleSearchSubmit = (values: any) => {
+    const filtered = Object.entries(values).filter(
+      ([, value]) =>
+        value !== null && value !== undefined && value.toString().trim() !== ''
+    );
+    if (filtered.length === 0) return;
+    setQueryParams({ ...searchParams, ...Object.fromEntries(filtered) });
+  };
+
+  const handleSearchReset = (form: UseFormReturn<any>) => {
+    form.reset();
+    setPagination({
+      current: DEFAULT_TABLE_PAGE_START + 1,
+      pageSize: DEFAULT_TABLE_PAGE_SIZE,
+      total: 0
+    });
+    setQueryParams({});
+  };
+
+  const renderSearchForm = ({
+    searchFields,
+    schema,
+    initialValues
+  }: {
+    searchFields: SearchFormProps<S>['searchFields'];
+    schema: SearchFormProps<S>['schema'];
+    initialValues: SearchFormProps<S>['initialValues'];
+  }) => {
+    const mergedValues = {
+      ...initialValues,
+      ...Object.fromEntries(
+        Object.entries(searchParams).map(([key, value]) => {
+          const field = searchFields.find((f) => f.key === key);
+          if (!field) return [key, value];
+
+          switch (field.type) {
+            case FieldTypes.NUMBER:
+              return [key, value ? Number(value) : undefined];
+            case FieldTypes.SELECT:
+              const option = field.options?.find(
+                (opt: any) => String(opt.value) === String(value)
+              );
+              return [key, option ? option.value : value];
+            default:
+              return [key, value];
+          }
+        })
+      )
+    };
+    return (
+      <SearchForm<S>
+        initialValues={mergedValues}
+        searchFields={searchFields}
+        schema={schema}
+        handleSearchSubmit={handleSearchSubmit}
+        handleSearchReset={handleSearchReset}
+      />
+    );
+  };
+
   const extendableHandlers = (): HandlerType<T, S> => {
     const handlers: HandlerType<T, S> = {
       changePagination,
@@ -297,7 +374,8 @@ export default function useListBase<
       additionalParams,
       additionalPathParams,
       additionalColumns,
-      renderAddButton
+      renderAddButton,
+      renderSearchForm
     };
 
     override?.(handlers);
@@ -311,6 +389,7 @@ export default function useListBase<
     pagination,
     loading:
       listQuery.isLoading || listQuery.isFetching || deleteMutation.isPending,
-    handlers
+    handlers,
+    queryFilter
   };
 }

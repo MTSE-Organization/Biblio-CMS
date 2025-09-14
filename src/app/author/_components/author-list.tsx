@@ -4,17 +4,18 @@ import { AvatarField } from '@/components/form';
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { BaseTable } from '@/components/table';
-import { apiConfig } from '@/constants';
+import { apiConfig, FieldTypes, groupKinds } from '@/constants';
 import useListBase from '@/hooks/use-list-base';
 import { cn } from '@/lib';
 import route from '@/routes';
-import { Column } from '@/types';
+import { authorSchemaParamSchema } from '@/schemaValidations';
+import { Column, SearchFormProps } from '@/types';
 import { AuthorResType, AuthorSearchParamType } from '@/types/author.type';
 import { formatDate, renderImageUrl } from '@/utils';
 import { CircleUserRound } from 'lucide-react';
 
 export default function AuthorList() {
-  const { data, pagination, loading, handlers } = useListBase<
+  const { data, pagination, loading, handlers, queryFilter } = useListBase<
     AuthorResType,
     AuthorSearchParamType
   >({
@@ -71,6 +72,11 @@ export default function AuthorList() {
       columnProps: { fixed: true }
     })
   ];
+
+  const searchFields: SearchFormProps<AuthorSearchParamType>['searchFields'] = [
+    { key: 'name', placeholder: 'Họ tên' }
+  ];
+
   return (
     <PageWrapper
       breadcrumbs={[
@@ -78,7 +84,14 @@ export default function AuthorList() {
         { label: 'Tác giả' }
       ]}
     >
-      <ListPageWrapper>
+      <ListPageWrapper
+        searchForm={handlers.renderSearchForm({
+          searchFields,
+          schema: authorSchemaParamSchema,
+          initialValues: { ...queryFilter, kind: null }
+        })}
+        actionBar={handlers.renderAddButton()}
+      >
         <BaseTable
           columns={columns}
           dataSource={data}

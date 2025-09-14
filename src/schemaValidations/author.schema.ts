@@ -6,11 +6,14 @@ export const authorSchema = z.object({
   bio: z.string().nonempty('Bắt buộc'),
   avatarPath: z.string(),
   gender: z.number(),
-  dateOfBirth: z.string(),
+  dateOfBirth: z.preprocess((val) => {
+    if (val instanceof Date) return val.toISOString().split('T')[0];
+    return val;
+  }, z.string()),
   country: z.string()
 });
 
 export const authorSchemaParamSchema = z.object({
   name: z.string().optional(),
-  kind: z.number().optional()
+  kind: z.number().optional().nullable()
 });

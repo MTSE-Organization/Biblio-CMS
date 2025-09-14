@@ -1,4 +1,7 @@
 import {
+  GENDER_FEMALE,
+  GENDER_MALE,
+  GENDER_OTHER,
   KIND_ADMIN,
   KIND_EMPLOYEE,
   KIND_USER,
@@ -56,7 +59,7 @@ export const statusOptions = [
   }
 ];
 
-export const countries: { label: string; value: string }[] = [
+export const countryOptions: { label: string; value: string }[] = [
   { label: 'Afghanistan', value: 'AF' },
   { label: 'Albania', value: 'AL' },
   { label: 'Algérie', value: 'DZ' },
@@ -252,4 +255,27 @@ export const countries: { label: string; value: string }[] = [
   { label: 'Yemen', value: 'YE' },
   { label: 'Zambia', value: 'ZM' },
   { label: 'Zimbabwe', value: 'ZW' }
+];
+
+export const FieldTypes = {
+  STRING: 'STRING_TYPE',
+  NUMBER: 'NUMBER_TYPE',
+  SELECT: 'SELECT',
+  AUTOCOMPLETE: 'AUTOCOMPLETE',
+  DATE: 'DATE',
+  DATE_RANGE: 'DATE_RANGE'
+} as const;
+
+export type FieldType = keyof typeof FieldTypes;
+
+export type OptionType = {
+  value: string | number;
+  label: string;
+  [key: string]: string | number;
+};
+
+export const genderOptions: OptionType[] = [
+  { value: GENDER_MALE, label: 'Nam' },
+  { value: GENDER_FEMALE, label: 'Nữ' },
+  { value: GENDER_OTHER, label: 'Khác' }
 ];

@@ -110,23 +110,26 @@ export default function BaseTable<T extends Record<any, any>>({
                   )}
                 </>
               ) : (
-                <TableRow className='hover:bg-transparent'>
-                  <TableCell
-                    colSpan={columns.length}
-                    className='py-8 text-center align-middle'
-                    style={{ textAlign: 'center' }}
-                  >
-                    <div className='flex flex-col items-center justify-center'>
-                      <Image
-                        src={emptyData.src}
-                        alt='Không có dữ liệu'
-                        width={150}
-                        height={50}
-                      />
-                      <span>Không có dữ liệu</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                dataSource.length === 0 &&
+                !loading && (
+                  <TableRow className='hover:bg-transparent'>
+                    <TableCell
+                      colSpan={columns.length}
+                      className='py-8 text-center align-middle'
+                      style={{ textAlign: 'center' }}
+                    >
+                      <div className='flex flex-col items-center justify-center'>
+                        <Image
+                          src={emptyData.src}
+                          alt='Không có dữ liệu'
+                          width={150}
+                          height={50}
+                        />
+                        <span>Không có dữ liệu</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
               )}
             </TableBody>
           </Table>
