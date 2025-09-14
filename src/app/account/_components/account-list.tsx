@@ -220,7 +220,7 @@ export default function AccountList() {
     phone: ''
   };
 
-  const initialValues = useMemo(() => Object.fromEntries(searchParams), []);
+  const initialValues = useMemo(() => searchParams, []);
 
   const onSubmit = async (values: AccountSearchParamType) => {
     const filtered = Object.entries(values).filter(
