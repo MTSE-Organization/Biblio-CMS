@@ -76,8 +76,9 @@ export default function DatePickerField({
                   <Button
                     variant='outline'
                     className={cn(
-                      'w-full justify-start text-left font-normal',
-                      'data-[state=open]:border-[dodgerblue] data-[state=open]:ring-1 data-[state=open]:ring-[dodgerblue]',
+                      'w-full justify-start text-left font-normal text-black opacity-100',
+                      'focus:ring-0 focus-visible:border-gray-200 focus-visible:ring-0',
+                      'data-[state=open]:border-dodger-blue data-[state=open]:ring-dodger-blue data-[state=open]:ring-1',
                       !field.value && 'text-muted-foreground'
                     )}
                     disabled={disabled}
@@ -91,7 +92,10 @@ export default function DatePickerField({
                   </Button>
                 </FormControl>
               </PopoverTrigger>
-              <PopoverContent className='w-auto space-y-2 p-4' align='start'>
+              <PopoverContent
+                className='w-full origin-top space-y-2 p-4'
+                align='start'
+              >
                 <Calendar
                   locale={calendarLocale}
                   mode='single'
