@@ -94,8 +94,6 @@ export default function PublisherForm({ queryKey }: { queryKey: string }) {
                 name='description'
                 label='Mô tả'
                 placeholder='Nhập mô tả'
-                rows={5}
-                className='focus-visible:ring-dodger-blue'
                 required
               />
             </Col>
