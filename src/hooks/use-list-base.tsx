@@ -264,12 +264,14 @@ export default function useListBase<
                 <AlertDialogDescription></AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <Button
-                  variant='outline'
-                  className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
-                >
-                  Không
-                </Button>
+                <AlertDialogCancel asChild>
+                  <Button
+                    variant='outline'
+                    className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
+                  >
+                    Không
+                  </Button>
+                </AlertDialogCancel>
                 <Button
                   variant={'primary'}
                   onClick={() => handleDelete(record)}
