@@ -4,9 +4,9 @@ import {
   Col,
   DatePickerField,
   InputField,
+  RichTextField,
   Row,
   SelectField,
-  TextAreaField,
   UploadImageField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
@@ -21,21 +21,23 @@ import { useSaveBase } from '@/hooks';
 import { useUploadImageMutation } from '@/queries';
 import route from '@/routes';
 import { authorSchema } from '@/schemaValidations';
-import { AuthorBodyType } from '@/types/author.type';
+import { AuthorBodyType, AuthorResType } from '@/types/author.type';
 import { renderImageUrl } from '@/utils';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function AuthorForm({ queryKey }: { queryKey: string }) {
   const [avatarPath, setAvatarPath] = useState<string>('');
-  const { data, loading, handleSubmit, renderActions } =
-    useSaveBase<AuthorBodyType>({
-      apiConfig: apiConfig.author,
-      options: {
-        queryKey,
-        objectName: 'tác giả',
-        listPageUrl: route.author.getList.path
-      }
-    });
+  const { data, loading, handleSubmit, renderActions } = useSaveBase<
+    AuthorResType,
+    AuthorBodyType
+  >({
+    apiConfig: apiConfig.author,
+    options: {
+      queryKey,
+      objectName: 'tác giả',
+      listPageUrl: route.author.getList.path
+    }
+  });
   const uploadImageMutation = useUploadImageMutation();
 
   const defaultValues: AuthorBodyType = {
@@ -150,12 +152,11 @@ export default function AuthorForm({ queryKey }: { queryKey: string }) {
           </Row>
           <Row>
             <Col>
-              <TextAreaField
+              <RichTextField
+                label='Tiểu sử'
+                placeholder='Nhập tiểu sử'
                 control={form.control}
                 name='bio'
-                label='Mô tả'
-                placeholder='Nhập mô tả'
-                className='focus-visible:ring-dodger-blue'
                 required
               />
             </Col>
