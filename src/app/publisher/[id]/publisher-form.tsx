@@ -3,8 +3,8 @@
 import {
   Col,
   InputField,
+  RichTextField,
   Row,
-  TextAreaField,
   UploadImageField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
@@ -54,7 +54,6 @@ export default function PublisherForm({ queryKey }: { queryKey: string }) {
       defaultValues={defaultValues}
       schema={publisherSchema}
       initialValues={initialValues}
-      className='relative w-200 rounded-lg bg-white p-4'
     >
       {(form) => (
         <>
@@ -89,11 +88,18 @@ export default function PublisherForm({ queryKey }: { queryKey: string }) {
           </Row>
           <Row>
             <Col>
-              <TextAreaField
+              {/* <TextAreaField
                 control={form.control}
                 name='description'
                 label='Mô tả'
                 placeholder='Nhập mô tả'
+                required
+              /> */}
+              <RichTextField
+                label='Mô tả'
+                placeholder='Nhập mô tả'
+                control={form.control}
+                name='description'
                 required
               />
             </Col>
