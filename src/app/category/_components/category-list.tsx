@@ -1,5 +1,4 @@
 'use client';
-
 import { categoryApiRequest } from '@/api-requests';
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
@@ -16,7 +15,6 @@ import {
 } from '@/constants';
 import { useDragDrop, useListBase } from '@/hooks';
 import { cn } from '@/lib';
-import route from '@/routes';
 import { categorySearchParamSchema } from '@/schemaValidations';
 import {
   CategoryResType,
@@ -40,10 +38,7 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
     apiConfig: apiConfig.category,
     options: {
       queryKey,
-      objectName: 'danh mục',
-      defaultFilters: {
-        status: STATUS_ACTIVE
-      }
+      objectName: 'danh mục'
     },
     override: (handlers) => {
       handlers.additionalColumns = () => ({
@@ -140,12 +135,7 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
     ];
 
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Danh mục' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Danh mục' }]}>
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,

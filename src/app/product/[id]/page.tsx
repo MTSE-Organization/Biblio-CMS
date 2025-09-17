@@ -12,7 +12,6 @@ export default async function ProductDetailPage({
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
         { label: 'Danh mục', href: route.product.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} sản phẩm` }
       ]}

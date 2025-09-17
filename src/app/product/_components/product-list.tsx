@@ -1,11 +1,9 @@
 'use client';
-
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { BaseTable } from '@/components/table';
 import { apiConfig } from '@/constants';
 import { useListBase } from '@/hooks';
-import route from '@/routes';
 import { productSearchParamSchema } from '@/schemaValidations';
 import {
   Column,
@@ -66,12 +64,7 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
       { key: 'publisherId', placeholder: 'Nhà xuất bản' }
     ];
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Sách' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Sách' }]}>
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,

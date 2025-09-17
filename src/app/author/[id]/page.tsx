@@ -12,7 +12,6 @@ export default async function AuthorDetailPage({
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
         { label: 'Tác giả', href: route.author.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} tác giả` }
       ]}

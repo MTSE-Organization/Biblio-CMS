@@ -12,7 +12,6 @@ export default async function PublisherDetailPage({
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
         { label: 'Nhà xuất bản', href: route.publisher.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} nhà xuất bản` }
       ]}

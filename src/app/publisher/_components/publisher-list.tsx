@@ -1,5 +1,4 @@
 'use client';
-
 import { publisherApiRequest } from '@/api-requests';
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
@@ -15,7 +14,6 @@ import {
 } from '@/constants';
 import { useListBase } from '@/hooks';
 import { cn } from '@/lib';
-import route from '@/routes';
 import { publisherSearchParamSchema } from '@/schemaValidations';
 import {
   Column,
@@ -38,10 +36,7 @@ export default function PublisherList({ queryKey }: { queryKey: string }) {
       apiConfig: apiConfig.publisher,
       options: {
         queryKey,
-        objectName: 'nhà xuất bản',
-        defaultFilters: {
-          status: STATUS_ACTIVE
-        }
+        objectName: 'nhà xuất bản'
       },
       override: (handlers) => {
         handlers.additionalColumns = () => ({
@@ -127,12 +122,7 @@ export default function PublisherList({ queryKey }: { queryKey: string }) {
     ];
 
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Nhà xuất bản' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Nhà xuất bản' }]}>
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,

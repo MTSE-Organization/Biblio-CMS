@@ -1,5 +1,4 @@
 'use client';
-
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
@@ -20,7 +19,6 @@ import { apiConfig, groupKinds } from '@/constants';
 import { useListBase } from '@/hooks';
 import { cn } from '@/lib';
 import { logger } from '@/logger';
-import route from '@/routes';
 import { accountSearchParamSchema } from '@/schemaValidations';
 import {
   AccountResType,
@@ -204,12 +202,7 @@ export default function AccountList({ queryKey }: { queryKey: string }) {
     ];
 
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Tài khoản' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Tài khoản' }]}>
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,

@@ -1,10 +1,8 @@
 'use client';
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageWrapper } from '@/components/layout';
 import { GroupList } from '@/app/group-permission/_components';
 import PermissionList from '@/app/group-permission/_components/permission-list';
-import route from '@/routes';
 import GroupPermissionList from '@/app/group-permission/_components/group-permission-list';
 import { useState } from 'react';
 import { getData, setData } from '@/utils';
@@ -34,12 +32,7 @@ export default function GroupPermissionPage() {
   if (!isMounted) return null;
 
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Quyền' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Quyền' }]}>
       <div className='rounded-lg bg-white'>
         <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
           <TabsList className='relative h-auto w-full justify-start gap-0.5 bg-transparent p-4 before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-zinc-100'>
