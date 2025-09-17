@@ -11,10 +11,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
+import { storageKeys } from '@/constants';
 import useNavigate from '@/hooks/use-navigate';
 import { logger } from '@/logger';
 import { ApiConfig, ApiResponse } from '@/types';
-import { http, notify } from '@/utils';
+import { getData, http, notify } from '@/utils';
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeftFromLine, Info, Save } from 'lucide-react';
@@ -141,9 +142,15 @@ export default function useSaveBase<
           <Button
             type='button'
             variant={'ghost'}
-            onClick={() =>
-              listPageUrl ? navigate(listPageUrl) : options?.onCancel?.()
-            }
+            onClick={() => {
+              const prevPath =
+                getData(storageKeys.PREVIOUS_PATH) || listPageUrl;
+              if (prevPath) {
+                navigate(prevPath);
+              } else if (options?.onCancel) {
+                options.onCancel();
+              }
+            }}
             className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'
           >
             <ArrowLeftFromLine />
