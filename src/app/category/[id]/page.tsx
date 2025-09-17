@@ -12,7 +12,6 @@ export default async function CategoryDetailPage({
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
         { label: 'Danh mục', href: route.category.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} danh mục` }
       ]}

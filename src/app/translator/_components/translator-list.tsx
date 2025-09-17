@@ -1,5 +1,4 @@
 'use client';
-
 import { translatorApiRequest } from '@/api-requests';
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
@@ -16,7 +15,6 @@ import {
 } from '@/constants';
 import { useListBase } from '@/hooks';
 import { cn } from '@/lib';
-import route from '@/routes';
 import { translatorSchemaParamSchema } from '@/schemaValidations';
 import {
   Column,
@@ -39,10 +37,7 @@ export default function TranslatorList({ queryKey }: { queryKey: string }) {
       apiConfig: apiConfig.translator,
       options: {
         queryKey,
-        objectName: 'dịch giả',
-        defaultFilters: {
-          status: STATUS_ACTIVE
-        }
+        objectName: 'dịch giả'
       },
       override: (handlers) => {
         handlers.additionalColumns = () => ({
@@ -146,12 +141,7 @@ export default function TranslatorList({ queryKey }: { queryKey: string }) {
     ];
 
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Dịch giả' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Dịch giả' }]}>
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,

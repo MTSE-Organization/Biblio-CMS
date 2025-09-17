@@ -12,7 +12,6 @@ export default async function TranslatorDetailPage({
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
         { label: 'Dịch giả', href: route.translator.getList.path },
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} dịch giả` }
       ]}

@@ -44,17 +44,38 @@ const useQueryParams = <T extends Record<string, any>>() => {
     router.push(queryString ? `${pathname}?${queryString}` : pathname);
   };
 
+  const serializeParams = (obj: Record<string, any>) => {
+    return Object.entries(obj)
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join('&');
+  };
+
+  const deserializeParams = (str: string) => {
+    return str.split('&').reduce(
+      (acc, part) => {
+        const [key, value] = part.split('=');
+        if (key) {
+          acc[decodeURIComponent(key)] = decodeURIComponent(value || '');
+        }
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+  };
+
   const paramsObject = Object.fromEntries(searchParams.entries()) as Partial<T>;
   const queryString = new URLSearchParams(
     paramsObject as Record<string, string>
   ).toString();
 
   return {
+    deserializeParams,
     getQueryParam,
-    setQueryParam,
-    setQueryParams,
+    queryString,
     searchParams: paramsObject,
-    queryString
+    serializeParams,
+    setQueryParam,
+    setQueryParams
   };
 };
 

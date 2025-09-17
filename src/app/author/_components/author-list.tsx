@@ -1,5 +1,4 @@
 'use client';
-
 import { authorApiRequest } from '@/api-requests';
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
@@ -16,7 +15,6 @@ import {
 } from '@/constants';
 import { useListBase } from '@/hooks';
 import { cn } from '@/lib';
-import route from '@/routes';
 import { authorSchemaParamSchema } from '@/schemaValidations';
 import { Column, SearchFormProps } from '@/types';
 import { AuthorResType, AuthorSearchParamType } from '@/types/author.type';
@@ -35,10 +33,7 @@ export default function AuthorList({ queryKey }: { queryKey: string }) {
       apiConfig: apiConfig.author,
       options: {
         queryKey,
-        objectName: 'tác giả',
-        defaultFilters: {
-          status: STATUS_ACTIVE
-        }
+        objectName: 'tác giả'
       },
       override: (handlers) => {
         handlers.additionalColumns = () => ({
@@ -138,12 +133,7 @@ export default function AuthorList({ queryKey }: { queryKey: string }) {
   ];
 
   return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Trang chủ', href: route.home.path },
-        { label: 'Tác giả' }
-      ]}
-    >
+    <PageWrapper breadcrumbs={[{ label: 'Tác giả' }]}>
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,

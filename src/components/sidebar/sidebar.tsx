@@ -24,7 +24,7 @@ import { Button } from '@/components/form';
 import './sidebar.css';
 import { MenuItem } from '@/types';
 import { useSidebarStore } from '@/store';
-import { useNavigate } from '@/hooks';
+import { useNavigate, useQueryParams } from '@/hooks';
 import useValidatePermission from '@/hooks/use-validate-permission';
 import { Skeleton } from '@/components/ui/skeleton';
 import menuConfig from '@/constants/menu-config';
@@ -34,6 +34,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const navigate = useNavigate();
   const pathname = usePathname();
   const { state } = useSidebar();
+  const { serializeParams } = useQueryParams();
 
   const storeOpen = useSidebarStore((s) => s.openMenus[item.key]);
   const { toggleMenu, setMenu, setSidebarState } = useSidebarStore();
@@ -77,9 +78,13 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   }, [item.children, pathname, item.key, setMenu]);
 
   // handle click on sub menu item
-  const handleSubItemClick = (path?: string) => {
+  const handleSubItemClick = (sub: MenuItem) => {
+    let path = sub.path;
+    let query = '';
     if (!path || pathname.includes(path)) return;
+    if (sub.query) query = serializeParams(sub.query);
     setSidebarState('expanded');
+    if (query) path = `${path}?${query}`;
     navigate(path);
   };
 
@@ -158,7 +163,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
                       >
                         <Button
                           variant='ghost'
-                          onClick={() => handleSubItemClick(sub.path)}
+                          onClick={() => handleSubItemClick(sub)}
                           className={cn(
                             'mx-auto w-[calc(100%_-_8px)] justify-start rounded-lg pl-12 font-normal text-white transition-all duration-200 ease-linear hover:text-white active:text-white',
                             {
@@ -218,7 +223,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
                             <Button
                               variant='ghost'
                               onClick={() => {
-                                handleSubItemClick(sub.path);
+                                handleSubItemClick(sub);
                                 setHovered(false);
                                 setFlyoutHovered(false);
                                 setSidebarState('collapsed');

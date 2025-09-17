@@ -1,4 +1,5 @@
 import apiConfig from '@/constants/api-config';
+import { STATUS_ACTIVE } from '@/constants/constant';
 import route from '@/routes';
 import { MenuItem } from '@/types';
 import { BookOpen, Settings, User, UsersRound } from 'lucide-react';
@@ -33,7 +34,8 @@ const menuConfig: MenuItem[] = [
         key: 'category-list',
         label: 'Danh mục sách',
         path: route.category.getList.path,
-        permissionCode: [apiConfig.category.getList.permissionCode]
+        permissionCode: [apiConfig.category.getList.permissionCode],
+        query: { status: STATUS_ACTIVE }
       },
       {
         key: 'product-list',
@@ -57,19 +59,22 @@ const menuConfig: MenuItem[] = [
         key: 'author-list',
         label: 'Tác giả',
         path: route.author.getList.path,
-        permissionCode: [apiConfig.author.getList.permissionCode]
+        permissionCode: [apiConfig.author.getList.permissionCode],
+        query: { status: STATUS_ACTIVE }
       },
       {
         key: 'translator-list',
         label: 'Dịch giả',
         path: route.translator.getList.path,
-        permissionCode: [apiConfig.translator.getList.permissionCode]
+        permissionCode: [apiConfig.translator.getList.permissionCode],
+        query: { status: STATUS_ACTIVE }
       },
       {
         key: 'publisher-list',
         label: 'Nhà xuất bản',
         path: route.publisher.getList.path,
-        permissionCode: [apiConfig.publisher.getList.permissionCode]
+        permissionCode: [apiConfig.publisher.getList.permissionCode],
+        query: { status: STATUS_ACTIVE }
       }
     ]
   },
