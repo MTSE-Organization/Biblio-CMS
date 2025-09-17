@@ -1,11 +1,11 @@
 'use client';
 
 import {
-  AutoCompleteField,
   Col,
   InputField,
   RichTextField,
   Row,
+  SelectField,
   UploadImageField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
@@ -104,7 +104,7 @@ export default function CategoryForm({ queryKey }: { queryKey: string }) {
               />
             </Col>
             <Col span={12}>
-              <AutoCompleteField
+              <SelectField
                 getLabel={(option) => option.label}
                 getValue={(option) => option.value}
                 options={statusOptions}

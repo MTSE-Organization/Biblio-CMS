@@ -1,20 +1,13 @@
 'use client';
-
 import route from '@/routes';
 import { useAuth, useFirstActiveRoute, useNavigate } from '@/hooks';
 import { usePathname } from 'next/navigation';
-import {
-  getAccessTokenFromLocalStorage,
-  getData,
-  removeData,
-  validatePermission
-} from '@/utils';
+import { getAccessTokenFromLocalStorage, validatePermission } from '@/utils';
 import { useEffect, useState } from 'react';
 import { Unauthorized } from '@/components/unauthorized';
 import { motion } from 'framer-motion';
 import { Loader } from 'lucide-react';
 import { useProfileStore } from '@/store';
-import { storageKeys } from '@/constants';
 
 export default function PermissionGuard({
   children
@@ -66,10 +59,6 @@ export default function PermissionGuard({
       setReady(true);
     }
   }, [loading]);
-
-  if (pathname !== route.profile.savePage.path) {
-    removeData(storageKeys.PREVIOUS_PATH);
-  }
 
   // navigate to login if not login
   useEffect(() => {

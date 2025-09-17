@@ -58,7 +58,7 @@ export default function GroupList({ queryKey }: { queryKey: string }) {
       key: 'kind',
       type: FieldTypes.SELECT,
       options: groupKinds,
-      placeholder: 'Trạng thái',
+      placeholder: 'Nhóm',
       submitOnChanged: true
     }
   ];

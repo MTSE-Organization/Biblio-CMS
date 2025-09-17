@@ -2,11 +2,11 @@
 
 import { emptyData } from '@/assets';
 import {
-  AutoCompleteField,
   Button,
   Col,
   InputField,
   Row,
+  SelectField,
   TextAreaField
 } from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
@@ -35,7 +35,7 @@ import { GroupBodyType, PermissionResType } from '@/types';
 import { applyFormErrors, notify } from '@/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { omit } from 'lodash';
-import { Save } from 'lucide-react';
+import { ArrowLeftFromLine, Save } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
@@ -152,7 +152,7 @@ export default function GroupForm() {
             </Col>
             {isCreate && (
               <Col span={12}>
-                <AutoCompleteField
+                <SelectField
                   getLabel={(option) => option.label}
                   getValue={(option) => option.value}
                   options={groupKinds}
@@ -314,6 +314,7 @@ export default function GroupForm() {
                 variant={'ghost'}
                 className='border border-red-500 text-red-500 hover:border-red-500/50 hover:bg-transparent! hover:text-red-500/50'
               >
+                <ArrowLeftFromLine />
                 Hủy
               </Button>
             </Col>

@@ -29,6 +29,8 @@ import useValidatePermission from '@/hooks/use-validate-permission';
 import { Skeleton } from '@/components/ui/skeleton';
 import menuConfig from '@/constants/menu-config';
 import { createPortal } from 'react-dom';
+import { setData } from '@/utils';
+import { storageKeys } from '@/constants';
 
 function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
 
   const [hovered, setHovered] = useState(false);
   const [flyoutHovered, setFlyoutHovered] = useState(false);
-  const showFlyout = state === 'collapsed' && (hovered || flyoutHovered);
+  const showFlyout = hovered || flyoutHovered;
   const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Initial open when reload
@@ -86,6 +88,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
     setSidebarState('expanded');
     if (query) path = `${path}?${query}`;
     navigate(path);
+    setData(storageKeys.PREVIOUS_PATH, path);
   };
 
   // handle show float sub menu when sidebar state is collapsed
@@ -142,7 +145,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
           />
         </SidebarMenuButton>
         <AnimatePresence initial={false}>
-          {open && !showFlyout && item.children && (
+          {open && state === 'expanded' && !showFlyout && item.children && (
             <motion.div
               key='content'
               initial={{ height: 0 }}
@@ -190,7 +193,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
       </SidebarMenuItem>
       {createPortal(
         <AnimatePresence>
-          {showFlyout && item.children && (
+          {showFlyout && state === 'collapsed' && item.children && (
             <>
               <motion.div
                 key='fly-layout'

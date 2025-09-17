@@ -18,7 +18,8 @@ import {
   DEFAULT_TABLE_PAGE_SIZE,
   DEFAULT_TABLE_PAGE_START,
   FieldTypes,
-  statusOptions as defaultStatusOptions
+  statusOptions as defaultStatusOptions,
+  storageKeys
 } from '@/constants';
 import useNavigate from '@/hooks/use-navigate';
 import useQueryParams from '@/hooks/use-query-params';
@@ -33,7 +34,7 @@ import {
   PaginationType,
   SearchFormProps
 } from '@/types';
-import { http, notify } from '@/utils';
+import { http, notify, setData } from '@/utils';
 import { Separator } from '@radix-ui/react-separator';
 import {
   keepPreviousData,
@@ -122,7 +123,8 @@ export default function useListBase<
     pageSize: DEFAULT_TABLE_PAGE_SIZE,
     total: 0
   });
-  const { searchParams, setQueryParams, setQueryParam } = useQueryParams<S>();
+  const { searchParams, setQueryParams, setQueryParam, serializeParams } =
+    useQueryParams<S>();
   const mergedSearchParams = useMemo(() => {
     return { ...defaultFilters, ...searchParams };
   }, [searchParams, defaultFilters]);
@@ -368,7 +370,15 @@ export default function useListBase<
     return (
       <HasPermission requiredPermissions={[apiConfig.create.permissionCode]}>
         <Link href={`${pathname}/create`}>
-          <Button variant={'primary'}>
+          <Button
+            onClick={() => {
+              let path = pathname;
+              if (Object.keys(searchParams).length > 0)
+                path = `${path}?${serializeParams(searchParams)}`;
+              setData(storageKeys.PREVIOUS_PATH, path);
+            }}
+            variant={'primary'}
+          >
             <PlusIcon />
             Thêm mới
           </Button>
