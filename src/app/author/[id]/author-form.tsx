@@ -18,7 +18,7 @@ import {
   genderOptions
 } from '@/constants';
 import { useSaveBase } from '@/hooks';
-import { useUploadImageMutation } from '@/queries';
+import { useUploadAvatar } from '@/queries';
 import route from '@/routes';
 import { authorSchema } from '@/schemaValidations';
 import { AuthorBodyType, AuthorResType } from '@/types';
@@ -38,7 +38,7 @@ export default function AuthorForm({ queryKey }: { queryKey: string }) {
       listPageUrl: route.author.getList.path
     }
   });
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadAvatar();
 
   const defaultValues: AuthorBodyType = {
     avatarPath: '',

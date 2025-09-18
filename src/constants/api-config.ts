@@ -311,7 +311,7 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/product-image/set-default`,
       method: 'PUT',
       headers: baseHeader,
-      permissionCode: 'PRD_IMG_D'
+      permissionCode: 'PRD_IMG_U'
     }
   },
   publisher: {

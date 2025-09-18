@@ -12,7 +12,7 @@ import { CircleLoading } from '@/components/loading';
 import { storageKeys } from '@/constants';
 import { useNavigate } from '@/hooks';
 import { logger } from '@/logger';
-import { useUpdateProfileMutation, useUploadImageMutation } from '@/queries';
+import { useUpdateProfileMutation, useUploadAvatar } from '@/queries';
 import route from '@/routes';
 import { updateProfileSchema } from '@/schemaValidations';
 import { useProfileStore } from '@/store';
@@ -25,7 +25,7 @@ import { UseFormReturn } from 'react-hook-form';
 export default function ProfileForm() {
   const navigate = useNavigate();
   const { profile } = useProfileStore();
-  const fileMutation = useUploadImageMutation();
+  const fileMutation = useUploadAvatar();
   const profileMutation = useUpdateProfileMutation();
   const [avatarPath, setAvatarPath] = useState('');
 

@@ -28,6 +28,7 @@ import {
 } from '@/types';
 import { http } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 export default function ProductForm({ queryKey }: { queryKey: string }) {
   const categoryRes = useQuery({
@@ -114,32 +115,50 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
     publisherId: ''
   };
 
-  const initialValues: ProductBodyType = {
-    name: data?.name ?? '',
-    ageRating: data?.ageRating ?? 0,
-    categoryId: data?.category?.id ?? '',
-    contributorsIds: data?.contributors?.map((contr) => contr.id) ?? [],
-    description: data?.description ?? '',
-    discount: data?.discount ?? 0,
-    isFeatured: data?.isFeatured ?? false,
-    language: data?.language ?? '',
-    metaData: parseMetadataToObject(data?.metaData ?? '') ?? {
-      height: 0,
-      length: 0,
-      weight: 0,
-      width: 0,
-      numPage: 0
-    },
-    price: data?.price ?? 0,
-    releaseDate: data?.releaseDate ?? new Date().toLocaleDateString(),
-    publisherId: data?.publisher.id ?? ''
-  };
+  const initialValues: ProductBodyType = useMemo(
+    () => ({
+      name: data?.name ?? '',
+      ageRating: data?.ageRating ?? 0,
+      categoryId: data?.category?.id ?? '',
+      contributorsIds: data?.contributors?.map((contr) => contr.id) ?? [],
+      description: data?.description ?? '',
+      discount: data?.discount ?? 0,
+      isFeatured: data?.isFeatured ?? false,
+      language: data?.language ?? '',
+      metaData: parseMetadataToObject(data?.metaData ?? '') ?? {
+        height: 0,
+        length: 0,
+        weight: 0,
+        width: 0,
+        numPage: 0
+      },
+      price: data?.price ?? 0,
+      releaseDate: data?.releaseDate ?? new Date().toLocaleDateString(),
+      publisherId: data?.publisher.id ?? ''
+    }),
+    [
+      data?.ageRating,
+      data?.category?.id,
+      data?.contributors,
+      data?.description,
+      data?.discount,
+      data?.isFeatured,
+      data?.language,
+      data?.metaData,
+      data?.name,
+      data?.price,
+      data?.publisher.id,
+      data?.releaseDate
+    ]
+  );
+
   const onSubmit = async (values: ProductBodyType) => {
     await handleSubmit({
       ...values,
       metaData: JSON.stringify(values.metaData)
     });
   };
+
   return (
     <PageWrapper
       breadcrumbs={[

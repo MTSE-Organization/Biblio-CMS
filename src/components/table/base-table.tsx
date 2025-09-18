@@ -53,7 +53,7 @@ export default function BaseTable<T extends Record<any, any>>({
             <TableHeader className='bg-gray-50'>
               <TableRow className='border-b-[0.2px]'>
                 {columns.map((col, idx) => {
-                  const isLast = idx === columns.length - 1;
+                  const isLast = idx === columns.length - (col.fixed ? 2 : 1);
                   return (
                     <TableHead
                       key={idx}
@@ -63,8 +63,9 @@ export default function BaseTable<T extends Record<any, any>>({
                         }`,
                         {
                           'before:absolute before:top-1/2 before:right-0 before:h-1/2 before:w-0.5 before:-translate-y-1/2 before:bg-zinc-100':
-                            !isLast,
-                          'sticky right-0 z-30 bg-white': col.fixed
+                            !isLast && !col.fixed,
+                          'sticky right-0 z-1 z-10 bg-white before:absolute before:top-0 before:left-0 before:h-full before:shadow-[0px_0px_5px_1px] before:shadow-gray-300 before:content-[""]':
+                            col.fixed
                         }
                       )}
                       style={{ width: col.width }}
@@ -92,7 +93,8 @@ export default function BaseTable<T extends Record<any, any>>({
                                 col.align ? `text-${col.align}` : 'text-left'
                               }`,
                               {
-                                'sticky right-0 z-30 bg-white': col.fixed
+                                'sticky right-0 z-1 z-10 bg-white before:absolute before:top-0 before:left-0 before:h-full before:shadow-[0px_0px_5px_1px] before:shadow-gray-300 before:content-[""]':
+                                  col.fixed
                               }
                             )}
                           >

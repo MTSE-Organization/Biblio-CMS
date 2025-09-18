@@ -144,8 +144,8 @@ export default function useSaveBase<
     form: UseFormReturn<T>,
     options?: { onCancel?: () => void }
   ) => (
-    <Row className='my-0 justify-end'>
-      <Col span={4}>
+    <Row className='my-0 justify-end gap-2'>
+      <Col span={4} className='w-30'>
         {!form.formState.isDirty ? (
           <Button
             type='button'
@@ -202,7 +202,7 @@ export default function useSaveBase<
           </AlertDialog>
         )}
       </Col>
-      <Col span={4}>
+      <Col span={4} className='w-30'>
         <Button
           disabled={!form.formState.isDirty || loading}
           type='submit'

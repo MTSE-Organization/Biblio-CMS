@@ -94,6 +94,7 @@ type UseListBaseProps<
     objectName: string;
     pageSize?: number;
     defaultFilters?: Partial<S>;
+    enabled?: boolean;
   };
   override?: (handlers: HandlerType<T, S>) => HandlerType<T, S> | void;
 };
@@ -107,7 +108,8 @@ export default function useListBase<
     queryKey = '',
     objectName = '',
     pageSize = DEFAULT_TABLE_PAGE_SIZE,
-    defaultFilters = {} as Partial<S>
+    defaultFilters = {} as Partial<S>,
+    enabled = true
   },
   override
 }: UseListBaseProps<T, S>) {
@@ -158,7 +160,8 @@ export default function useListBase<
         params: { ...queryFilter, ...handlers.additionalParams() },
         pathParams: { ...handlers.additionalPathParams() }
       }),
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    enabled
   });
   const deleteMutation = useMutation({
     mutationKey: [`delete-${queryKey}`],

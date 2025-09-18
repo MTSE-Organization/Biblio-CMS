@@ -13,7 +13,7 @@ import { PageWrapper } from '@/components/layout';
 import { CircleLoading } from '@/components/loading';
 import { apiConfig, STATUS_ACTIVE, statusOptions } from '@/constants';
 import { useQueryParams, useSaveBase } from '@/hooks';
-import { useUploadImageMutation } from '@/queries';
+import { useUploadAvatar } from '@/queries';
 import route from '@/routes';
 import { categorySchema } from '@/schemaValidations';
 import { CategoryBodyType, CategoryResType } from '@/types';
@@ -36,7 +36,7 @@ export default function CategoryForm({ queryKey }: { queryKey: string }) {
       listPageUrl: route.category.getList.path
     }
   });
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadAvatar();
 
   const defaultValues: CategoryBodyType = {
     name: '',

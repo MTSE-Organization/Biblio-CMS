@@ -1,4 +1,7 @@
 'use client';
+import ProductImageModal from '@/app/product/_components/product-image-modal';
+import { Button, ToolTip } from '@/components/form';
+import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import { BaseTable } from '@/components/table';
@@ -8,7 +11,7 @@ import {
   FieldTypes,
   languageOptions
 } from '@/constants';
-import { useListBase } from '@/hooks';
+import { useDisclosure, useListBase } from '@/hooks';
 import { productSearchParamSchema } from '@/schemaValidations';
 import {
   ApiResponseList,
@@ -22,6 +25,8 @@ import {
 } from '@/types';
 import { formatDate, formatMoney, http } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
+import { FileImage } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ProductList({ queryKey }: { queryKey: string }) {
   const categoryRes = useQuery({
@@ -38,6 +43,8 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
         apiConfig.publisher.autoComplete
       )
   });
+  const { opened, open, close } = useDisclosure(false);
+  const [selectedRow, setSelectedRow] = useState<ProductResType | null>(null);
   const { data, loading, handlers, pagination } = useListBase<
     ProductResType,
     ProductSearchParamType
@@ -46,8 +53,37 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
     options: {
       queryKey,
       objectName: 'sách'
+    },
+    override: (handlers) => {
+      handlers.additionalColumns = () => ({
+        viewProductImage: (
+          record: ProductResType,
+          buttonProps: Record<string, any>
+        ) => {
+          return (
+            <HasPermission
+              requiredPermissions={[
+                apiConfig.productImage.getList.permissionCode
+              ]}
+            >
+              <ToolTip title={'Xem hình ảnh sách'}>
+                <span>
+                  <Button
+                    onClick={() => handleOpen(record)}
+                    className='border-none bg-transparent shadow-none hover:bg-transparent'
+                    {...buttonProps}
+                  >
+                    <FileImage className='stroke-dodger-blue size-3.5' />
+                  </Button>
+                </span>
+              </ToolTip>
+            </HasPermission>
+          );
+        }
+      });
     }
   });
+
   const columns: Column<ProductResType>[] = [
     {
       title: '#',
@@ -124,10 +160,12 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
     handlers.renderActionColumn({
       actions: {
         edit: true,
+        viewProductImage: true,
         delete: true
       },
       columnProps: {
-        fixed: true
+        fixed: true,
+        width: 150
       }
     })
   ];
@@ -166,6 +204,16 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
         }))
       }
     ];
+
+  const handleOpen = (record: ProductResType) => {
+    open();
+    setSelectedRow(record);
+  };
+
+  const handleClose = () => {
+    close();
+  };
+
   return (
     <PageWrapper breadcrumbs={[{ label: 'Sách' }]}>
       <ListPageWrapper
@@ -183,6 +231,11 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
           changePagination={handlers.changePagination}
         />
       </ListPageWrapper>
+      <ProductImageModal
+        data={selectedRow}
+        open={opened}
+        onClose={handleClose}
+      />
     </PageWrapper>
   );
 }
