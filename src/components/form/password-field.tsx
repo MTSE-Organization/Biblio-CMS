@@ -106,7 +106,9 @@ export default function PasswordField<T extends FieldValues>({
                       'cursor-not-allowed opacity-50': disabled,
                       'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500':
                         fieldState.error
-                    }
+                    },
+                    !fieldState.error &&
+                      'focus-visible:ring-dodger-blue focus-visible:border-transparent'
                   )}
                 />
                 <Button

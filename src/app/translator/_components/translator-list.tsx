@@ -32,47 +32,52 @@ export default function TranslatorList({ queryKey }: { queryKey: string }) {
     mutationFn: (id: string) => translatorApiRequest.recover(id)
   });
 
-  const { data, pagination, loading, handlers, queryFilter, listQuery } =
-    useListBase<TranslatorResType, TranslatorSearchParamType>({
-      apiConfig: apiConfig.translator,
-      options: {
-        queryKey,
-        objectName: 'dịch giả'
-      },
-      override: (handlers) => {
-        handlers.additionalColumns = () => ({
-          recover: (
-            record: TranslatorResType,
-            buttonProps?: Record<string, any>
-          ) => {
-            return (
-              <HasPermission
-                requiredPermissions={[
-                  apiConfig.translator.recover.permissionCode
-                ]}
-              >
-                <ToolTip title={`Khôi phục`}>
-                  <span>
-                    <Button
-                      disabled={record.status === STATUS_ACTIVE}
-                      onClick={async () => {
-                        await recoverMutation.mutateAsync(record.id);
-                        notify.success('Khôi phục thành công');
-                        listQuery.refetch();
-                      }}
-                      className='border-none bg-transparent shadow-none hover:bg-transparent'
-                      {...buttonProps}
-                    >
-                      <RotateCcw className='stroke-dodger-blue size-3.5' />
-                    </Button>
-                  </span>
-                </ToolTip>
-              </HasPermission>
-            );
-          }
-        });
+  const { data, pagination, loading, handlers, listQuery } = useListBase<
+    TranslatorResType,
+    TranslatorSearchParamType
+  >({
+    apiConfig: apiConfig.translator,
+    options: {
+      queryKey,
+      objectName: 'dịch giả',
+      defaultFilters: {
+        status: STATUS_ACTIVE
       }
-    });
+    },
+    override: (handlers) => {
+      handlers.additionalColumns = () => ({
+        recover: (
+          record: TranslatorResType,
+          buttonProps?: Record<string, any>
+        ) => {
+          return (
+            <HasPermission
+              requiredPermissions={[
+                apiConfig.translator.recover.permissionCode
+              ]}
+            >
+              <ToolTip title={`Khôi phục`}>
+                <span>
+                  <Button
+                    disabled={record.status === STATUS_ACTIVE}
+                    onClick={async () => {
+                      await recoverMutation.mutateAsync(record.id);
+                      notify.success('Khôi phục thành công');
+                      listQuery.refetch();
+                    }}
+                    className='border-none bg-transparent shadow-none hover:bg-transparent'
+                    {...buttonProps}
+                  >
+                    <RotateCcw className='stroke-dodger-blue size-3.5' />
+                  </Button>
+                </span>
+              </ToolTip>
+            </HasPermission>
+          );
+        }
+      });
+    }
+  });
 
   const columns: Column<TranslatorResType>[] = [
     {
@@ -145,8 +150,7 @@ export default function TranslatorList({ queryKey }: { queryKey: string }) {
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,
-          schema: translatorSchemaParamSchema,
-          initialValues: { ...queryFilter }
+          schema: translatorSchemaParamSchema
         })}
         actionBar={handlers.renderAddButton()}
       >

@@ -14,7 +14,7 @@ import {
 } from '@/types';
 
 export default function GroupList({ queryKey }: { queryKey: string }) {
-  const { data, loading, queryFilter, handlers, pagination } = useListBase<
+  const { data, loading, handlers, pagination } = useListBase<
     GroupResType,
     GroupSearchParamType
   >({
@@ -67,8 +67,7 @@ export default function GroupList({ queryKey }: { queryKey: string }) {
     <ListPageWrapper
       searchForm={handlers.renderSearchForm({
         searchFields,
-        schema: groupSearchParamSchema,
-        initialValues: { ...queryFilter }
+        schema: groupSearchParamSchema
       })}
       actionBar={handlers.renderAddButton()}
     >

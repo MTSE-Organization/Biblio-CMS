@@ -147,7 +147,6 @@ export default function GroupForm() {
                 label='Tên nhóm'
                 placeholder='Nhập tên nhóm'
                 required
-                className='focus-visible:ring-dodger-blue'
               />
             </Col>
             {isCreate && (
@@ -172,7 +171,6 @@ export default function GroupForm() {
                 name='description'
                 label='Mô tả'
                 placeholder='Nhập mô tả'
-                className='focus-visible:ring-dodger-blue'
                 required
               />
             </Col>

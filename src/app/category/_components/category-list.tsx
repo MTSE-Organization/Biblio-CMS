@@ -31,14 +31,17 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
     mutationKey: [`${queryKey}-recover`],
     mutationFn: (id: string) => categoryApiRequest.recover(id)
   });
-  const { data, loading, queryFilter, handlers, listQuery } = useListBase<
+  const { data, loading, handlers, listQuery } = useListBase<
     CategoryResType,
     CategorySearchParamType
   >({
     apiConfig: apiConfig.category,
     options: {
       queryKey,
-      objectName: 'danh mục'
+      objectName: 'danh mục',
+      defaultFilters: {
+        status: STATUS_ACTIVE
+      }
     },
     override: (handlers) => {
       handlers.additionalColumns = () => ({
@@ -139,8 +142,7 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
       <ListPageWrapper
         searchForm={handlers.renderSearchForm({
           searchFields,
-          schema: categorySearchParamSchema,
-          initialValues: { ...queryFilter }
+          schema: categorySearchParamSchema
         })}
         actionBar={handlers.renderAddButton()}
       >

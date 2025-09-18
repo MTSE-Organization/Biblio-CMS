@@ -18,8 +18,7 @@ import {
   DEFAULT_TABLE_PAGE_SIZE,
   DEFAULT_TABLE_PAGE_START,
   FieldTypes,
-  statusOptions as defaultStatusOptions,
-  storageKeys
+  statusOptions as defaultStatusOptions
 } from '@/constants';
 import useNavigate from '@/hooks/use-navigate';
 import useQueryParams from '@/hooks/use-query-params';
@@ -34,7 +33,7 @@ import {
   PaginationType,
   SearchFormProps
 } from '@/types';
-import { http, notify, setData } from '@/utils';
+import { http, notify } from '@/utils';
 import { Separator } from '@radix-ui/react-separator';
 import {
   keepPreviousData,
@@ -60,12 +59,10 @@ type HandlerType<T extends { id: string }, S extends BaseSearchParamType> = {
   renderAddButton: () => React.ReactNode | any;
   renderSearchForm: ({
     searchFields,
-    schema,
-    initialValues
+    schema
   }: {
     searchFields: SearchFormProps<S>['searchFields'];
     schema: SearchFormProps<S>['schema'];
-    initialValues: SearchFormProps<S>['initialValues'];
   }) => React.ReactNode | any;
   renderStatusColumn: ({
     statusOptions,
@@ -97,6 +94,7 @@ type UseListBaseProps<
     objectName: string;
     pageSize?: number;
     defaultFilters?: Partial<S>;
+    enabled?: boolean;
   };
   override?: (handlers: HandlerType<T, S>) => HandlerType<T, S> | void;
 };
@@ -110,7 +108,8 @@ export default function useListBase<
     queryKey = '',
     objectName = '',
     pageSize = DEFAULT_TABLE_PAGE_SIZE,
-    defaultFilters = {} as Partial<S>
+    defaultFilters = {} as Partial<S>,
+    enabled = true
   },
   override
 }: UseListBaseProps<T, S>) {
@@ -161,7 +160,8 @@ export default function useListBase<
         params: { ...queryFilter, ...handlers.additionalParams() },
         pathParams: { ...handlers.additionalPathParams() }
       }),
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    enabled
   });
   const deleteMutation = useMutation({
     mutationKey: [`delete-${queryKey}`],
@@ -195,7 +195,9 @@ export default function useListBase<
   };
 
   const handleEditClick = (id: string) => {
-    navigate(`${pathname}/${id}`);
+    const query = serializeParams(searchParams);
+    const path = query ? `${pathname}/${id}?${query}` : `${pathname}/${id}`;
+    navigate(path);
   };
 
   const handleDeleteClick = async (id: string) => {
@@ -367,18 +369,13 @@ export default function useListBase<
   const renderAddButton = () => {
     if (!apiConfig.create) throw new Error('apiConfig.create is not defined !');
     if (!apiConfig.create.permissionCode) return null;
+    let path = `${pathname}/create`;
+    if (Object.keys(searchParams).length > 0)
+      path = `${path}?${serializeParams(searchParams)}`;
     return (
       <HasPermission requiredPermissions={[apiConfig.create.permissionCode]}>
-        <Link href={`${pathname}/create`}>
-          <Button
-            onClick={() => {
-              let path = pathname;
-              if (Object.keys(searchParams).length > 0)
-                path = `${path}?${serializeParams(searchParams)}`;
-              setData(storageKeys.PREVIOUS_PATH, path);
-            }}
-            variant={'primary'}
-          >
+        <Link href={path}>
+          <Button variant={'primary'}>
             <PlusIcon />
             Thêm mới
           </Button>
@@ -389,15 +386,13 @@ export default function useListBase<
 
   const renderSearchForm = ({
     searchFields,
-    schema,
-    initialValues
+    schema
   }: {
     searchFields: SearchFormProps<S>['searchFields'];
     schema: SearchFormProps<S>['schema'];
-    initialValues: SearchFormProps<S>['initialValues'];
   }) => {
     const mergedValues = {
-      ...initialValues,
+      ...queryFilter,
       ...Object.fromEntries(
         Object.entries(searchParams).map(([key, value]) => {
           const field = searchFields.find((f) => f.key === key);
@@ -419,17 +414,11 @@ export default function useListBase<
     };
 
     const handleSearchSubmit = (values: any) => {
-      const filtered = Object.entries(values).filter(
-        ([, value]) =>
-          value !== null &&
-          value !== undefined &&
-          value.toString().trim() !== ''
-      );
-      if (filtered.length === 0) return;
-      setQueryParams({ ...searchParams, ...Object.fromEntries(filtered) });
+      setQueryParams({ ...values } as Partial<S>);
     };
 
     const handleSearchReset = () => {
+      if (Object.keys(searchParams).length === 0) return;
       setPagination({
         current: DEFAULT_TABLE_PAGE_START + 1,
         pageSize: DEFAULT_TABLE_PAGE_SIZE,

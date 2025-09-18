@@ -31,6 +31,24 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { Grip } from 'lucide-react';
 
+function getValueByPath<T extends Record<string, any>>(
+  obj: T,
+  path?: string | string[]
+): any {
+  if (!obj || !path) return undefined;
+
+  if (typeof path === 'string') {
+    return obj[path];
+  }
+
+  return path.reduce((acc, key) => {
+    if (acc && typeof acc === 'object' && key in acc) {
+      return acc[key];
+    }
+    return undefined;
+  }, obj as any);
+}
+
 function SortableRow<T extends Record<any, any>>({
   row,
   rowIndex,
@@ -83,12 +101,12 @@ function SortableRow<T extends Record<any, any>>({
             </button>
           ) : col.render ? (
             col.render(
-              col.dataIndex ? row[col.dataIndex] : undefined,
+              col.dataIndex ? getValueByPath(row, col.dataIndex) : undefined,
               row,
               rowIndex
             )
           ) : col.dataIndex ? (
-            row[col.dataIndex]
+            getValueByPath(row, col.dataIndex)
           ) : null}
         </TableCell>
       ))}

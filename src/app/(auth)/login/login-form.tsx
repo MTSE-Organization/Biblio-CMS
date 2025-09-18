@@ -78,7 +78,6 @@ export default function LoginForm() {
                 control={form.control}
                 label='Email'
                 placeholder='Nhập email...'
-                className='focus-visible:ring-dodger-blue'
               />
             </Col>
           </Row>

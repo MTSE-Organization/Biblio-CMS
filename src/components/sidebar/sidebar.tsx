@@ -1,5 +1,4 @@
 'use client';
-
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -29,8 +28,6 @@ import useValidatePermission from '@/hooks/use-validate-permission';
 import { Skeleton } from '@/components/ui/skeleton';
 import menuConfig from '@/constants/menu-config';
 import { createPortal } from 'react-dom';
-import { setData } from '@/utils';
-import { storageKeys } from '@/constants';
 
 function CollapsibleMenuItem({ item }: { item: MenuItem }) {
   const navigate = useNavigate();
@@ -88,7 +85,6 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
     setSidebarState('expanded');
     if (query) path = `${path}?${query}`;
     navigate(path);
-    setData(storageKeys.PREVIOUS_PATH, path);
   };
 
   // handle show float sub menu when sidebar state is collapsed

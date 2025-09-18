@@ -1,10 +1,12 @@
 import { cn } from '@/lib';
 
 export default function ListPageWrapper({
+  className,
   children,
   searchForm,
   actionBar
 }: {
+  className?: string;
   children?: React.ReactNode;
   searchForm?: React.ReactNode;
   actionBar?: React.ReactNode;
@@ -12,7 +14,10 @@ export default function ListPageWrapper({
   return (
     <div
       tabIndex={-1}
-      className='min-h-[calc(100vh_-_190px)] rounded-lg bg-white'
+      className={cn(
+        'min-h-[calc(100vh_-_190px)] rounded-lg bg-white',
+        className
+      )}
     >
       <div className='flex items-center justify-between rounded-tl-lg rounded-tr-lg bg-white px-4'>
         {searchForm && <div className='flex-1'>{searchForm}</div>}
