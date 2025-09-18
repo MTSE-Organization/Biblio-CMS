@@ -32,7 +32,7 @@ const menuConfig: MenuItem[] = [
     children: [
       {
         key: 'category-list',
-        label: 'Danh mục sách',
+        label: 'Danh mục',
         path: route.category.getList.path,
         permissionCode: [apiConfig.category.getList.permissionCode],
         query: { status: STATUS_ACTIVE }

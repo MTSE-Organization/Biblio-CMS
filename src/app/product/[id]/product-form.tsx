@@ -1,12 +1,82 @@
 'use client';
-
-import { apiConfig } from '@/constants';
-import { useSaveBase } from '@/hooks';
+import {
+  BooleanField,
+  Col,
+  DatePickerField,
+  InputField,
+  NumberField,
+  RichTextField,
+  Row,
+  SelectField
+} from '@/components/form';
+import { BaseForm } from '@/components/form/base-form';
+import { PageWrapper } from '@/components/layout';
+import { CircleLoading } from '@/components/loading';
+import { ageRatings, apiConfig, languageOptions } from '@/constants';
+import { useQueryParams, useSaveBase } from '@/hooks';
+import { logger } from '@/logger';
 import route from '@/routes';
-import { ProductBodyType, ProductResType } from '@/types';
+import { productSchema } from '@/schemaValidations';
+import {
+  ApiResponseList,
+  AuthorResType,
+  CategoryAutoResType,
+  ProductBodyType,
+  ProductResType,
+  PublisherResType,
+  TranslatorResType
+} from '@/types';
+import { http } from '@/utils';
+import { useQuery } from '@tanstack/react-query';
 
 export default function ProductForm({ queryKey }: { queryKey: string }) {
-  const { data, handleSubmit, loading, renderActions } = useSaveBase<
+  const categoryRes = useQuery({
+    queryKey: ['category-auto-complete'],
+    queryFn: () =>
+      http.get<ApiResponseList<CategoryAutoResType>>(
+        apiConfig.category.autoComplete
+      )
+  });
+  const authorRes = useQuery({
+    queryKey: ['author-auto-complete'],
+    queryFn: () =>
+      http.get<ApiResponseList<AuthorResType>>(apiConfig.author.autoComplete)
+  });
+  const translatorRes = useQuery({
+    queryKey: ['translator-auto-complete'],
+    queryFn: () =>
+      http.get<ApiResponseList<TranslatorResType>>(
+        apiConfig.translator.autoComplete
+      )
+  });
+
+  const publisherRes = useQuery({
+    queryKey: ['publisher-auto-complete'],
+    queryFn: () =>
+      http.get<ApiResponseList<PublisherResType>>(
+        apiConfig.publisher.autoComplete
+      )
+  });
+
+  const authors =
+    authorRes.data?.data.content.map((auth) => ({
+      label: auth.name,
+      value: auth.id
+    })) ?? [];
+
+  const translators =
+    translatorRes.data?.data.content.map((trans) => ({
+      label: trans.name,
+      value: trans.id
+    })) ?? [];
+
+  const publishers =
+    publisherRes.data?.data.content.map((pub) => ({
+      label: pub.name,
+      value: pub.id
+    })) ?? [];
+
+  const { data, loading, renderActions, handleSubmit } = useSaveBase<
     ProductResType,
     ProductBodyType
   >({
@@ -17,33 +87,256 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
       listPageUrl: route.product.getList.path
     }
   });
+
+  const parseMetadataToObject = (metaData: string) => {
+    if (!metaData)
+      return { height: 0, length: 0, weight: 0, width: 0, numPage: 0 };
+    try {
+      const json = JSON.parse(metaData) as ProductBodyType['metaData'];
+      return json;
+    } catch (error) {
+      logger.error('Error whiling parsing metaData json: ', error);
+    }
+  };
+
   const defaultValues: ProductBodyType = {
     name: '',
     ageRating: 0,
-    category: '',
+    categoryId: '',
     contributorsIds: [],
     description: '',
     discount: 0,
     isFeatured: false,
     language: '',
-    metaData: '',
+    metaData: { height: 0, length: 0, weight: 0, width: 0, numPage: 0 },
     price: 0,
-    releaseDate: ''
+    releaseDate: '',
+    publisherId: ''
   };
 
   const initialValues: ProductBodyType = {
     name: data?.name ?? '',
     ageRating: data?.ageRating ?? 0,
-    category: data?.category?.id ?? '',
-    contributorsIds: data?.contributors ?? [],
+    categoryId: data?.category?.id ?? '',
+    contributorsIds: data?.contributors?.map((contr) => contr.id) ?? [],
     description: data?.description ?? '',
     discount: data?.discount ?? 0,
     isFeatured: data?.isFeatured ?? false,
     language: data?.language ?? '',
-    metaData: data?.metaData ?? '',
+    metaData: parseMetadataToObject(data?.metaData ?? '') ?? {
+      height: 0,
+      length: 0,
+      weight: 0,
+      width: 0,
+      numPage: 0
+    },
     price: data?.price ?? 0,
-    releaseDate: data?.releaseDate ?? ''
+    releaseDate: data?.releaseDate ?? new Date().toLocaleDateString(),
+    publisherId: data?.publisher.id ?? ''
   };
-
-  return <div></div>;
+  const onSubmit = async (values: ProductBodyType) => {
+    await handleSubmit({
+      ...values,
+      metaData: JSON.stringify(values.metaData)
+    });
+  };
+  return (
+    <PageWrapper
+      breadcrumbs={[
+        { label: 'Sách', href: route.product.getList.path },
+        { label: `${!data ? 'Thêm mới' : 'Cập nhật'} sách` }
+      ]}
+    >
+      <BaseForm
+        defaultValues={defaultValues}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        schema={productSchema}
+      >
+        {(form) => (
+          <>
+            <Row>
+              <Col span={12}>
+                <InputField
+                  control={form.control}
+                  name='name'
+                  label='Tên sách'
+                  placeholder='Nhập tên sách'
+                  required
+                />
+              </Col>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='price'
+                  label='Giá (VNĐ)'
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <DatePickerField
+                  control={form.control}
+                  name='releaseDate'
+                  label='Ngày phát hành'
+                  placeholder='Ngày phát hành'
+                  required
+                />
+              </Col>
+              <Col span={12}>
+                <SelectField
+                  control={form.control}
+                  name='ageRating'
+                  label='Độ tuổi'
+                  placeholder='Độ tuổi'
+                  getLabel={(opt) => opt.label}
+                  getValue={(opt) => opt.value}
+                  options={ageRatings}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <SelectField
+                  control={form.control}
+                  name='language'
+                  label='Ngôn ngữ'
+                  placeholder='Ngôn ngữ'
+                  required
+                  getLabel={(opt) => opt.label}
+                  getValue={(opt) => opt.value}
+                  options={languageOptions}
+                />
+              </Col>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='discount'
+                  label='Giảm giá (%)'
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <SelectField
+                  control={form.control}
+                  name='categoryId'
+                  label='Danh mục'
+                  placeholder='Danh mục'
+                  required
+                  getLabel={(opt) => opt.label}
+                  getValue={(opt) => opt.value}
+                  options={(categoryRes.data?.data.content || []).map(
+                    (category) => ({ label: category.name, value: category.id })
+                  )}
+                />
+              </Col>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='metaData.length'
+                  label='Chiều dài'
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='metaData.width'
+                  label='Chiều rộng'
+                  required
+                />
+              </Col>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='metaData.height'
+                  label='Chiều cao'
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='metaData.weight'
+                  label='Cân nặng (g)'
+                  required
+                />
+              </Col>
+              <Col span={12}>
+                <NumberField
+                  control={form.control}
+                  name='metaData.numPage'
+                  label='Số trang'
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <SelectField
+                  control={form.control}
+                  name='publisherId'
+                  label='Nhà xuất bản'
+                  placeholder='Nhà xuất bản'
+                  required
+                  getLabel={(opt) => opt.label}
+                  getValue={(opt) => opt.value}
+                  options={publishers}
+                />
+              </Col>
+              <Col span={12}>
+                <SelectField
+                  control={form.control}
+                  name='contributorsIds'
+                  label='Nhà đóng góp'
+                  placeholder='Nhà đóng góp'
+                  required
+                  getLabel={(opt) => opt.label}
+                  getValue={(opt) => opt.value}
+                  options={[...authors, ...translators]}
+                  multiple
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <BooleanField
+                  className='my-auto'
+                  control={form.control}
+                  name='isFeatured'
+                  label='Nổi bật'
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <RichTextField
+                  control={form.control}
+                  name='description'
+                  label='Mô tả'
+                  placeholder='Nhập mô tả'
+                  required
+                />
+              </Col>
+            </Row>
+            <>{renderActions(form)}</>
+            {loading && (
+              <div className='absolute inset-0 bg-white/80'>
+                <CircleLoading className='stroke-dodger-blue mt-20 size-8' />
+              </div>
+            )}
+          </>
+        )}
+      </BaseForm>
+    </PageWrapper>
+  );
 }

@@ -115,7 +115,6 @@ export default function ProfileForm() {
                 name='email'
                 label='Email'
                 placeholder='Nhập email'
-                className='focus-visible:ring-dodger-blue'
                 required
               />
             </Col>
@@ -127,7 +126,6 @@ export default function ProfileForm() {
                 name='fullName'
                 label='Họ tên'
                 placeholder='Nhập họ tên'
-                className='focus-visible:ring-dodger-blue'
                 required
               />
             </Col>
@@ -139,7 +137,6 @@ export default function ProfileForm() {
                 name='phone'
                 label='Số điện thoại'
                 placeholder='Nhập số điện thoại'
-                className='focus-visible:ring-dodger-blue'
                 required
               />
             </Col>

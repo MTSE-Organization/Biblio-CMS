@@ -350,6 +350,11 @@ const apiConfig = defineApiConfig({
       method: 'PUT',
       headers: baseHeader,
       permissionCode: 'PUB_U'
+    },
+    autoComplete: {
+      baseUrl: `${AppConstants.apiUrl}v1/publisher/auto-complete`,
+      method: 'GET',
+      headers: baseHeader
     }
   },
   author: {
@@ -388,6 +393,11 @@ const apiConfig = defineApiConfig({
       method: 'PUT',
       headers: baseHeader,
       permissionCode: 'AUTH_U'
+    },
+    autoComplete: {
+      baseUrl: `${AppConstants.apiUrl}v1/author/auto-complete`,
+      method: 'GET',
+      headers: baseHeader
     }
   },
   translator: {
@@ -426,6 +436,11 @@ const apiConfig = defineApiConfig({
       method: 'PUT',
       headers: baseHeader,
       permissionCode: 'AUTH_U'
+    },
+    autoComplete: {
+      baseUrl: `${AppConstants.apiUrl}v1/translator/auto-complete`,
+      method: 'GET',
+      headers: baseHeader
     }
   }
 });

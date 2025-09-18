@@ -107,7 +107,7 @@ export default function SelectField<
     <FormField
       control={control}
       name={name}
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         const selectedValues: (string | number)[] =
           field.value === undefined
             ? []
@@ -157,7 +157,9 @@ export default function SelectField<
                       'pl-1!': selectedValues.length > 1,
                       'disabled:cursor-not-allowed disabled:opacity-100 disabled:hover:bg-transparent disabled:[&>div>span]:opacity-80':
                         disabled,
-                      'border-dodger-blue ring-dodger-blue ring-1': open
+                      'border-dodger-blue ring-dodger-blue ring-1': open,
+                      '[&>div>span]:text-gray-300': !field.value,
+                      'border-red-500 ring-1 ring-red-500': fieldState.invalid
                     }
                   )}
                 >

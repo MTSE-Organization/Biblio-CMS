@@ -18,6 +18,24 @@ import { cn } from '@/lib';
 import { CircleLoading } from '@/components/loading';
 import { AnimatePresence, motion } from 'framer-motion';
 
+function getValueByPath<T extends Record<string, any>>(
+  obj: T,
+  path?: string | string[]
+): any {
+  if (!obj || !path) return undefined;
+
+  if (typeof path === 'string') {
+    return obj[path];
+  }
+
+  return path.reduce((acc, key) => {
+    if (acc && typeof acc === 'object' && key in acc) {
+      return acc[key];
+    }
+    return undefined;
+  }, obj as any);
+}
+
 export default function BaseTable<T extends Record<any, any>>({
   columns,
   dataSource,
@@ -46,7 +64,7 @@ export default function BaseTable<T extends Record<any, any>>({
                         {
                           'before:absolute before:top-1/2 before:right-0 before:h-1/2 before:w-0.5 before:-translate-y-1/2 before:bg-zinc-100':
                             !isLast,
-                          'sticky right-0 z-30': col.fixed
+                          'sticky right-0 z-30 bg-white': col.fixed
                         }
                       )}
                       style={{ width: col.width }}
@@ -74,20 +92,20 @@ export default function BaseTable<T extends Record<any, any>>({
                                 col.align ? `text-${col.align}` : 'text-left'
                               }`,
                               {
-                                'sticky right-0 z-30': col.fixed
+                                'sticky right-0 z-30 bg-white': col.fixed
                               }
                             )}
                           >
                             {col.render
                               ? col.render(
                                   col.dataIndex
-                                    ? row[col.dataIndex]
+                                    ? getValueByPath(row, col.dataIndex)
                                     : undefined,
                                   row,
                                   rowIndex
                                 )
                               : col.dataIndex
-                                ? row[col.dataIndex]
+                                ? getValueByPath(row, col.dataIndex)
                                 : null}
                           </TableCell>
                         );

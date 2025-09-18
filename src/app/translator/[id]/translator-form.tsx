@@ -133,7 +133,6 @@ export default function TranslatorForm({ queryKey }: { queryKey: string }) {
                 label='Ngày sinh'
                 placeholder='Chọn ngày sinh'
                 required
-                className='focus-visible:ring-dodger-blue'
                 format='dd/MM/yyyy'
               />
             </Col>

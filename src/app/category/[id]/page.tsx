@@ -1,22 +1,5 @@
 import CategoryForm from '@/app/category/[id]/category-form';
-import { PageWrapper } from '@/components/layout';
-import route from '@/routes';
 
-export default async function CategoryDetailPage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const isCreate = id === 'create';
-  return (
-    <PageWrapper
-      breadcrumbs={[
-        { label: 'Danh mục', href: route.category.getList.path },
-        { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} danh mục` }
-      ]}
-    >
-      <CategoryForm queryKey='category' />
-    </PageWrapper>
-  );
+export default function CategoryDetailPage() {
+  return <CategoryForm queryKey='category' />;
 }
