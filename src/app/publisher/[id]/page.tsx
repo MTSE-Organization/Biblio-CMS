@@ -1,5 +1,6 @@
 import PublisherForm from '@/app/publisher/[id]/publisher-form';
 import { PageWrapper } from '@/components/layout';
+import { queryKeys } from '@/constants';
 import route from '@/routes';
 
 export default async function PublisherDetailPage({
@@ -16,7 +17,7 @@ export default async function PublisherDetailPage({
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} nhà xuất bản` }
       ]}
     >
-      <PublisherForm queryKey='publisher' />
+      <PublisherForm queryKey={queryKeys.PUBLISHER} />
     </PageWrapper>
   );
 }

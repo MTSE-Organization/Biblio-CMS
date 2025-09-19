@@ -131,7 +131,8 @@ export default function PublisherList({ queryKey }: { queryKey: string }) {
           searchFields,
           schema: publisherSearchParamSchema
         })}
-        actionBar={handlers.renderAddButton()}
+        addButton={handlers.renderAddButton()}
+        reloadButton={handlers.renderReloadButton()}
       >
         <BaseTable
           columns={columns}

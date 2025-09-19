@@ -268,6 +268,12 @@ const apiConfig = defineApiConfig({
       method: 'DELETE',
       headers: baseHeader,
       permissionCode: 'PRD_V_D'
+    },
+    recover: {
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/recover/:id`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_V_U'
     }
   },
   productImage: {

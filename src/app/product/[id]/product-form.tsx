@@ -12,7 +12,7 @@ import {
 import { BaseForm } from '@/components/form/base-form';
 import { PageWrapper } from '@/components/layout';
 import { CircleLoading } from '@/components/loading';
-import { ageRatings, apiConfig, languageOptions } from '@/constants';
+import { ageRatings, apiConfig, languageOptions, queryKeys } from '@/constants';
 import { useQueryParams, useSaveBase } from '@/hooks';
 import { logger } from '@/logger';
 import route from '@/routes';
@@ -26,25 +26,26 @@ import {
   PublisherResType,
   TranslatorResType
 } from '@/types';
-import { http } from '@/utils';
+import { http, renderListPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export default function ProductForm({ queryKey }: { queryKey: string }) {
+  const { queryString } = useQueryParams();
   const categoryRes = useQuery({
-    queryKey: ['category-auto-complete'],
+    queryKey: [`${queryKeys.CATEGORY}-auto-complete`],
     queryFn: () =>
       http.get<ApiResponseList<CategoryAutoResType>>(
         apiConfig.category.autoComplete
       )
   });
   const authorRes = useQuery({
-    queryKey: ['author-auto-complete'],
+    queryKey: [`${queryKeys.AUTHOR}-auto-complete`],
     queryFn: () =>
       http.get<ApiResponseList<AuthorResType>>(apiConfig.author.autoComplete)
   });
   const translatorRes = useQuery({
-    queryKey: ['translator-auto-complete'],
+    queryKey: [`${queryKeys.TRANSLATOR}-auto-complete`],
     queryFn: () =>
       http.get<ApiResponseList<TranslatorResType>>(
         apiConfig.translator.autoComplete
@@ -52,7 +53,7 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
   });
 
   const publisherRes = useQuery({
-    queryKey: ['publisher-auto-complete'],
+    queryKey: [`${queryKeys.PUBLISHER}-auto-complete`],
     queryFn: () =>
       http.get<ApiResponseList<PublisherResType>>(
         apiConfig.publisher.autoComplete
@@ -162,7 +163,10 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Sách', href: route.product.getList.path },
+        {
+          label: 'Sách',
+          href: renderListPageUrl(route.product.getList.path, queryString)
+        },
         { label: `${!data ? 'Thêm mới' : 'Cập nhật'} sách` }
       ]}
     >

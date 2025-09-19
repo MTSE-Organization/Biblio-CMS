@@ -152,7 +152,8 @@ export default function TranslatorList({ queryKey }: { queryKey: string }) {
           searchFields,
           schema: translatorSchemaParamSchema
         })}
-        actionBar={handlers.renderAddButton()}
+        addButton={handlers.renderAddButton()}
+        reloadButton={handlers.renderReloadButton()}
       >
         <BaseTable
           columns={columns}

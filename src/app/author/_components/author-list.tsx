@@ -145,7 +145,8 @@ export default function AuthorList({ queryKey }: { queryKey: string }) {
           searchFields,
           schema: authorSchemaParamSchema
         })}
-        actionBar={handlers.renderAddButton()}
+        addButton={handlers.renderAddButton()}
+        reloadButton={handlers.renderReloadButton()}
       >
         <BaseTable
           columns={columns}

@@ -53,8 +53,8 @@ export default function SearchForm<S extends FieldValues>({
   };
 
   const handleReset = (form: UseFormReturn<z.infer<typeof schema>>) => {
-    handleSearchReset(initialValues ?? {});
-    form.reset(initialValues);
+    handleSearchReset();
+    form.reset({});
   };
 
   return (
@@ -99,7 +99,6 @@ export default function SearchForm<S extends FieldValues>({
                 </Col>
               );
             })}
-
             <Col className='w-9'>
               <Button type='submit' variant={'primary'}>
                 <Search />

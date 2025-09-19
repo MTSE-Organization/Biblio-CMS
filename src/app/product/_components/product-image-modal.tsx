@@ -8,11 +8,12 @@ import {
 import { BaseForm } from '@/components/form/base-form';
 import { HasPermission } from '@/components/has-permission';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
+import { CircleLoading } from '@/components/loading';
 import { Modal } from '@/components/modal';
-import { BaseTable } from '@/components/table';
+import { DragDropTable } from '@/components/table';
 import { Badge } from '@/components/ui/badge';
 import { apiConfig } from '@/constants';
-import { useDisclosure, useListBase, useSaveBase } from '@/hooks';
+import { useDisclosure, useDragDrop, useListBase, useSaveBase } from '@/hooks';
 import { logger } from '@/logger';
 import { useUploadImageProduct } from '@/queries';
 import { productImageSchema } from '@/schemaValidations';
@@ -26,7 +27,7 @@ import {
 } from '@/types';
 import { http, notify, renderImageUrl } from '@/utils';
 import { useMutation } from '@tanstack/react-query';
-import { Check, Edit2, FileImage, PlusIcon } from 'lucide-react';
+import { Check, Edit2, FileImage, PlusIcon, Save } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function ProductImageModal({
@@ -55,11 +56,11 @@ export default function ProductImageModal({
     loading,
     handlers,
     listQuery,
-    pagination
+    setData
   } = useListBase<ProductImageResType, ProductImageSearchParamType>({
     apiConfig: apiConfig.productImage,
     options: {
-      queryKey: 'product image',
+      queryKey: 'product-image',
       objectName: 'ảnh sách',
       enabled: !!data
     },
@@ -146,14 +147,30 @@ export default function ProductImageModal({
     }
   });
 
+  const {
+    sortColumn,
+    loading: loadingUpdateOrdering,
+    sortedData,
+    isChanged,
+    onDragEnd,
+    handleUpdate
+  } = useDragDrop<ProductImageResType>({
+    key: 'product-image-list',
+    objectName: 'ảnh sách',
+    data: productImages,
+    apiConfig: apiConfig.productImage.updateOrdering,
+    sortField: 'ordering'
+  });
+
   const columns: Column<ProductImageResType>[] = [
-    {
-      title: '#',
-      render: (_, __, index) =>
-        (pagination.current - 1) * pagination.pageSize + index + 1,
-      width: 50,
-      align: 'center'
-    },
+    ...(sortedData.length > 1 ? [sortColumn] : []),
+    // {
+    //   title: '#',
+    //   render: (_, __, index) =>
+    //     (pagination.current - 1) * pagination.pageSize + index + 1,
+    //   width: 50,
+    //   align: 'center'
+    // },
     {
       title: 'Ảnh',
       dataIndex: 'url',
@@ -213,9 +230,11 @@ export default function ProductImageModal({
       onSuccess: (res) => {
         if (res.result) {
           notify.success('Đặt làm ảnh mặc định thành công');
-          listQuery.refetch();
+          listQuery.refetch().then((res) => {
+            setData(res.data?.data.content || []);
+          });
         } else {
-          notify.success('Đặt làm ảnh mặc định thất bại');
+          notify.error('Đặt làm ảnh mặc định thất bại');
         }
       },
       onError: (error) => {
@@ -247,24 +266,46 @@ export default function ProductImageModal({
 
   const onSubmit = async (values: ProductImageBodyType) => {
     await handleSubmit({ ...values });
-    handleClose();
     listQuery.refetch();
+    handleClose();
   };
 
   return (
     <>
       <Modal open={open} onClose={onClose}>
         <ListPageWrapper
-          className='min-h-auto w-200 pb-4 max-2xl:w-200'
-          actionBar={handlers.renderAddButton()}
+          className='min-h-auto w-200 max-2xl:w-200'
+          addButton={handlers.renderAddButton()}
+          reloadButton={handlers.renderReloadButton()}
         >
-          <BaseTable
-            dataSource={productImages}
-            changePagination={handlers.changePagination}
+          <DragDropTable
+            onDragEnd={onDragEnd}
+            dataSource={sortedData}
             columns={columns}
-            pagination={pagination}
             loading={loading}
           />
+          {sortedData.length > 1 && (
+            <div className='mr-4 flex justify-end py-4'>
+              <Button
+                onClick={async () => {
+                  await handleUpdate();
+                  await listQuery.refetch();
+                }}
+                disabled={!isChanged || loading || loadingUpdateOrdering}
+                className='w-40'
+                variant={'primary'}
+              >
+                {loadingUpdateOrdering ? (
+                  <CircleLoading />
+                ) : (
+                  <>
+                    <Save />
+                    Cập nhật
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </ListPageWrapper>
       </Modal>
       <Modal open={opened} onClose={close}>

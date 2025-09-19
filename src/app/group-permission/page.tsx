@@ -6,7 +6,7 @@ import PermissionList from '@/app/group-permission/_components/permission-list';
 import GroupPermissionList from '@/app/group-permission/_components/group-permission-list';
 import { useState } from 'react';
 import { getData, setData } from '@/utils';
-import { storageKeys } from '@/constants';
+import { queryKeys, storageKeys } from '@/constants';
 import { useIsMounted } from '@/hooks';
 
 export default function GroupPermissionPage() {
@@ -19,12 +19,12 @@ export default function GroupPermissionPage() {
     {
       value: 'tab-1',
       label: 'Vai trò',
-      component: <GroupList queryKey='group' />
+      component: <GroupList queryKey={queryKeys.GROUP} />
     },
     {
       value: 'tab-2',
       label: 'Nhóm quyền',
-      component: <GroupPermissionList queryKey='group-permission' />
+      component: <GroupPermissionList queryKey={queryKeys.GROUP_PERMISSION} />
     },
     { value: 'tab-3', label: 'Quyền', component: <PermissionList /> }
   ];

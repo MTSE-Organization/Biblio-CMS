@@ -158,7 +158,7 @@ export default function SelectField<
                       'disabled:cursor-not-allowed disabled:opacity-100 disabled:hover:bg-transparent disabled:[&>div>span]:opacity-80':
                         disabled,
                       'border-dodger-blue ring-dodger-blue ring-1': open,
-                      '[&>div>span]:text-gray-300': !field.value,
+                      '[&>div>span]:text-gray-300': fieldState.invalid,
                       'border-red-500 ring-1 ring-red-500': fieldState.invalid
                     }
                   )}
