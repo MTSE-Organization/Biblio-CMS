@@ -7,7 +7,6 @@ export { default as groupApiRequest } from './group.api-request';
 export { default as groupPermissionApiRequest } from './group-permission.api-request';
 export { default as permissionApiRequest } from './permission.api-request';
 export { default as productApiRequest } from './product.api-request';
-export { default as productImageApiRequest } from './product-image.api-request';
 export { default as productVariantApiRequest } from './product-variant.api-request';
 export { default as publisherApiRequest } from './publisher.api-request';
 export { default as translatorApiRequest } from './translator.api-request';
