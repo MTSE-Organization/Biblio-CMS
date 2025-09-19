@@ -18,10 +18,7 @@ import {
 import { useListBase, useQueryParams } from '@/hooks';
 import { cn } from '@/lib';
 import route from '@/routes';
-import {
-  productSearchParamSchema,
-  productVariantSearchParamSchema
-} from '@/schemaValidations';
+import { productVariantSearchParamSchema } from '@/schemaValidations';
 import {
   Column,
   ProductVariantResType,
@@ -104,7 +101,7 @@ export default function ProductVariantList({ queryKey }: { queryKey: string }) {
     },
     {
       title: 'Tên sách',
-      render: (value) => searchParams.name
+      render: () => searchParams.name
     },
     {
       title: 'Tình trạng',

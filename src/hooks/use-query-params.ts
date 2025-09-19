@@ -24,21 +24,13 @@ const useQueryParams = <T extends Record<string, any>>() => {
   };
 
   const setQueryParams = (newParams: Partial<T>) => {
-    let params: URLSearchParams;
+    const params = new URLSearchParams();
 
-    if (Object.keys(newParams).length === 0) {
-      params = new URLSearchParams();
-    } else {
-      params = new URLSearchParams(searchParams.toString());
-
-      Object.entries(newParams).forEach(([key, value]) => {
-        if (value === null || value === undefined || value === '') {
-          params.delete(key);
-        } else {
-          params.set(key, String(value));
-        }
-      });
-    }
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params.set(key, String(value));
+      }
+    });
 
     const queryString = params.toString();
     router.push(queryString ? `${pathname}?${queryString}` : pathname);

@@ -97,7 +97,7 @@ type UseListBaseProps<
     pageSize?: number;
     defaultFilters?: Partial<S>;
     enabled?: boolean;
-    excludeFromQueryFilter?: (keyof S | string)[];
+    excludeFromQueryFilter?: string[];
   };
   override?: (handlers: HandlerType<T, S>) => HandlerType<T, S> | void;
 };
@@ -132,7 +132,7 @@ export default function useListBase<
   const queryFilter = useMemo(() => {
     const filteredParams = Object.fromEntries(
       Object.entries(mergedSearchParams).filter(
-        ([key]) => !excludeFromQueryFilter.includes(key as keyof S)
+        ([key]) => !excludeFromQueryFilter.includes(key)
       )
     );
 
@@ -426,17 +426,31 @@ export default function useListBase<
     };
 
     const handleSearchSubmit = (values: any) => {
-      setQueryParams({ ...values } as Partial<S>);
+      const preservedParams = Object.fromEntries(
+        Object.entries(searchParams).filter(([key]) =>
+          excludeFromQueryFilter.includes(key)
+        )
+      );
+
+      setQueryParams({ ...values, ...preservedParams } as Partial<S>);
     };
 
     const handleSearchReset = () => {
       if (Object.keys(searchParams).length === 0) return;
+
       setPagination({
         current: DEFAULT_TABLE_PAGE_START + 1,
         pageSize: DEFAULT_TABLE_PAGE_SIZE,
         total: 0
       });
-      setQueryParams({ ...defaultFilters });
+
+      const preservedParams = Object.fromEntries(
+        Object.entries(searchParams).filter(([key]) =>
+          excludeFromQueryFilter.includes(key)
+        )
+      );
+
+      setQueryParams({ ...defaultFilters, ...preservedParams });
     };
 
     return (
