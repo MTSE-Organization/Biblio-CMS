@@ -13,16 +13,16 @@ import { PageWrapper } from '@/components/layout';
 import { CircleLoading } from '@/components/loading';
 import { apiConfig, STATUS_ACTIVE, statusOptions } from '@/constants';
 import { useQueryParams, useSaveBase } from '@/hooks';
-import { useUploadAvatar } from '@/queries';
+import { useUploadImageProduct } from '@/queries';
 import route from '@/routes';
 import { categorySchema } from '@/schemaValidations';
 import { CategoryBodyType, CategoryResType } from '@/types';
-import { renderImageUrl } from '@/utils';
+import { renderImageUrl, renderListPageUrl } from '@/utils';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function CategoryForm({ queryKey }: { queryKey: string }) {
   const [imageUrl, setImageUrl] = useState<string>('');
-  const { searchParams, serializeParams } = useQueryParams();
+  const { queryString } = useQueryParams();
   const {
     data: category,
     loading,
@@ -36,7 +36,7 @@ export default function CategoryForm({ queryKey }: { queryKey: string }) {
       listPageUrl: route.category.getList.path
     }
   });
-  const uploadImageMutation = useUploadAvatar();
+  const uploadImageMutation = useUploadImageProduct();
 
   const defaultValues: CategoryBodyType = {
     name: '',
@@ -72,7 +72,7 @@ export default function CategoryForm({ queryKey }: { queryKey: string }) {
       breadcrumbs={[
         {
           label: 'Danh mục',
-          href: `${route.category.getList.path}?${serializeParams(searchParams)}`
+          href: renderListPageUrl(route.category.getList.path, queryString)
         },
         { label: `${!category ? 'Thêm mới' : 'Cập nhật'} danh mục` }
       ]}

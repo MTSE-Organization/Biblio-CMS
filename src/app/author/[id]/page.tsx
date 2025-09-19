@@ -1,5 +1,6 @@
 import AuthorForm from '@/app/author/[id]/author-form';
 import { PageWrapper } from '@/components/layout';
+import { queryKeys } from '@/constants';
 import route from '@/routes';
 
 export default async function AuthorDetailPage({
@@ -16,7 +17,7 @@ export default async function AuthorDetailPage({
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} tác giả` }
       ]}
     >
-      <AuthorForm queryKey='author' />
+      <AuthorForm queryKey={queryKeys.AUTHOR} />
     </PageWrapper>
   );
 }

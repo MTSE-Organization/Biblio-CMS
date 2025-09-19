@@ -1,5 +1,6 @@
 import TranslatorForm from '@/app/translator/[id]/translator-form';
 import { PageWrapper } from '@/components/layout';
+import { queryKeys } from '@/constants';
 import route from '@/routes';
 
 export default async function TranslatorDetailPage({
@@ -16,7 +17,7 @@ export default async function TranslatorDetailPage({
         { label: `${isCreate ? 'Thêm mới' : 'Cập nhật'} dịch giả` }
       ]}
     >
-      <TranslatorForm queryKey='translator' />
+      <TranslatorForm queryKey={queryKeys.TRANSLATOR} />
     </PageWrapper>
   );
 }

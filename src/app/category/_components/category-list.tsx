@@ -77,7 +77,7 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
   });
   const {
     sortColumn,
-    loading: updateOrderingloading,
+    loading: loadingUpdateOrdering,
     sortedData,
     isChanged,
     onDragEnd,
@@ -144,23 +144,24 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
           searchFields,
           schema: categorySearchParamSchema
         })}
-        actionBar={handlers.renderAddButton()}
+        addButton={handlers.renderAddButton()}
+        reloadButton={handlers.renderReloadButton()}
       >
         <DragDropTable
           columns={columns}
           dataSource={sortedData}
-          loading={loading || updateOrderingloading}
+          loading={loading || loadingUpdateOrdering}
           onDragEnd={onDragEnd}
         />
-        {sortedData.length > 1 && !(loading || updateOrderingloading) && (
+        {sortedData.length > 1 && !(loading || loadingUpdateOrdering) && (
           <div className='mr-4 flex justify-end py-4'>
             <Button
               onClick={handleUpdate}
-              disabled={!isChanged || loading || updateOrderingloading}
+              disabled={!isChanged || loading || loadingUpdateOrdering}
               className='w-40'
               variant={'primary'}
             >
-              {loading || updateOrderingloading ? (
+              {loading || loadingUpdateOrdering ? (
                 <CircleLoading />
               ) : (
                 <>

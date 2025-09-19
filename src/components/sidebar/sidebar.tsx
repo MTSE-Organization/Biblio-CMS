@@ -124,7 +124,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
             toggleMenu(item.key);
           }}
           className={cn(
-            'hover:bg-sidebar! active:bg-sidebar! mx-auto my-1 min-h-10 cursor-pointer rounded-none pl-8 font-normal whitespace-nowrap text-white transition-all! duration-200! ease-linear! hover:text-white active:text-white',
+            'hover:bg-sidebar! active:bg-sidebar! mx-auto my-1 min-h-10 cursor-pointer rounded-none pl-8 font-normal whitespace-nowrap text-white transition-all! duration-200! ease-linear! hover:text-white focus-visible:ring-0! active:text-white',
             {
               'opacity-80 hover:opacity-100': !item.children?.find(
                 (child) => child.path === pathname
@@ -157,7 +157,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
                   ) : (
                     <SidebarMenuItem key={sub.key}>
                       <SidebarMenuButton
-                        className='m-1 min-h-10 rounded-none'
+                        className='m-1 min-h-10 rounded-none focus-visible:ring-0!'
                         asChild
                       >
                         <Button
@@ -216,7 +216,7 @@ function CollapsibleMenuItem({ item }: { item: MenuItem }) {
                       ) : (
                         <SidebarMenuItem key={sub.key}>
                           <SidebarMenuButton
-                            className='m-1 min-h-10 rounded-none'
+                            className='m-1 min-h-10 rounded-none focus-visible:ring-0!'
                             asChild
                           >
                             <Button
@@ -263,7 +263,10 @@ const renderMenu = (items: MenuItem[]) => (
         <CollapsibleMenuItem key={item.key} item={item} />
       ) : (
         <SidebarMenuItem key={item.key}>
-          <SidebarMenuButton className='rounded-none' asChild>
+          <SidebarMenuButton
+            className='rounded-none focus-visible:ring-0!'
+            asChild
+          >
             {item.path ? (
               <Link href={item.path}>
                 {item.icon && <item.icon />}
@@ -356,7 +359,7 @@ const AppSidebar = () => {
       >
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className='h-full' asChild>
+            <SidebarMenuButton className='h-full focus-visible:ring-0!' asChild>
               <Link
                 href='/'
                 className='block! w-full! transition-all duration-200 ease-linear group-data-[collapsible=icon]:size-full! group-data-[collapsible=icon]:p-0! hover:bg-transparent!'

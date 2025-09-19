@@ -30,6 +30,8 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Grip } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CircleLoading } from '@/components/loading';
 
 function getValueByPath<T extends Record<string, any>>(
   obj: T,
@@ -141,7 +143,10 @@ export default function DragDropTable<T extends Record<any, any>>({
 
   return (
     <div className='flex flex-col gap-y-5 rounded-br-lg rounded-bl-lg bg-white text-sm'>
-      <div className='base-table flex-1 overflow-hidden' ref={tableRef}>
+      <div
+        className='base-table relative flex-1 overflow-hidden'
+        ref={tableRef}
+      >
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -173,17 +178,7 @@ export default function DragDropTable<T extends Record<any, any>>({
               </TableRow>
             </TableHeader>
             <TableBody className='[&_tr:last-child]:border-b'>
-              {loading ? (
-                Array.from({ length: 10 }).map((_, i) => (
-                  <TableRow key={i}>
-                    {columns.map((_, idx) => (
-                      <TableCell key={idx} className='px-4 py-4'>
-                        <div className='h-10 w-full animate-pulse rounded bg-gray-200'></div>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : rows.length > 0 ? (
+              {rows.length > 0 ? (
                 <>
                   <SortableContext
                     items={rows.map((r) => r[rowKey])}
@@ -223,6 +218,19 @@ export default function DragDropTable<T extends Record<any, any>>({
             </TableBody>
           </Table>
         </DndContext>
+        <AnimatePresence>
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'linear' }}
+              className='absolute inset-0 top-[55px] z-50 flex items-start justify-center bg-white/70 pt-5'
+            >
+              <CircleLoading className='stroke-dodger-blue size-8' />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

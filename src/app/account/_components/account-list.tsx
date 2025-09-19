@@ -207,6 +207,7 @@ export default function AccountList({ queryKey }: { queryKey: string }) {
           searchFields,
           schema: accountSearchParamSchema
         })}
+        reloadButton={handlers.renderReloadButton()}
       >
         <BaseTable
           columns={columns}

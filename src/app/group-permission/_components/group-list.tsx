@@ -69,7 +69,8 @@ export default function GroupList({ queryKey }: { queryKey: string }) {
         searchFields,
         schema: groupSearchParamSchema
       })}
-      actionBar={handlers.renderAddButton()}
+      addButton={handlers.renderAddButton()}
+      reloadButton={handlers.renderReloadButton()}
     >
       <BaseTable
         columns={columns}

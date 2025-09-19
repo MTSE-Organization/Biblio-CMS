@@ -150,7 +150,7 @@ export default function GroupPermissionList({
   return (
     <>
       <ListPageWrapper
-        actionBar={
+        addButton={
           <HasPermission
             requiredPermissions={[
               apiConfig.groupPermission.create.permissionCode
@@ -162,6 +162,7 @@ export default function GroupPermissionList({
             </Button>
           </HasPermission>
         }
+        reloadButton={handlers.renderReloadButton()}
       >
         <BaseTable
           columns={columns}

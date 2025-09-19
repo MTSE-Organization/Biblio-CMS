@@ -41,7 +41,7 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query';
-import { Edit2, Info, PlusIcon, Trash } from 'lucide-react';
+import { Edit2, Info, PlusIcon, RefreshCcw, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -74,6 +74,8 @@ type HandlerType<T extends { id: string }, S extends BaseSearchParamType> = {
   setQueryParam: (key: keyof S, value: S[keyof S] | null) => void;
   handleEditClick: (id: string) => void;
   handleDeleteClick: (id: string) => void;
+  invalidateQueries: () => void;
+  renderReloadButton: () => React.ReactNode;
 };
 
 type ActionCondition<T> = boolean | ((record: T) => boolean);
@@ -95,6 +97,7 @@ type UseListBaseProps<
     pageSize?: number;
     defaultFilters?: Partial<S>;
     enabled?: boolean;
+    excludeFromQueryFilter?: (keyof S | string)[];
   };
   override?: (handlers: HandlerType<T, S>) => HandlerType<T, S> | void;
 };
@@ -102,20 +105,19 @@ type UseListBaseProps<
 export default function useListBase<
   T extends { id: string },
   S extends BaseSearchParamType
->({
-  apiConfig,
-  options: {
+>({ apiConfig, options, override }: UseListBaseProps<T, S>) {
+  const {
     queryKey = '',
     objectName = '',
     pageSize = DEFAULT_TABLE_PAGE_SIZE,
     defaultFilters = {} as Partial<S>,
-    enabled = true
-  },
-  override
-}: UseListBaseProps<T, S>) {
+    enabled = true,
+    excludeFromQueryFilter = []
+  } = options;
   const navigate = useNavigate();
   const pathname = usePathname();
   const queryClient = useQueryClient();
+  const [data, setData] = useState<T[]>([]);
 
   const [pagination, setPagination] = useState<PaginationType>({
     current: DEFAULT_TABLE_PAGE_START,
@@ -128,14 +130,20 @@ export default function useListBase<
     return { ...defaultFilters, ...searchParams };
   }, [searchParams, defaultFilters]);
   const queryFilter = useMemo(() => {
+    const filteredParams = Object.fromEntries(
+      Object.entries(mergedSearchParams).filter(
+        ([key]) => !excludeFromQueryFilter.includes(key as keyof S)
+      )
+    );
+
     return {
-      ...mergedSearchParams,
+      ...filteredParams,
       page: mergedSearchParams.page
         ? Number(mergedSearchParams.page) - 1
         : DEFAULT_TABLE_PAGE_START,
       size: pageSize
     } as S;
-  }, [mergedSearchParams, pageSize]);
+  }, [mergedSearchParams, pageSize, excludeFromQueryFilter]);
 
   useEffect(() => {
     Object.entries(defaultFilters).forEach(([key, value]) => {
@@ -172,6 +180,10 @@ export default function useListBase<
         }
       })
   });
+
+  useEffect(() => {
+    setData(listQuery.data?.data.content || []);
+  }, [listQuery.data?.data.content]);
 
   const current = searchParams['page'];
   useEffect(() => {
@@ -438,6 +450,20 @@ export default function useListBase<
     );
   };
 
+  const invalidateQueries = () =>
+    queryClient.invalidateQueries({ queryKey: [`${queryKey}-list`] });
+
+  const renderReloadButton = () => (
+    <Button
+      disabled={listQuery.isFetching}
+      onClick={() => listQuery.refetch()}
+      variant={'primary'}
+    >
+      <RefreshCcw />
+      Tải lại
+    </Button>
+  );
+
   const extendableHandlers = (): HandlerType<T, S> => {
     const handlers: HandlerType<T, S> = {
       changePagination,
@@ -450,7 +476,9 @@ export default function useListBase<
       renderStatusColumn,
       setQueryParam,
       handleEditClick,
-      handleDeleteClick
+      handleDeleteClick,
+      invalidateQueries,
+      renderReloadButton
     };
 
     override?.(handlers);
@@ -460,12 +488,13 @@ export default function useListBase<
   const handlers = extendableHandlers();
 
   return {
-    data: listQuery.data?.data.content || [],
+    data,
     pagination,
     loading:
       listQuery.isLoading || listQuery.isFetching || deleteMutation.isPending,
     handlers,
     queryFilter,
-    listQuery
+    listQuery,
+    setData
   };
 }

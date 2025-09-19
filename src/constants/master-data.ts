@@ -5,6 +5,10 @@ import {
   KIND_ADMIN,
   KIND_EMPLOYEE,
   KIND_USER,
+  PRODUCT_VARIANT_CONDITION_NEW,
+  PRODUCT_VARIANT_CONDITION_OLD,
+  PRODUCT_VARIANT_FORMAT_HARD_COVER,
+  PRODUCT_VARIANT_FORMAT_PAPER_BACK,
   STATUS_ACTIVE,
   STATUS_DELETED,
   STATUS_LOCK,
@@ -398,6 +402,19 @@ export const categoryStatuses = [
   }
 ];
 
+export const productVariantStatuses = [
+  {
+    value: STATUS_ACTIVE,
+    label: 'Hoạt động',
+    color: '#28a745'
+  },
+  {
+    value: STATUS_DELETED,
+    label: 'Đã xóa',
+    color: '#dc3545'
+  }
+];
+
 export const ageRatings = [
   { label: '0 - 2 tuổi (Trẻ sơ sinh)', value: 1 },
   { label: '3 - 5 tuổi (Mẫu giáo)', value: 2 },
@@ -405,4 +422,38 @@ export const ageRatings = [
   { label: '12 - 15 tuổi (Thiếu niên)', value: 4 },
   { label: '16 - 18 tuổi (Thanh thiếu niên)', value: 5 },
   { label: '18+ (Người lớn)', value: 6 }
+];
+
+export const queryKeys = {
+  ACCOUNT: 'account',
+  AUTHOR: 'author',
+  CATEGORY: 'category',
+  GROUP: 'group',
+  GROUP_PERMISSION: 'group-permission',
+  PRODUCT: 'product',
+  PRODUCT_VARIANT: 'product-variant',
+  PUBLISHER: 'publisher',
+  TRANSLATOR: 'translator'
+};
+
+export const productVariantConditions = [
+  {
+    label: 'Cũ',
+    value: PRODUCT_VARIANT_CONDITION_OLD
+  },
+  {
+    label: 'Mới',
+    value: PRODUCT_VARIANT_CONDITION_NEW
+  }
+];
+
+export const productVariantFormats = [
+  {
+    label: 'Bìa mềm',
+    value: PRODUCT_VARIANT_FORMAT_PAPER_BACK
+  },
+  {
+    label: 'Bìa cứng',
+    value: PRODUCT_VARIANT_FORMAT_HARD_COVER
+  }
 ];

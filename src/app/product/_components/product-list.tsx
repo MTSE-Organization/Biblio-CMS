@@ -11,7 +11,13 @@ import {
   FieldTypes,
   languageOptions
 } from '@/constants';
-import { useDisclosure, useListBase } from '@/hooks';
+import {
+  useDisclosure,
+  useListBase,
+  useNavigate,
+  useQueryParams
+} from '@/hooks';
+import route from '@/routes';
 import { productSearchParamSchema } from '@/schemaValidations';
 import {
   ApiResponseList,
@@ -23,12 +29,20 @@ import {
   PublisherResType,
   SearchFormProps
 } from '@/types';
-import { formatDate, formatMoney, http } from '@/utils';
+import {
+  formatDate,
+  formatMoney,
+  generatePath,
+  http,
+  renderListPageUrl
+} from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { FileImage } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ProductList({ queryKey }: { queryKey: string }) {
+  const navigate = useNavigate();
+  const { searchParams, serializeParams } = useQueryParams();
   const categoryRes = useQuery({
     queryKey: ['category-auto-complete'],
     queryFn: () =>
@@ -95,8 +109,21 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
       title: 'Tên sách',
       dataIndex: 'name',
       width: 400,
-      render: (value) => (
-        <span title={value} className='block w-full truncate'>
+      render: (value, record) => (
+        <span
+          onClick={() =>
+            navigate(
+              renderListPageUrl(
+                generatePath(route.productVariant.getList.path, {
+                  id: record.id
+                }),
+                serializeParams({ ...searchParams, name: record.name })
+              )
+            )
+          }
+          title={value}
+          className='text-dodger-blue block w-full cursor-pointer truncate'
+        >
           {value}
         </span>
       )
@@ -221,7 +248,8 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
           searchFields,
           schema: productSearchParamSchema
         })}
-        actionBar={handlers.renderAddButton()}
+        reloadButton={handlers.renderReloadButton()}
+        addButton={handlers.renderAddButton()}
       >
         <BaseTable
           columns={columns}

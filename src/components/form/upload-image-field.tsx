@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import { AvatarField, Button } from '@/components/form';
-import { FormLabel } from '@/components/ui/form';
+import { FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib';
 import { useFileUpload } from '@/hooks';
 import { logger } from '@/logger';
@@ -114,7 +114,7 @@ export default function UploadImageField<T extends FieldValues>({
   const [zoom, setZoom] = useState(1);
   const {
     field: { value: fieldValue, onChange: fieldOnChange },
-    fieldState: { isDirty }
+    fieldState: { error }
   } = useController({ name, control });
 
   const [
@@ -174,7 +174,15 @@ export default function UploadImageField<T extends FieldValues>({
     <div className='space-y-2'>
       <div className='flex flex-col items-center justify-center gap-y-5'>
         {label && (
-          <FormLabel className={cn('ml-1 gap-1.5', labelClassName)}>
+          <FormLabel
+            className={cn(
+              'ml-1 gap-1.5',
+              {
+                'text-destructive': error?.message
+              },
+              labelClassName
+            )}
+          >
             {label}
             {required && <span className='text-destructive'>*</span>}
           </FormLabel>
@@ -237,6 +245,9 @@ export default function UploadImageField<T extends FieldValues>({
             />
           </label>
         </div>
+        {error?.message && (
+          <p className='text-destructive text-sm'>{error.message}</p>
+        )}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
