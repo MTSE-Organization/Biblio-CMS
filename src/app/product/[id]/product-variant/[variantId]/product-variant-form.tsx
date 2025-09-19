@@ -10,6 +10,7 @@ import { BaseForm } from '@/components/form/base-form';
 import { PageWrapper } from '@/components/layout';
 import {
   apiConfig,
+  ErrorCode,
   PRODUCT_VARIANT_CONDITION_NEW,
   PRODUCT_VARIANT_FORMAT_HARD_COVER,
   productVariantConditions,
@@ -20,10 +21,17 @@ import { useUploadImageProduct } from '@/queries';
 import route from '@/routes';
 import { productVariantSchema } from '@/schemaValidations';
 import { ProductVariantBodyType, ProductVariantResType } from '@/types';
-import { generatePath, renderImageUrl, renderListPageUrl } from '@/utils';
+import {
+  generatePath,
+  notify,
+  renderImageUrl,
+  renderListPageUrl
+} from '@/utils';
+import { AxiosError } from 'axios';
 import { omit } from 'lodash';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
 export default function ProductVariantForm({ queryKey }: { queryKey: string }) {
   const { queryString } = useQueryParams();
@@ -84,9 +92,18 @@ export default function ProductVariantForm({ queryKey }: { queryKey: string }) {
   }, [data]);
 
   const onSubmit = async (values: ProductVariantBodyType) => {
-    await handleSubmit(
-      !data ? { ...values } : { ...omit(values, ['productId']), id: data.id }
-    );
+    try {
+      await handleSubmit(
+        !data ? { ...values } : { ...omit(values, ['productId']), id: data.id }
+      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const errCode = error.response?.data?.code;
+        if (errCode === ErrorCode.PRODUCT_VARIANT_ERROR_EXISTED) {
+          notify.error('Tình trạng và định dạng phân loại sách đã tồn tại');
+        }
+      }
+    }
   };
 
   return (
