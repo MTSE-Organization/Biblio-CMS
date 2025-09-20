@@ -159,7 +159,8 @@ export default function SelectField<
                         disabled,
                       'border-dodger-blue ring-dodger-blue ring-1': open,
                       '[&>div>span]:text-gray-300': fieldState.invalid,
-                      'border-red-500 ring-1 ring-red-500': fieldState.invalid
+                      'border-red-500 ring-1 ring-red-500': fieldState.invalid,
+                      'pl-[5px]!': multiple
                     }
                   )}
                 >

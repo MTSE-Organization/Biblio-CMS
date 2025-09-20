@@ -108,7 +108,6 @@ export default function PublisherList({ queryKey }: { queryKey: string }) {
       dataIndex: 'name',
       render: (value) => value ?? '---'
     },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: PublisherResType) => record.status === STATUS_ACTIVE,

@@ -210,10 +210,10 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
         if (typeof jsonObj === 'object') {
           return (
             <span
-              title={`jsonObj.length}cmx${jsonObj.width}cmx${jsonObj.length}cmx${jsonObj.weight}gx${jsonObj.numPage}tr`}
+              title={`${jsonObj.length}cmx${jsonObj.width}cmx${jsonObj.height}cmx${jsonObj.weight}gx${jsonObj.numPage}tr`}
               className='block w-full truncate'
             >
-              {jsonObj.length}cmx{jsonObj.width}cmx{jsonObj.length}cmx
+              {jsonObj.length}cmx{jsonObj.width}cmx{jsonObj.height}cmx
               {jsonObj.weight}gx{jsonObj.numPage}tr
             </span>
           );
@@ -228,9 +228,15 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
       width: 100,
       align: 'center'
     },
-    { title: 'Danh mục', dataIndex: ['category', 'name'], width: 120 },
+    {
+      title: 'Danh mục',
+      dataIndex: ['category', 'name'],
+      width: 120,
+      render: (value) => (
+        <span className='block w-full cursor-pointer truncate'>{value}</span>
+      )
+    },
     { title: 'Nhà xuất bản', dataIndex: ['publisher', 'name'], width: 200 },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: ProductResType) => record.status === STATUS_ACTIVE,

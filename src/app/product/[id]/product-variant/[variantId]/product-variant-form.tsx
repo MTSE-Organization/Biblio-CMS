@@ -31,7 +31,6 @@ import { AxiosError } from 'axios';
 import { omit } from 'lodash';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 
 export default function ProductVariantForm({ queryKey }: { queryKey: string }) {
   const { queryString } = useQueryParams();
@@ -185,6 +184,8 @@ export default function ProductVariantForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='quantity'
                   label='Số lượng'
+                  placeholder='Số lượng'
+                  required
                 />
               </Col>
               <Col span={12}>
@@ -192,6 +193,7 @@ export default function ProductVariantForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='modifiedPrice'
                   label='Giá'
+                  placeholder='Giá'
                 />
               </Col>
             </Row>

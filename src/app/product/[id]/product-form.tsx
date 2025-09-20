@@ -154,10 +154,12 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
   );
 
   const onSubmit = async (values: ProductBodyType) => {
-    await handleSubmit({
+    const payload = {
       ...values,
       metaData: JSON.stringify(values.metaData)
-    });
+    };
+
+    await handleSubmit(payload as any);
   };
 
   return (
@@ -238,6 +240,8 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='discount'
                   label='Giảm giá (%)'
+                  placeholder='Giảm giá (%)'
+                  isFloat
                   required
                 />
               </Col>
@@ -262,6 +266,8 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='metaData.length'
                   label='Chiều dài'
+                  placeholder='Chiều dài'
+                  isFloat
                   required
                 />
               </Col>
@@ -272,6 +278,8 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='metaData.width'
                   label='Chiều rộng'
+                  placeholder='Chiều rộng'
+                  isFloat
                   required
                 />
               </Col>
@@ -280,6 +288,8 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='metaData.height'
                   label='Chiều cao'
+                  placeholder='Chiều cao'
+                  isFloat
                   required
                 />
               </Col>
@@ -290,6 +300,7 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='metaData.weight'
                   label='Cân nặng (g)'
+                  placeholder='Cân nặng (g)'
                   required
                 />
               </Col>
@@ -298,6 +309,7 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   control={form.control}
                   name='metaData.numPage'
                   label='Số trang'
+                  placeholder='Số trang'
                   required
                 />
               </Col>

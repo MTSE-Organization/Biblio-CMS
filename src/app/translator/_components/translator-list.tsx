@@ -128,7 +128,6 @@ export default function TranslatorList({ queryKey }: { queryKey: string }) {
       width: 150,
       align: 'center'
     },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: TranslatorResType) => record.status === STATUS_ACTIVE,

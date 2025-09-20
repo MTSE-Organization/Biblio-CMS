@@ -132,13 +132,12 @@ export default function ProductVariantList({ queryKey }: { queryKey: string }) {
       align: 'center'
     },
     {
-      title: 'Giá điều chỉnh',
+      title: 'Giá',
       dataIndex: 'modifiedPrice',
       render: (value) => formatMoney(value),
       width: 180,
       align: 'center'
     },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: ProductVariantResType) =>

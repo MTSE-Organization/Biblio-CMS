@@ -429,12 +429,12 @@ export const productStatuses = [
 ];
 
 export const ageRatings = [
-  { label: '0 - 2 tuổi (Trẻ sơ sinh)', value: 1 },
-  { label: '3 - 5 tuổi (Mẫu giáo)', value: 2 },
-  { label: '6 - 11 tuổi (Thiếu nhi)', value: 3 },
-  { label: '12 - 15 tuổi (Thiếu niên)', value: 4 },
-  { label: '16 - 18 tuổi (Thanh thiếu niên)', value: 5 },
-  { label: '18+ (Người lớn)', value: 6 }
+  { label: '0 - 2 tuổi', value: 1 },
+  { label: '3 - 5 tuổi', value: 2 },
+  { label: '6 - 11 tuổ', value: 3 },
+  { label: '12 - 15 tuổi', value: 4 },
+  { label: '16 - 18 tuổi', value: 5 },
+  { label: '18+', value: 6 }
 ];
 
 export const queryKeys = {

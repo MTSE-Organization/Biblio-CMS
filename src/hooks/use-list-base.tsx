@@ -5,6 +5,16 @@ import { HasPermission } from '@/components/has-permission';
 import { CircleLoading } from '@/components/loading';
 import { Modal } from '@/components/modal';
 import { SearchForm } from '@/components/search-form';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import {
   DEFAULT_TABLE_PAGE_SIZE,
@@ -256,46 +266,45 @@ export default function useListBase<
       if (!apiConfig.delete.permissionCode) return null;
       return (
         <HasPermission requiredPermissions={[apiConfig.delete.permissionCode]}>
-          <ToolTip title={`Xóa ${objectName}`}>
-            <Button
-              className='border-none bg-transparent shadow-none hover:bg-transparent'
-              onClick={() => open()}
-              {...buttonProps}
-            >
-              <Trash className='size-3.5 stroke-red-600' />
-            </Button>
-          </ToolTip>
-          <Modal open={opened} className='z-99' onClose={close}>
-            <div className='w-100 p-4'>
-              <div className='flex items-center gap-2'>
-                <Info className='size-8 fill-orange-500 stroke-white' />
-                Bạn có chắc chắn muốn xóa {objectName} này không ?
-              </div>
-              <Row className='mb-0 justify-end gap-2'>
-                <Col span={5}>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <span>
+                <ToolTip title={`Xóa ${objectName}`}>
                   <Button
-                    onClick={close}
+                    className='border-none bg-transparent shadow-none hover:bg-transparent'
+                    {...buttonProps}
+                  >
+                    <Trash className='size-3.5 stroke-red-600' />
+                  </Button>
+                </ToolTip>
+              </span>
+            </AlertDialogTrigger>
+            <AlertDialogContent className='data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-0! data-[state=closed]:slide-out-to-top-0! data-[state=open]:slide-in-from-left-0! data-[state=open]:slide-in-from-top-0! top-[30%]'>
+              <AlertDialogHeader>
+                <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
+                  <Info className='size-8 fill-orange-500 stroke-white' />
+                  Bạn có chắc chắn muốn xóa {objectName} này không ?
+                </AlertDialogTitle>
+                <AlertDialogDescription></AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button
                     variant='outline'
-                    className='h-9 border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
+                    className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
                   >
                     Không
                   </Button>
-                </Col>
-                <Col span={5}>
-                  <Button
-                    variant={'primary'}
-                    onClick={() => handleDeleteClick(record.id)}
-                  >
-                    {deleteMutation.isPending ? (
-                      <CircleLoading className='size-6' />
-                    ) : (
-                      'Có'
-                    )}
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          </Modal>
+                </AlertDialogCancel>
+                <Button
+                  variant={'primary'}
+                  onClick={() => handleDeleteClick(record.id)}
+                >
+                  Có
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </HasPermission>
       );
     }
