@@ -60,7 +60,7 @@ export default function NumberField<T extends FieldValues>({
   min,
   max,
   allowNegative = false,
-  delimiter = '.' // mặc định là `.`
+  delimiter = '.'
 }: NumberFieldProps<T>) {
   const [raw, setRaw] = useState<string>('');
 

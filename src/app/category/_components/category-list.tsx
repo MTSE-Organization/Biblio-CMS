@@ -121,7 +121,6 @@ export default function CategoryList({ queryKey }: { queryKey: string }) {
       title: 'Tên',
       dataIndex: 'name'
     },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: CategoryResType) => record.status === STATUS_ACTIVE,

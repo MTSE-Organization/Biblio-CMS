@@ -138,7 +138,6 @@ export default function ProductVariantList({ queryKey }: { queryKey: string }) {
       width: 180,
       align: 'center'
     },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: ProductVariantResType) =>

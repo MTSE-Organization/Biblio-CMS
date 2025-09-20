@@ -62,7 +62,8 @@ export default function ProductImageModal({
     options: {
       queryKey: 'product-image',
       objectName: 'ảnh sách',
-      enabled: !!data
+      enabled: !!data,
+      excludeFromQueryFilter: ['status']
     },
     override: (handlers) => {
       handlers.additionalParams = () => ({

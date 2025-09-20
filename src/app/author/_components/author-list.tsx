@@ -123,7 +123,6 @@ export default function AuthorList({ queryKey }: { queryKey: string }) {
       width: 150,
       align: 'center'
     },
-    handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
         edit: (record: AuthorResType) => record.status === STATUS_ACTIVE,
