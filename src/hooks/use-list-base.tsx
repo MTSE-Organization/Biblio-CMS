@@ -5,17 +5,6 @@ import { HasPermission } from '@/components/has-permission';
 import { CircleLoading } from '@/components/loading';
 import { Modal } from '@/components/modal';
 import { SearchForm } from '@/components/search-form';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import {
   DEFAULT_TABLE_PAGE_SIZE,
