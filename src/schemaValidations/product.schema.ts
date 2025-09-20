@@ -4,29 +4,35 @@ export const productSchema = z.object({
   id: z.string().optional(),
   name: z.string().nonempty('Bắt buộc'),
   description: z.string().nonempty('Bắt buộc'),
-  price: z
-    .number({ error: 'Giá phải là số' })
-    .nonnegative('Giá không được là số âm'),
+  price: z.number({ error: 'Bắt buộc' }).nonnegative('Giá không được là số âm'),
   releaseDate: z.string().nonempty('Bắt buộc'),
-  ageRating: z.number({ error: 'Độ tuổi phải là số' }),
+  ageRating: z.number({ error: 'Bắt buộc' }),
   language: z.string().nonempty('Bắt buộc'),
   isFeatured: z.boolean({ error: 'Bắt buộc' }),
   discount: z
-    .number({ error: 'Giảm giá phải là số' })
+    .number({ error: 'Bắt buộc' })
     .nonnegative('Giảm giá không được là số âm'),
   categoryId: z.string().nonempty('Bắt buộc'),
   contributorsIds: z.array(z.string()).nonempty('Bắt buộc'),
   publisherId: z.string().nonempty('Bắt buộc'),
-  metaData: z.union([
-    z.object({
-      height: z.number().nonnegative('Chiều cao không được âm'),
-      width: z.number().nonnegative('Chiều rộng không được âm'),
-      length: z.number().nonnegative('Chiều dài không được âm'),
-      weight: z.number().nonnegative('Cân nặng không được âm'),
-      numPage: z.number().int().positive('Số trang phải lớn hơn 0')
-    }),
-    z.string().nonempty('Bắt buộc')
-  ])
+  metaData: z.object({
+    height: z
+      .number({ error: 'Bắt buộc' })
+      .nonnegative('Chiều cao không được âm'),
+    width: z
+      .number({ error: 'Bắt buộc' })
+      .nonnegative('Chiều rộng không được âm'),
+    length: z
+      .number({ error: 'Bắt buộc' })
+      .nonnegative('Chiều dài không được âm'),
+    weight: z
+      .number({ error: 'Bắt buộc' })
+      .nonnegative('Cân nặng không được âm'),
+    numPage: z
+      .number({ error: 'Bắt buộc' })
+      .positive('Số trang phải lớn hơn 0')
+      .int({ error: 'Số trang phải là số nguyên' })
+  })
 });
 
 export const productSearchParamSchema = z.object({
