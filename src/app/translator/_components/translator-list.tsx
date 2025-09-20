@@ -1,5 +1,5 @@
 'use client';
-import { translatorApiRequest } from '@/api-requests';
+
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
@@ -17,19 +17,25 @@ import { useListBase } from '@/hooks';
 import { cn } from '@/lib';
 import { translatorSchemaParamSchema } from '@/schemaValidations';
 import {
+  ApiResponse,
   Column,
   SearchFormProps,
   TranslatorResType,
   TranslatorSearchParamType
 } from '@/types';
-import { formatDate, notify, renderImageUrl } from '@/utils';
+import { formatDate, http, notify, renderImageUrl } from '@/utils';
 import { useMutation } from '@tanstack/react-query';
 import { CircleUserRound, RotateCcw } from 'lucide-react';
 
 export default function TranslatorList({ queryKey }: { queryKey: string }) {
   const recoverMutation = useMutation({
     mutationKey: [`${queryKey}-recover`],
-    mutationFn: (id: string) => translatorApiRequest.recover(id)
+    mutationFn: (id: string) =>
+      http.put<ApiResponse<any>>(apiConfig.translator.recover, {
+        pathParams: {
+          id
+        }
+      })
   });
 
   const { data, pagination, loading, handlers, listQuery } = useListBase<

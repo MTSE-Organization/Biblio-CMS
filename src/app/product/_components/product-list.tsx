@@ -1,4 +1,5 @@
 'use client';
+
 import ProductImageModal from '@/app/product/_components/product-image-modal';
 import { Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
@@ -9,7 +10,10 @@ import {
   ageRatings,
   apiConfig,
   FieldTypes,
-  languageOptions
+  languageOptions,
+  productStatuses,
+  STATUS_ACTIVE,
+  STATUS_DELETED
 } from '@/constants';
 import {
   useDisclosure,
@@ -20,6 +24,7 @@ import {
 import route from '@/routes';
 import { productSearchParamSchema } from '@/schemaValidations';
 import {
+  ApiResponse,
   ApiResponseList,
   CategoryAutoResType,
   Column,
@@ -34,10 +39,11 @@ import {
   formatMoney,
   generatePath,
   http,
+  notify,
   renderListPageUrl
 } from '@/utils';
-import { useQuery } from '@tanstack/react-query';
-import { FileImage } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { FileImage, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ProductList({ queryKey }: { queryKey: string }) {
@@ -57,16 +63,28 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
         apiConfig.publisher.autoComplete
       )
   });
+  const recoverMutation = useMutation({
+    mutationKey: [`${queryKey}-recover`],
+    mutationFn: (id: string) =>
+      http.put<ApiResponse<any>>(apiConfig.product.recover, {
+        pathParams: {
+          id
+        }
+      })
+  });
   const { opened, open, close } = useDisclosure(false);
   const [selectedRow, setSelectedRow] = useState<ProductResType | null>(null);
-  const { data, loading, handlers, pagination } = useListBase<
+  const { data, loading, handlers, pagination, listQuery } = useListBase<
     ProductResType,
     ProductSearchParamType
   >({
     apiConfig: apiConfig.product,
     options: {
       queryKey,
-      objectName: 'sách'
+      objectName: 'sách',
+      defaultFilters: {
+        status: STATUS_ACTIVE
+      }
     },
     override: (handlers) => {
       handlers.additionalColumns = () => ({
@@ -88,6 +106,35 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
                     {...buttonProps}
                   >
                     <FileImage className='stroke-dodger-blue size-3.5' />
+                  </Button>
+                </span>
+              </ToolTip>
+            </HasPermission>
+          );
+        },
+        recover: (
+          record: ProductResType,
+          buttonProps?: Record<string, any>
+        ) => {
+          return (
+            <HasPermission
+              requiredPermissions={[
+                apiConfig.productVariant.recover.permissionCode
+              ]}
+            >
+              <ToolTip title={`Khôi phục`}>
+                <span>
+                  <Button
+                    disabled={record.status === STATUS_ACTIVE}
+                    onClick={async () => {
+                      await recoverMutation.mutateAsync(record.id);
+                      notify.success('Khôi phục thành công');
+                      listQuery.refetch();
+                    }}
+                    className='border-none bg-transparent shadow-none hover:bg-transparent'
+                    {...buttonProps}
+                  >
+                    <RotateCcw className='stroke-dodger-blue size-3.5' />
                   </Button>
                 </span>
               </ToolTip>
@@ -186,9 +233,11 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
     handlers.renderStatusColumn(),
     handlers.renderActionColumn({
       actions: {
-        edit: true,
-        viewProductImage: true,
-        delete: true
+        edit: (record: ProductResType) => record.status === STATUS_ACTIVE,
+        viewProductImage: (record: ProductResType) =>
+          record.status === STATUS_ACTIVE,
+        recover: (record: ProductResType) => record.status === STATUS_DELETED,
+        delete: (record: ProductResType) => record.status === STATUS_ACTIVE
       },
       columnProps: {
         fixed: true,
@@ -229,6 +278,13 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
           label: publisher.name,
           value: publisher.id
         }))
+      },
+      {
+        key: 'status',
+        placeholder: 'Trạng thái',
+        type: FieldTypes.SELECT,
+        options: productStatuses,
+        submitOnChanged: true
       }
     ];
 

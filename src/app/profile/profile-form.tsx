@@ -15,7 +15,7 @@ import { logger } from '@/logger';
 import { useUpdateProfileMutation, useUploadAvatar } from '@/queries';
 import route from '@/routes';
 import { updateProfileSchema } from '@/schemaValidations';
-import { useProfileStore } from '@/store';
+import { useAuthStore } from '@/store';
 import { ProfileBodyType } from '@/types';
 import { getData, notify, removeData, renderImageUrl } from '@/utils';
 import { Save } from 'lucide-react';
@@ -24,7 +24,7 @@ import { UseFormReturn } from 'react-hook-form';
 
 export default function ProfileForm() {
   const navigate = useNavigate();
-  const { profile } = useProfileStore();
+  const { profile } = useAuthStore();
   const fileMutation = useUploadAvatar();
   const profileMutation = useUpdateProfileMutation();
   const [avatarPath, setAvatarPath] = useState('');

@@ -1,6 +1,5 @@
 'use client';
 
-import { productVariantApiRequest } from '@/api-requests';
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
@@ -20,21 +19,33 @@ import { cn } from '@/lib';
 import route from '@/routes';
 import { productVariantSearchParamSchema } from '@/schemaValidations';
 import {
+  ApiResponse,
   Column,
   ProductVariantResType,
   ProductVariantSearchParamType,
   SearchFormProps
 } from '@/types';
-import { formatMoney, notify, renderImageUrl } from '@/utils';
+import {
+  formatMoney,
+  http,
+  notify,
+  renderImageUrl,
+  renderListPageUrl
+} from '@/utils';
 import { useMutation } from '@tanstack/react-query';
 import { RotateCcw } from 'lucide-react';
 
 export default function ProductVariantList({ queryKey }: { queryKey: string }) {
   const recoverMutation = useMutation({
     mutationKey: [`${queryKey}-recover`],
-    mutationFn: (id: string) => productVariantApiRequest.recover(id)
+    mutationFn: (id: string) =>
+      http.put<ApiResponse<any>>(apiConfig.productVariant.recover, {
+        pathParams: {
+          id
+        }
+      })
   });
-  const { searchParams } = useQueryParams<{ name: string }>();
+  const { searchParams, serializeParams } = useQueryParams<{ name: string }>();
   const { data, loading, handlers, pagination, listQuery } = useListBase<
     ProductVariantResType,
     ProductVariantSearchParamType
@@ -157,13 +168,20 @@ export default function ProductVariantList({ queryKey }: { queryKey: string }) {
         key: 'status',
         type: FieldTypes.SELECT,
         options: productVariantStatuses,
-        placeholder: 'Trạng thái'
+        placeholder: 'Trạng thái',
+        submitOnChanged: true
       }
     ];
   return (
     <PageWrapper
       breadcrumbs={[
-        { label: 'Sách', href: route.product.getList.path },
+        {
+          label: 'Sách',
+          href: renderListPageUrl(
+            route.product.getList.path,
+            serializeParams({ status: STATUS_ACTIVE })
+          )
+        },
         { label: 'Phân loại sách' }
       ]}
     >
