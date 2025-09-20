@@ -274,7 +274,7 @@ export default function ProductImageModal({
     <>
       <Modal open={open} onClose={onClose}>
         <ListPageWrapper
-          className='min-h-auto w-200 max-2xl:w-200'
+          className='min-h-auto w-200 overflow-hidden max-2xl:w-200'
           addButton={handlers.renderAddButton()}
           reloadButton={handlers.renderReloadButton()}
         >

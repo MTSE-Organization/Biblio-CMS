@@ -1,10 +1,13 @@
 'use client';
 
-import { Button, ToolTip } from '@/components/form';
+import { Button, Col, Row, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
+import { CircleLoading } from '@/components/loading';
+import { Modal } from '@/components/modal';
 import { SearchForm } from '@/components/search-form';
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -20,6 +23,7 @@ import {
   FieldTypes,
   statusOptions as defaultStatusOptions
 } from '@/constants';
+import useDisclosure from '@/hooks/use-disclosure';
 import useNavigate from '@/hooks/use-navigate';
 import useQueryParams from '@/hooks/use-query-params';
 import { logger } from '@/logger';
@@ -118,6 +122,7 @@ export default function useListBase<
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const [data, setData] = useState<T[]>([]);
+  const { opened, open, close } = useDisclosure();
 
   const [pagination, setPagination] = useState<PaginationType>({
     current: DEFAULT_TABLE_PAGE_START,
@@ -217,6 +222,7 @@ export default function useListBase<
       onSuccess: (res) => {
         if (res.result) {
           notify.success(`Xoá ${objectName} thành công`);
+          close();
           queryClient.invalidateQueries({ queryKey: [`${queryKey}-list`] });
           listQuery.refetch();
         } else {
@@ -261,45 +267,46 @@ export default function useListBase<
       if (!apiConfig.delete.permissionCode) return null;
       return (
         <HasPermission requiredPermissions={[apiConfig.delete.permissionCode]}>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <span>
-                <ToolTip title={`Xóa ${objectName}`}>
+          <ToolTip title={`Xóa ${objectName}`}>
+            <Button
+              className='border-none bg-transparent shadow-none hover:bg-transparent'
+              onClick={() => open()}
+              {...buttonProps}
+            >
+              <Trash className='size-3.5 stroke-red-600' />
+            </Button>
+          </ToolTip>
+          <Modal open={opened} className='z-99' onClose={close}>
+            <div className='w-100 p-4'>
+              <div className='flex items-center gap-2'>
+                <Info className='size-8 fill-orange-500 stroke-white' />
+                Bạn có chắc chắn muốn xóa {objectName} này không ?
+              </div>
+              <Row className='mb-0 justify-end gap-2'>
+                <Col span={5}>
                   <Button
-                    className='border-none bg-transparent shadow-none hover:bg-transparent'
-                    {...buttonProps}
-                  >
-                    <Trash className='size-3.5 stroke-red-600' />
-                  </Button>
-                </ToolTip>
-              </span>
-            </AlertDialogTrigger>
-            <AlertDialogContent className='data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-0! data-[state=closed]:slide-out-to-top-0! data-[state=open]:slide-in-from-left-0! data-[state=open]:slide-in-from-top-0! top-[30%]'>
-              <AlertDialogHeader>
-                <AlertDialogTitle className='text-md flex items-center gap-2 font-normal'>
-                  <Info className='size-8 fill-orange-500 stroke-white' />
-                  Bạn có chắc chắn muốn xóa {objectName} này không ?
-                </AlertDialogTitle>
-                <AlertDialogDescription></AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel asChild>
-                  <Button
+                    onClick={close}
                     variant='outline'
-                    className='border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
+                    className='h-9 border-red-500 text-red-500 transition-all duration-200 ease-linear hover:bg-transparent hover:text-red-500/80'
                   >
                     Không
                   </Button>
-                </AlertDialogCancel>
-                <Button
-                  variant={'primary'}
-                  onClick={() => handleDeleteClick(record.id)}
-                >
-                  Có
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                </Col>
+                <Col span={5}>
+                  <Button
+                    variant={'primary'}
+                    onClick={() => handleDeleteClick(record.id)}
+                  >
+                    {deleteMutation.isPending ? (
+                      <CircleLoading className='size-6' />
+                    ) : (
+                      'Có'
+                    )}
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </Modal>
         </HasPermission>
       );
     }

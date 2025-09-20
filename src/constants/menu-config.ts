@@ -41,7 +41,8 @@ const menuConfig: MenuItem[] = [
         key: 'product-list',
         label: 'Sách',
         path: route.product.getList.path,
-        permissionCode: [apiConfig.product.getList.permissionCode]
+        permissionCode: [apiConfig.product.getList.permissionCode],
+        query: { status: STATUS_ACTIVE }
       }
     ]
   },

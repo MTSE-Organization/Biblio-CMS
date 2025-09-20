@@ -1,5 +1,5 @@
 'use client';
-import { publisherApiRequest } from '@/api-requests';
+
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
@@ -16,19 +16,25 @@ import { useListBase } from '@/hooks';
 import { cn } from '@/lib';
 import { publisherSearchParamSchema } from '@/schemaValidations';
 import {
+  ApiResponse,
   Column,
   PublisherResType,
   PublisherSearchParamTYpe,
   SearchFormProps
 } from '@/types';
-import { notify, renderImageUrl } from '@/utils';
+import { http, notify, renderImageUrl } from '@/utils';
 import { useMutation } from '@tanstack/react-query';
 import { CircleUserRound, RotateCcw } from 'lucide-react';
 
 export default function PublisherList({ queryKey }: { queryKey: string }) {
   const recoverMutation = useMutation({
     mutationKey: [`${queryKey}-recover`],
-    mutationFn: (id: string) => publisherApiRequest.recover(id)
+    mutationFn: (id: string) =>
+      http.put<ApiResponse<any>>(apiConfig.publisher.recover, {
+        pathParams: {
+          id
+        }
+      })
   });
 
   const { data, pagination, loading, handlers, listQuery } = useListBase<

@@ -415,6 +415,19 @@ export const productVariantStatuses = [
   }
 ];
 
+export const productStatuses = [
+  {
+    value: STATUS_ACTIVE,
+    label: 'Hoạt động',
+    color: '#28a745'
+  },
+  {
+    value: STATUS_DELETED,
+    label: 'Đã xóa',
+    color: '#dc3545'
+  }
+];
+
 export const ageRatings = [
   { label: '0 - 2 tuổi (Trẻ sơ sinh)', value: 1 },
   { label: '3 - 5 tuổi (Mẫu giáo)', value: 2 },

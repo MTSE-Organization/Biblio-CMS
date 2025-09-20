@@ -35,5 +35,6 @@ export const productSearchParamSchema = z.object({
   language: z.string().optional().nullable(),
   isFeatured: z.boolean().optional().nullable(),
   categoryId: z.string().optional().nullable(),
-  publisherId: z.string().optional().nullable()
+  publisherId: z.string().optional().nullable(),
+  status: z.number().optional().nullable()
 });

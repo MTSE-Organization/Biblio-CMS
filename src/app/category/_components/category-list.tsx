@@ -1,5 +1,5 @@
 'use client';
-import { categoryApiRequest } from '@/api-requests';
+
 import { AvatarField, Button, ToolTip } from '@/components/form';
 import { HasPermission } from '@/components/has-permission';
 import { PageWrapper } from '@/components/layout';
@@ -17,19 +17,25 @@ import { useDragDrop, useListBase } from '@/hooks';
 import { cn } from '@/lib';
 import { categorySearchParamSchema } from '@/schemaValidations';
 import {
+  ApiResponse,
   CategoryResType,
   CategorySearchParamType,
   Column,
   SearchFormProps
 } from '@/types';
-import { notify, renderImageUrl } from '@/utils';
+import { http, notify, renderImageUrl } from '@/utils';
 import { useMutation } from '@tanstack/react-query';
 import { RotateCcw, Save } from 'lucide-react';
 
 export default function CategoryList({ queryKey }: { queryKey: string }) {
   const recoverMutation = useMutation({
     mutationKey: [`${queryKey}-recover`],
-    mutationFn: (id: string) => categoryApiRequest.recover(id)
+    mutationFn: (id: string) =>
+      http.put<ApiResponse<any>>(apiConfig.category.recover, {
+        pathParams: {
+          id
+        }
+      })
   });
   const { data, loading, handlers, listQuery } = useListBase<
     CategoryResType,

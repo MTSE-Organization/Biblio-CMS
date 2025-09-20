@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import { AvatarField, Button } from '@/components/form';
-import { FormLabel, FormMessage } from '@/components/ui/form';
+import { FormLabel } from '@/components/ui/form';
 import { cn } from '@/lib';
 import { useFileUpload } from '@/hooks';
 import { logger } from '@/logger';

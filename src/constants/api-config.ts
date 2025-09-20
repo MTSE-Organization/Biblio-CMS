@@ -236,11 +236,17 @@ const apiConfig = defineApiConfig({
       method: 'DELETE',
       headers: baseHeader,
       permissionCode: 'PRD_D'
+    },
+    recover: {
+      baseUrl: `${AppConstants.apiUrl}v1/product/recover/:id`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'PRD_U'
     }
   },
   productVariant: {
     getList: {
-      baseUrl: `${AppConstants.apiUrl}v1/product-variant/list`,
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/private/list`,
       method: 'GET',
       headers: baseHeader,
       permissionCode: 'PRD_V_L'
@@ -258,7 +264,7 @@ const apiConfig = defineApiConfig({
       permissionCode: 'PRD_V_U'
     },
     getById: {
-      baseUrl: `${AppConstants.apiUrl}v1/product-variant/get/:id`,
+      baseUrl: `${AppConstants.apiUrl}v1/product-variant/private/get/:id`,
       method: 'GET',
       headers: baseHeader,
       permissionCode: 'PRD_V_V'
