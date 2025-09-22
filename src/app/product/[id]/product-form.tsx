@@ -133,7 +133,7 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
         width: 0,
         numPage: 0
       },
-      price: data?.price ?? 0,
+      price: Number(data?.price) ?? 0,
       releaseDate: data?.releaseDate ?? new Date().toLocaleDateString(),
       publisherId: data?.publisher.id ?? ''
     }),
@@ -241,7 +241,6 @@ export default function ProductForm({ queryKey }: { queryKey: string }) {
                   name='discount'
                   label='Giảm giá (%)'
                   placeholder='Giảm giá (%)'
-                  isFloat
                   required
                 />
               </Col>
