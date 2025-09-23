@@ -231,9 +231,11 @@ export default function ProductList({ queryKey }: { queryKey: string }) {
     {
       title: 'Danh mục',
       dataIndex: ['category', 'name'],
-      width: 120,
+      width: 200,
       render: (value) => (
-        <span className='block w-full cursor-pointer truncate'>{value}</span>
+        <span title={value} className='block w-full truncate'>
+          {value}
+        </span>
       )
     },
     { title: 'Nhà xuất bản', dataIndex: ['publisher', 'name'], width: 200 },

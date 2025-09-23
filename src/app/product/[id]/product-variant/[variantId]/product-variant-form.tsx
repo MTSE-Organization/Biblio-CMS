@@ -148,7 +148,7 @@ export default function ProductVariantForm({ queryKey }: { queryKey: string }) {
                     return res.data?.filePath ?? '';
                   }}
                   required
-                  label='Tải lên ảnh'
+                  label='Tải lên ảnh sách'
                 />
               </Col>
             </Row>

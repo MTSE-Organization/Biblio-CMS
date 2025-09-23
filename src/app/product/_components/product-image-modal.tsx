@@ -321,7 +321,7 @@ export default function ProductImageModal({
             <>
               <UploadImageField
                 size={180}
-                label='Tải lên ảnh'
+                label='Tải lên ảnh sách'
                 control={form.control}
                 name='url'
                 required
