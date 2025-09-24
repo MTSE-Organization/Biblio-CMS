@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { DATE_TIME_FORMAT } from '@/constants';
 
 type Props = {
   control: Control<any>;
@@ -47,7 +48,7 @@ export default function DateTimePickerField({
   label,
   description,
   required,
-  format: dateFormat = 'dd/MM/yyyy HH:mm:ss',
+  format: dateFormat = DATE_TIME_FORMAT,
   labelClassName
 }: Props) {
   const hours = Array.from({ length: 24 }, (_, i) => i);

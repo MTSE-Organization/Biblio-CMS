@@ -45,28 +45,28 @@ export default function TranslatorForm({ queryKey }: { queryKey: string }) {
     avatarPath: '',
     bio: '',
     country: '',
-    dateOfBirth: '01/01/1970',
+    dateOfBirth: '01/01/1900',
     gender: GENDER_MALE,
     name: ''
   };
 
-  const initialValues: TranslatorBodyType = useMemo(() => {
-    return {
-      name: data?.name ?? '',
-      bio: data?.bio ?? '',
-      avatarPath: data?.avatarPath ?? '',
-      gender: Number(data?.gender) ?? 0,
-      dateOfBirth: data?.dateOfBirth ?? '01/01/1970',
-      country: data?.country ?? ''
-    };
-  }, [
-    data?.avatarPath,
-    data?.bio,
-    data?.country,
-    data?.dateOfBirth,
-    data?.gender,
-    data?.name
-  ]);
+  // const initialValues: TranslatorBodyType = useMemo(() => {
+  //   return {
+  //     name: data?.name ?? '',
+  //     bio: data?.bio ?? '',
+  //     avatarPath: data?.avatarPath ?? '',
+  //     gender: Number(data?.gender) ?? 0,
+  //     dateOfBirth: data?.dateOfBirth ?? '01/01/1970',
+  //     country: data?.country ?? ''
+  //   };
+  // }, [
+  //   data?.avatarPath,
+  //   data?.bio,
+  //   data?.country,
+  //   data?.dateOfBirth,
+  //   data?.gender,
+  //   data?.name
+  // ]);
 
   useEffect(() => {
     if (data?.avatarPath) setAvatarPath(data?.avatarPath);
@@ -87,7 +87,7 @@ export default function TranslatorForm({ queryKey }: { queryKey: string }) {
         onSubmit={onSubmit}
         defaultValues={defaultValues}
         schema={translatorSchema}
-        initialValues={initialValues}
+        initialValues={data}
       >
         {(form) => (
           <>

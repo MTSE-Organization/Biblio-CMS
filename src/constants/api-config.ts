@@ -54,7 +54,7 @@ const apiConfig = defineApiConfig({
   },
   file: {
     upload: {
-      baseUrl: `${AppConstants.apiUrl}v1/file/upload`,
+      baseUrl: `${AppConstants.mediaUrl}v1/file/upload`,
       method: 'POST',
       headers: multipartHeader,
       isUpload: true,

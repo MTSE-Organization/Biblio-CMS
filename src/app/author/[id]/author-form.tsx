@@ -45,7 +45,7 @@ export default function AuthorForm({ queryKey }: { queryKey: string }) {
     avatarPath: '',
     bio: '',
     country: '',
-    dateOfBirth: '01/01/1970',
+    dateOfBirth: '01/01/1900',
     gender: GENDER_MALE,
     name: ''
   };

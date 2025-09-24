@@ -30,7 +30,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { DropdownProps } from 'react-day-picker';
-import { DATE_TIME_FORMAT } from '@/constants';
+import { DEFAULT_DATE_FORMAT } from '@/constants';
 
 type Props = {
   control: Control<any>;
@@ -51,7 +51,7 @@ export default function DatePickerField({
   label,
   description,
   className,
-  format: dateFormat = DATE_TIME_FORMAT,
+  format: dateFormat = DEFAULT_DATE_FORMAT,
   disabled,
   required,
   placeholder,
@@ -136,7 +136,7 @@ export default function DatePickerField({
                   }}
                   captionLayout='dropdown'
                   defaultMonth={new Date(field.value)}
-                  startMonth={new Date(1900, 0)}
+                  startMonth={new Date(1700, 0)}
                   endMonth={new Date(2050, 12)}
                   components={{ Dropdown: CustomSelectDropdown }}
                   formatters={{

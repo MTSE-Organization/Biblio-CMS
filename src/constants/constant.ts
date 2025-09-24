@@ -33,3 +33,6 @@ export const COUPON_TYPE_PERCENTAGE = 2;
 
 export const DEFAULT_DATE_FORMAT = 'dd/MM/yyyy';
 export const DATE_TIME_FORMAT = 'HH:mm:ss dd/MM/yyyy ';
+
+export const CONTRIBUTOR_AUTHOR = 1;
+export const CONTRIBUTOR_TRANSLATOR = 2;
