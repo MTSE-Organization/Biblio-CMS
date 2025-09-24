@@ -54,7 +54,7 @@ const apiConfig = defineApiConfig({
   },
   file: {
     upload: {
-      baseUrl: `${AppConstants.apiUrl}v1/file/upload`,
+      baseUrl: `${AppConstants.mediaUrl}v1/file/upload`,
       method: 'POST',
       headers: multipartHeader,
       isUpload: true,
@@ -453,6 +453,44 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/translator/auto-complete`,
       method: 'GET',
       headers: baseHeader
+    }
+  },
+  coupon: {
+    getList: {
+      baseUrl: `${AppConstants.apiUrl}v1/coupon/private/list`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'CP_L'
+    },
+    create: {
+      baseUrl: `${AppConstants.apiUrl}v1/coupon/create`,
+      method: 'POST',
+      headers: baseHeader,
+      permissionCode: 'CP_C'
+    },
+    update: {
+      baseUrl: `${AppConstants.apiUrl}v1/coupon/update`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'CP_U'
+    },
+    getById: {
+      baseUrl: `${AppConstants.apiUrl}v1/coupon/private/get/:id`,
+      method: 'GET',
+      headers: baseHeader,
+      permissionCode: 'CP_V'
+    },
+    delete: {
+      baseUrl: `${AppConstants.apiUrl}v1/coupon/delete/:id`,
+      method: 'DELETE',
+      headers: baseHeader,
+      permissionCode: 'CP_D'
+    },
+    recover: {
+      baseUrl: `${AppConstants.apiUrl}v1/coupon/recover/:id`,
+      method: 'PUT',
+      headers: baseHeader,
+      permissionCode: 'CP_U'
     }
   }
 });

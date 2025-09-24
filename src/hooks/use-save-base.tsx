@@ -13,10 +13,11 @@ import {
 import useNavigate from '@/hooks/use-navigate';
 import useQueryParams from '@/hooks/use-query-params';
 import { logger } from '@/logger';
-import { ApiConfig, ApiResponse } from '@/types';
-import { http, notify } from '@/utils';
+import { ApiConfig, ApiResponse, ErrorMaps } from '@/types';
+import { applyFormErrors, http, notify } from '@/utils';
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError, isAxiosError } from 'axios';
 import { ArrowLeftFromLine, Info, Save } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -81,22 +82,22 @@ export default function useSaveBase<
     mutationFn: (body: T) =>
       http.get<ApiResponse<any>>(apiConfig.create, {
         body
-      }),
-    onSuccess: (res) => {
-      if (res.result) {
-        notify.success(`Thêm mới ${objectName} thành công`);
-        queryClient.invalidateQueries({
-          queryKey: [queryKey, detailId]
-        });
-      } else {
-        logger.error(`Error while creating ${objectName}:`, res);
-        // notify.error(`Thêm mới ${objectName} thất bại`);
-      }
-    },
-    onError: (error) => {
-      logger.error(`Error while creating ${queryKey}:`, error);
-      // notify.error(`Có lỗi xảy ra khi thêm mới ${objectName}`);
-    }
+      })
+    // onSuccess: (res) => {
+    //   if (res.result) {
+    //     notify.success(`Thêm mới ${objectName} thành công`);
+    //     queryClient.invalidateQueries({
+    //       queryKey: [queryKey, detailId]
+    //     });
+    //   } else {
+    //     logger.error(`Error while creating ${objectName}:`, res);
+    //     // notify.error(`Thêm mới ${objectName} thất bại`);
+    //   }
+    // },
+    // onError: (error) => {
+    //   logger.error(`Error while creating ${queryKey}:`, error);
+    //   // notify.error(`Có lỗi xảy ra khi thêm mới ${objectName}`);
+    // }
   });
 
   const updateMutation = useMutation({
@@ -104,22 +105,22 @@ export default function useSaveBase<
     mutationFn: (body: T) =>
       http.get<ApiResponse<any>>(apiConfig.update, {
         body
-      }),
-    onSuccess: (res) => {
-      if (res.result) {
-        queryClient.invalidateQueries({
-          queryKey: [queryKey, detailId]
-        });
-        notify.success(`Cập nhật ${objectName} thành công`);
-      } else {
-        logger.error(`Error while creating ${objectName}:`, res);
-        // notify.error(`Cập nhật ${objectName} thất bại`);
-      }
-    },
-    onError: (error) => {
-      logger.error(`Error while updating ${queryKey}:`, error);
-      // notify.error(`Có lỗi xảy ra khi cập nhật ${objectName}`);
-    }
+      })
+    // onSuccess: (res) => {
+    //   if (res.result) {
+    //     queryClient.invalidateQueries({
+    //       queryKey: [queryKey, detailId]
+    //     });
+    //     notify.success(`Cập nhật ${objectName} thành công`);
+    //   } else {
+    //     logger.error(`Error while creating ${objectName}:`, res);
+    //     // notify.error(`Cập nhật ${objectName} thất bại`);
+    //   }
+    // },
+    // onError: (error) => {
+    //   logger.error(`Error while updating ${queryKey}:`, error);
+    //   // notify.error(`Có lỗi xảy ra khi cập nhật ${objectName}`);
+    // }
   });
 
   const getBackPath = () => {
@@ -130,10 +131,33 @@ export default function useSaveBase<
 
   const loading = createMutation.isPending || updateMutation.isPending;
 
-  const handleSubmit = async (values: T) => {
+  const handleSubmit = async (
+    values: T,
+    form?: UseFormReturn<T>,
+    errorMaps?: ErrorMaps<T>
+  ) => {
     const mutation = isCreate ? createMutation : updateMutation;
     await mutation.mutateAsync(
-      isCreate ? { ...values } : { ...values, id: values.id ?? id }
+      isCreate ? { ...values } : { ...values, id: values.id ?? id },
+      {
+        onSuccess: (res) => {
+          if (res.result) {
+            queryClient.invalidateQueries({
+              queryKey: [queryKey, detailId]
+            });
+            notify.success(
+              `${isCreate ? 'Thêm mới' : 'Cập nhật'} ${objectName} thành công`
+            );
+          }
+        },
+        onError: (error) => {
+          if (isAxiosError(error)) {
+            const errCode = error?.response?.data?.code;
+            if (errCode && errorMaps && form)
+              applyFormErrors(form, errCode, errorMaps);
+          }
+        }
+      }
     );
     if (listPageUrl) {
       navigate(getBackPath());

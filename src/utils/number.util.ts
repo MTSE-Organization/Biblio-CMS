@@ -1,15 +1,42 @@
-export function formatMoney(value: string, delimiter: string = '.'): string {
-  if (!value) return '';
+export function formatMoney(
+  value: string | number,
+  suffix: string = '₫'
+): string {
+  if (value === null || value === undefined) return '';
 
-  const numeric = value.toString().replace(/\D/g, '');
-  if (numeric === '') return '';
+  const num = Number(value);
+  if (isNaN(num)) return '';
 
-  const reversed = numeric.split('').reverse();
-  const chunks: string[] = [];
+  return new Intl.NumberFormat('vi-VN').format(num) + suffix;
+}
 
-  for (let i = 0; i < reversed.length; i += 3) {
-    chunks.push(reversed.slice(i, i + 3).join(''));
+export function formatNumber(input: unknown, decimal = 2): string {
+  const value = Number(input);
+
+  if (isNaN(value)) {
+    return '';
   }
 
-  return chunks.join(delimiter).split('').reverse().join('');
+  const fixed = value.toFixed(decimal);
+  let [intPart, decimalPart] = fixed.split('.');
+
+  if (!decimalPart || Number(decimalPart) === 0) {
+    return intPart;
+  }
+
+  if (decimal === 1) {
+    return (Math.round(value * 10) / 10).toString();
+  }
+
+  if (decimal === 2) {
+    if (decimalPart[1] === '0') {
+      return `${intPart}.${decimalPart[0]}`;
+    }
+    if (decimalPart[1] === '5') {
+      return (Math.round(value * 10) / 10).toString();
+    }
+    return `${intPart}.${decimalPart}`;
+  }
+
+  return fixed;
 }

@@ -1,4 +1,8 @@
 import {
+  COUPON_KIND_DISCOUNT,
+  COUPON_KIND_FREESHIP,
+  COUPON_TYPE_FIXED,
+  COUPON_TYPE_PERCENTAGE,
   GENDER_FEMALE,
   GENDER_MALE,
   GENDER_OTHER,
@@ -446,7 +450,8 @@ export const queryKeys = {
   PRODUCT: 'product',
   PRODUCT_VARIANT: 'product-variant',
   PUBLISHER: 'publisher',
-  TRANSLATOR: 'translator'
+  TRANSLATOR: 'translator',
+  COUPON: 'COUPON'
 };
 
 export const productVariantConditions = [
@@ -468,5 +473,35 @@ export const productVariantFormats = [
   {
     label: 'Bìa cứng',
     value: PRODUCT_VARIANT_FORMAT_HARD_COVER
+  }
+];
+
+export const couponKinds = [
+  {
+    label: 'Giảm giá',
+    value: COUPON_KIND_DISCOUNT
+  },
+  {
+    label: 'Miễn phí vận chuyển',
+    value: COUPON_KIND_FREESHIP
+  }
+];
+
+export const couponTypes = [
+  {
+    label: 'Cố định',
+    value: COUPON_TYPE_FIXED
+  },
+  { label: 'Theo phần trăm', value: COUPON_TYPE_PERCENTAGE }
+];
+
+export const couponStatuses = [
+  {
+    label: 'Hoạt động',
+    value: STATUS_ACTIVE
+  },
+  {
+    label: 'Đã xóa',
+    value: STATUS_DELETED
   }
 ];
