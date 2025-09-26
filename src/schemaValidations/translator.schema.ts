@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export const translatorSchema = z.object({
-  id: z.string().optional(),
+  id: z.union([z.string(), z.number()]).optional(),
   name: z.string().nonempty('Bắt buộc'),
   bio: z.string().nonempty('Bắt buộc'),
   avatarPath: z.string(),
@@ -15,7 +15,7 @@ export const translatorSchema = z.object({
   country: z.string()
 });
 
-export const translatorSchemaParamSchema = z.object({
+export const translatorSearchSchema = z.object({
   name: z.string().optional(),
   kind: z.number().optional().nullable(),
   status: z.number().nullable()

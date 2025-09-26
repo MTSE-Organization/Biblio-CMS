@@ -31,9 +31,10 @@ import debounce from 'lodash/debounce';
 import Image from 'next/image';
 import { emptyData } from '@/assets';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { CircleLoading } from '@/components/loading';
 
 type AutoCompleteOption = {
-  label: string | number;
+  label: string;
   value: string | number;
   prefix?: React.ReactNode;
 };
@@ -94,6 +95,8 @@ export default function AutoCompleteField<
   const [initialOption, setInitialOption] = useState<AutoCompleteOption | null>(
     null
   );
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+  const commandInputRef = useRef<HTMLInputElement>(null);
   const initialFetched = useRef(false);
 
   const fieldValue = useWatch({ control, name });
@@ -124,6 +127,8 @@ export default function AutoCompleteField<
     },
     enabled: false
   });
+
+  const loading = query.isLoading || query.isFetching;
 
   const isFirstFetch = useRef(false);
   useEffect(() => {
@@ -182,9 +187,21 @@ export default function AutoCompleteField<
   const combinedOptions: AutoCompleteOption[] = useMemo(() => {
     const opts = options.filter((opt) => initialOption?.value !== opt.value);
     return initialOption ? [initialOption, ...opts] : opts;
-  }, [options, initialOption]).filter((opt) =>
-    opt.label.toString().includes(search)
-  );
+  }, [options, initialOption]);
+
+  useEffect(() => {
+    if (!fieldValue || (Array.isArray(fieldValue) && fieldValue.length === 0)) {
+      setSelectedOptions([]);
+      setInitialOption(null);
+      setSearch('');
+    }
+  }, [fieldValue]);
+
+  useEffect(() => {
+    if (!search) {
+      setHighlightedIndex(-1);
+    }
+  }, [search]);
 
   return (
     <FormField
@@ -198,7 +215,7 @@ export default function AutoCompleteField<
               ? Array.isArray(field.value)
                 ? field.value
                 : []
-              : [field.value];
+              : [field.value].filter(Boolean);
 
         const toggleValue = (val: string | number) => {
           if (multiple) {
@@ -208,7 +225,7 @@ export default function AutoCompleteField<
 
             field.onChange(next);
 
-            const picked = options.find((o) => o.value === val);
+            const picked = combinedOptions.find((o) => o.value === val);
             if (picked) {
               setSelectedOptions((prev) => {
                 const exist = prev.find((p) => p.value === val);
@@ -221,7 +238,7 @@ export default function AutoCompleteField<
             onValueChange?.(next);
           } else {
             field.onChange(val.toString());
-            const picked = options.find((o) => o.value === val);
+            const picked = combinedOptions.find((o) => o.value === val);
             if (picked) setSelectedOptions([picked]);
             onValueChange?.(val);
             setOpen(false);
@@ -251,14 +268,15 @@ export default function AutoCompleteField<
                   role='combobox'
                   aria-label='Select'
                   disabled={disabled}
+                  title={selectedOptions[0]?.label ?? ''}
                   className={cn(
-                    'w-full flex-wrap justify-between border-1 py-0 text-black opacity-80 opacity-100 focus:ring-0 focus-visible:border-gray-200 focus-visible:shadow-none focus-visible:ring-0',
+                    'w-full flex-nowrap justify-between truncate border-1 px-3 py-0 text-black opacity-80 opacity-100 focus:ring-0 focus-visible:border-gray-200 focus-visible:shadow-none focus-visible:ring-0',
                     {
                       'disabled:cursor-not-allowed disabled:opacity-100 disabled:hover:bg-transparent disabled:[&>div>span]:opacity-80':
                         disabled,
                       'border-dodger-blue ring-dodger-blue ring-1': open,
                       '[&>div>span]:text-gray-300': fieldState.invalid,
-                      'border-red-500 ring-1 ring-red-500': fieldState.invalid,
+                      'border-red-500 ring-red-500': fieldState.invalid,
                       'pl-1!': multiple && selectedValues.length
                     }
                   )}
@@ -266,42 +284,44 @@ export default function AutoCompleteField<
                   {multiple ? (
                     selectedOptions.length > 0 ? (
                       <div className='flex flex-wrap gap-2'>
-                        {selectedOptions.map((opt) => (
-                          <div
-                            key={opt.value}
-                            className='bg-accent text-accent-foreground flex items-center rounded-lg px-3 py-1 text-sm'
-                          >
-                            {opt.prefix && (
-                              <span className='mr-1 font-mono text-xs opacity-70'>
-                                {opt.prefix}
-                              </span>
-                            )}
-                            {opt.label}
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const next = selectedValues.filter(
-                                  (v) => v !== opt.value
-                                );
-                                field.onChange(next);
-                                setSelectedOptions((prev) =>
-                                  prev.filter((p) => p.value !== opt.value)
-                                );
-                              }}
-                              className='hover:text-destructive ml-2 cursor-pointer text-lg leading-none'
+                        {selectedOptions.map((opt) => {
+                          return (
+                            <div
+                              key={opt.value}
+                              className='bg-accent text-accent-foreground flex items-center rounded px-2 py-1 text-sm'
                             >
-                              <X />
-                            </span>
-                          </div>
-                        ))}
+                              {opt.prefix && (
+                                <span className='mr-1 font-mono text-xs opacity-70'>
+                                  {opt.prefix}
+                                </span>
+                              )}
+                              {opt.label}
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const next = selectedValues.filter(
+                                    (v) => v !== opt.value
+                                  );
+                                  field.onChange(next);
+                                  setSelectedOptions((prev) =>
+                                    prev.filter((p) => p.value !== opt.value)
+                                  );
+                                }}
+                                className='hover:text-destructive ml-2 cursor-pointer text-lg leading-none'
+                              >
+                                <X />
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     ) : (
                       <span className='opacity-30'>{placeholder}</span>
                     )
                   ) : selectedOptions.length === 1 ? (
-                    <div className='flex items-center gap-2 truncate'>
+                    <div className='flex min-w-0 flex-1 items-center gap-2'>
                       {selectedOptions[0].prefix}
-                      <span className='text-black'>
+                      <span className='truncate text-black'>
                         {selectedOptions[0].label}
                       </span>
                     </div>
@@ -313,16 +333,16 @@ export default function AutoCompleteField<
                     <span
                       onClick={(e) => {
                         e.stopPropagation();
-                        field.onChange(multiple ? [] : '');
+                        field.onChange(multiple ? [] : null);
                         setSelectedOptions([]);
                         setOpen(false);
                       }}
-                      className='bg-accent ml-2 flex h-4 w-4 shrink-0 items-center justify-center rounded-full p-2 hover:opacity-80'
+                      className='bg-accent ml-2 flex h-4 w-4 shrink-0 items-center justify-center rounded-full px-0 hover:opacity-80'
                     >
                       <X className='size-3' />
                     </span>
                   ) : (
-                    <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                    <ChevronDown className='ml-0 h-4 w-4 shrink-0 opacity-50' />
                   )}
                 </Button>
               </PopoverTrigger>
@@ -339,37 +359,73 @@ export default function AutoCompleteField<
                     placeholder={searchText}
                     value={search}
                     onValueChange={setSearch}
+                    ref={commandInputRef}
+                    onKeyDown={(e) => {
+                      if (combinedOptions.length === 0) return;
+                      switch (e.key) {
+                        case 'ArrowDown':
+                          e.preventDefault();
+                          setHighlightedIndex((prev) =>
+                            prev < combinedOptions.length - 1 ? prev + 1 : 0
+                          );
+                          break;
+                        case 'ArrowUp':
+                          e.preventDefault();
+                          setHighlightedIndex((prev) =>
+                            prev > 0 ? prev - 1 : combinedOptions.length - 1
+                          );
+                          break;
+                        case 'Enter':
+                          e.preventDefault();
+                          const selected = combinedOptions[highlightedIndex];
+                          if (selected) toggleValue(selected.value);
+                          break;
+                        case 'Escape':
+                          setOpen(false);
+                          break;
+                      }
+                    }}
                   />
-                  {options.length === 0 ? (
-                    <CommandEmpty className='mx-auto pt-4 pb-2 text-center text-sm'>
+                  {options.length === 0 && !loading ? (
+                    <CommandEmpty className='mx-auto pt-2 pb-4 text-center text-sm'>
                       <Image
                         src={emptyData.src}
                         width={120}
                         height={50}
-                        className='mx-auto mt-2'
+                        className='mx-auto'
                         alt={notFoundContent as string}
                       />
                       {notFoundContent}
                     </CommandEmpty>
                   ) : (
                     <CommandGroup>
-                      {combinedOptions.map((opt) => (
-                        <CommandItem
-                          key={opt.value}
-                          onSelect={() => toggleValue(opt.value)}
-                          className={cn('cursor-pointer rounded', {
-                            'bg-accent text-accent-foreground':
-                              selectedValues.includes(opt.value)
-                          })}
-                        >
-                          {opt.prefix && (
-                            <span className='mr-1 font-mono text-xs opacity-70'>
-                              {opt.prefix}
-                            </span>
-                          )}
-                          {opt.label}
-                        </CommandItem>
-                      ))}
+                      {loading ? (
+                        <CircleLoading className='stroke-dodger-blue my-2 size-7' />
+                      ) : (
+                        combinedOptions.map((opt, idx) => (
+                          <CommandItem
+                            key={opt.value}
+                            onSelect={() => toggleValue(opt.value)}
+                            onMouseEnter={() => setHighlightedIndex(idx)}
+                            title={opt.label}
+                            className={cn(
+                              'block cursor-pointer truncate rounded',
+                              {
+                                'bg-accent text-accent-foreground':
+                                  selectedValues.includes(opt.value) ||
+                                  highlightedIndex === idx
+                              }
+                            )}
+                          >
+                            {opt.prefix && (
+                              <span className='mr-1 font-mono text-xs opacity-70'>
+                                {opt.prefix}
+                              </span>
+                            )}
+                            {opt.label}
+                          </CommandItem>
+                        ))
+                      )}
                     </CommandGroup>
                   )}
                 </Command>

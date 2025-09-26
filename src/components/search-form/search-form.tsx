@@ -1,9 +1,17 @@
 'use client';
 
-import { Button, Col, InputField, Row, SelectField } from '@/components/form';
+import {
+  AutoCompleteField,
+  Button,
+  Col,
+  InputField,
+  Row,
+  SelectField
+} from '@/components/form';
 import { BaseForm } from '@/components/form/base-form';
 import { DEFAULT_COL_SPAN, FieldTypes } from '@/constants';
-import { SearchFormProps } from '@/types';
+import { cn } from '@/lib';
+import { ApiConfig, AutoCompleteOption, SearchFormProps } from '@/types';
 import { BrushCleaning, Search } from 'lucide-react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 import z from 'zod';
@@ -57,54 +65,83 @@ export default function SearchForm<S extends FieldValues>({
     form.reset({});
   };
 
-  return (
-    <BaseForm
-      onSubmit={onSubmit}
-      defaultValues={defaultValues}
-      schema={schema}
-      initialValues={initialValues}
-      className='w-full'
-    >
-      {(form) => (
-        <>
-          <Row className='my-0 -ml-4 gap-2'>
-            {searchFields.map((sf) => {
+  const renderField = (
+    searchFields: SearchFormProps<S>['searchFields'],
+    form: UseFormReturn<Record<string, unknown>>
+  ) => {
+    return (
+      <Row className='my-0 flex-wrap gap-2'>
+        {searchFields.map((sf) => {
+          switch (sf.type) {
+            case FieldTypes.SELECT: {
               return (
                 <Col
                   key={sf.key as string}
                   span={sf.colSpan || DEFAULT_COL_SPAN}
                 >
-                  {sf.type === FieldTypes.SELECT ? (
-                    <SelectField
-                      control={form.control}
-                      name={sf.key as string}
-                      placeholder={sf.placeholder}
-                      options={sf.options ?? []}
-                      getLabel={(option) => option.label}
-                      getValue={(option) => option.value}
-                      onValueChange={(val) => {
-                        if (sf.submitOnChanged) {
-                          form.setValue(sf.key as string, val);
-                          form.handleSubmit(onSubmit)();
-                        }
-                      }}
-                    />
-                  ) : (
-                    <InputField
-                      control={form.control}
-                      name={sf.key as string}
-                      placeholder={sf.placeholder}
-                    />
-                  )}
+                  <SelectField
+                    control={form.control}
+                    name={sf.key as string}
+                    placeholder={sf.placeholder}
+                    options={sf.options ?? []}
+                    getLabel={(option) => option.label}
+                    getValue={(option) => option.value}
+                    onValueChange={(val) => {
+                      if (sf.submitOnChanged) {
+                        form.setValue(sf.key as string, val);
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }}
+                  />
                 </Col>
               );
-            })}
-            <Col className='w-9'>
+            }
+            case FieldTypes.AUTOCOMPLETE: {
+              return (
+                <Col
+                  key={sf.key as string}
+                  span={sf.colSpan || DEFAULT_COL_SPAN}
+                >
+                  <AutoCompleteField
+                    apiConfig={sf.apiConfig as ApiConfig}
+                    control={form.control}
+                    mappingData={
+                      sf.mappingData as (
+                        option: Record<string, any>
+                      ) => AutoCompleteOption
+                    }
+                    name={sf.key as string}
+                    searchParams={sf.searchParams as string[]}
+                    initialParams={sf.initialParams}
+                    placeholder={sf.placeholder}
+                  />
+                </Col>
+              );
+            }
+            default: {
+              return (
+                <Col
+                  key={sf.key as string}
+                  span={sf.colSpan || DEFAULT_COL_SPAN}
+                >
+                  <InputField
+                    control={form.control}
+                    name={sf.key as string}
+                    placeholder={sf.placeholder}
+                  />
+                </Col>
+              );
+            }
+          }
+        })}
+        {searchFields.length < 4 && (
+          <>
+            <Col className='w-9!'>
               <Button type='submit' variant={'primary'}>
                 <Search />
               </Button>
             </Col>
-            <Col className='w-9'>
+            <Col className='w-9!'>
               <Button
                 type='button'
                 onClick={() => handleReset(form)}
@@ -113,7 +150,44 @@ export default function SearchForm<S extends FieldValues>({
                 <BrushCleaning className='transition-all duration-200 ease-linear' />
               </Button>
             </Col>
-          </Row>
+          </>
+        )}
+      </Row>
+    );
+  };
+
+  return (
+    <BaseForm
+      onSubmit={onSubmit}
+      defaultValues={defaultValues}
+      schema={schema}
+      initialValues={initialValues}
+      className='w-full p-0 pr-4'
+    >
+      {(form) => (
+        <>
+          {searchFields.length < 4 ? (
+            renderField(searchFields, form)
+          ) : (
+            <Row className='my-0 flex-wrap gap-2'>
+              <div className={cn('flex flex-1 flex-wrap gap-2')}>
+                {renderField(searchFields, form)}
+              </div>
+
+              <div className='flex items-start gap-2'>
+                <Button type='submit' variant='primary'>
+                  <Search />
+                </Button>
+                <Button
+                  type='button'
+                  onClick={() => handleReset(form)}
+                  className='hover:[&>svg]:stroke-dodger-blue hover:border-dodger-blue border border-gray-300 bg-white hover:bg-transparent [&>svg]:stroke-black'
+                >
+                  <BrushCleaning className='transition-all duration-200 ease-linear' />
+                </Button>
+              </div>
+            </Row>
+          )}
         </>
       )}
     </BaseForm>

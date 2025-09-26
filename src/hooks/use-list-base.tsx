@@ -27,7 +27,7 @@ import {
   ApiConfig,
   ApiResponse,
   ApiResponseList,
-  BaseSearchParamType,
+  BaseSearchType,
   Column,
   OptionType,
   PaginationType,
@@ -46,7 +46,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-type HandlerType<T extends { id: string }, S extends BaseSearchParamType> = {
+type HandlerType<T extends { id: string }, S extends BaseSearchType> = {
   changePagination: (page: number) => void;
   renderActionColumn: (options?: {
     actions?: Record<'edit' | 'delete' | string, ActionCondition<T>>;
@@ -80,10 +80,7 @@ type HandlerType<T extends { id: string }, S extends BaseSearchParamType> = {
 
 type ActionCondition<T> = boolean | ((record: T) => boolean);
 
-type UseListBaseProps<
-  T extends { id: string },
-  S extends BaseSearchParamType
-> = {
+type UseListBaseProps<T extends { id: string }, S extends BaseSearchType> = {
   apiConfig: {
     getList: ApiConfig;
     getById?: ApiConfig;
@@ -104,7 +101,7 @@ type UseListBaseProps<
 
 export default function useListBase<
   T extends { id: string },
-  S extends BaseSearchParamType
+  S extends BaseSearchType
 >({ apiConfig, options, override }: UseListBaseProps<T, S>) {
   const {
     queryKey = '',
@@ -126,9 +123,13 @@ export default function useListBase<
   });
   const { searchParams, setQueryParams, setQueryParam, serializeParams } =
     useQueryParams<S>();
+
+  // Combined current params with default params
   const mergedSearchParams = useMemo(() => {
     return { ...defaultFilters, ...searchParams };
   }, [searchParams, defaultFilters]);
+
+  // Filter params which will not be filtered by
   const queryFilter = useMemo(() => {
     const filteredParams = Object.fromEntries(
       Object.entries(mergedSearchParams).filter(
@@ -145,6 +146,7 @@ export default function useListBase<
     } as S;
   }, [mergedSearchParams, pageSize, excludeFromQueryFilter]);
 
+  // Clear undefined | null params
   useEffect(() => {
     Object.entries(defaultFilters).forEach(([key, value]) => {
       if (
@@ -185,6 +187,7 @@ export default function useListBase<
     setData(listQuery.data?.data.content || []);
   }, [listQuery.data?.data.content]);
 
+  // Pagination
   const current = searchParams['page'];
   useEffect(() => {
     setPagination((p) => ({
@@ -404,6 +407,7 @@ export default function useListBase<
     searchFields: SearchFormProps<S>['searchFields'];
     schema: SearchFormProps<S>['schema'];
   }) => {
+    // Set value for search fields
     const mergedValues = {
       ...queryFilter,
       ...Object.fromEntries(
@@ -414,7 +418,7 @@ export default function useListBase<
           switch (field.type) {
             case FieldTypes.NUMBER:
               return [key, value ? Number(value) : undefined];
-            case FieldTypes.SELECT:
+            case FieldTypes.SELECT || FieldTypes.AUTOCOMPLETE:
               const option = field.options?.find(
                 (opt: any) => String(opt.value) === String(value)
               );
@@ -426,6 +430,7 @@ export default function useListBase<
       )
     };
 
+    // Handle search
     const handleSearchSubmit = (values: any) => {
       const preservedParams = Object.fromEntries(
         Object.entries(searchParams).filter(([key]) =>
@@ -436,6 +441,7 @@ export default function useListBase<
       setQueryParams({ ...values, ...preservedParams } as Partial<S>);
     };
 
+    // Handle reset
     const handleSearchReset = () => {
       if (Object.keys(searchParams).length === 0) return;
 
@@ -450,7 +456,6 @@ export default function useListBase<
           excludeFromQueryFilter.includes(key)
         )
       );
-
       setQueryParams({ ...defaultFilters, ...preservedParams });
     };
 
@@ -475,7 +480,6 @@ export default function useListBase<
       variant={'primary'}
     >
       <RefreshCcw />
-      Tải lại
     </Button>
   );
 

@@ -14,7 +14,7 @@ export const STATUS_ACTIVE = 1;
 export const STATUS_LOCK = -1;
 export const STATUS_DELETED = -2;
 
-export const DEFAULT_COL_SPAN = 5;
+export const DEFAULT_COL_SPAN = 6;
 
 export const GENDER_MALE = 1;
 export const GENDER_FEMALE = 2;
@@ -36,3 +36,13 @@ export const DATE_TIME_FORMAT = 'HH:mm:ss dd/MM/yyyy ';
 
 export const CONTRIBUTOR_AUTHOR = 1;
 export const CONTRIBUTOR_TRANSLATOR = 2;
+
+export const AGE_RATING_0_2 = 1;
+export const AGE_RATING_3_5 = 2;
+export const AGE_RATING_6_11 = 3;
+export const AGE_RATING_12_15 = 4;
+export const AGE_RATING_16_18 = 5;
+export const AGE_RATING_18_OVER = 6;
+export const AGE_RATING_ALL = 7;
+
+export const FEATURED_PRODUCT = 1;
