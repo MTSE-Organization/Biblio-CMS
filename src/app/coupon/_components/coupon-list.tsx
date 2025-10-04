@@ -109,7 +109,7 @@ export default function CouponList({ queryKey }: { queryKey: string }) {
       render: (value, record) =>
         record.type === COUPON_TYPE_FIXED
           ? formatMoney(value)
-          : formatNumber(value)
+          : formatNumber(value) + '%'
     },
     {
       title: 'Giá trị tối thiểu',

@@ -126,10 +126,14 @@ export default function PasswordField<T extends FieldValues>({
                     <EyeIcon size={16} aria-hidden='true' />
                   )}
                 </Button>
+                {fieldState.error && (
+                  <div className='animate-in fade-in absolute -bottom-6 left-2 z-0 mt-1 text-sm text-red-500'>
+                    <FormMessage />
+                  </div>
+                )}
               </div>
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage className={'mb-0 ml-1'} />
 
             {/* Strength bar */}
             {/* <div

@@ -491,7 +491,7 @@ export const couponKinds = [
     value: COUPON_KIND_DISCOUNT
   },
   {
-    label: 'Miễn phí vận chuyển',
+    label: 'Miễn phí ship',
     value: COUPON_KIND_FREESHIP
   }
 ];
