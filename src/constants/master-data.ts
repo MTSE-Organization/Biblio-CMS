@@ -460,7 +460,8 @@ export const queryKeys = {
   PRODUCT_VARIANT: 'product-variant',
   PUBLISHER: 'publisher',
   TRANSLATOR: 'translator',
-  COUPON: 'COUPON'
+  COUPON: 'coupon',
+  ORDER: 'order'
 };
 
 export const productVariantConditions = [
@@ -491,7 +492,7 @@ export const couponKinds = [
     value: COUPON_KIND_DISCOUNT
   },
   {
-    label: 'Miễn phí vận chuyển',
+    label: 'Miễn phí ship',
     value: COUPON_KIND_FREESHIP
   }
 ];
