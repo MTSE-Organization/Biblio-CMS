@@ -20,7 +20,6 @@ export * from './product.type';
 export * from './publisher.type';
 export * from './search.type';
 export * from './sidebar.type';
-export * from './store.type';
 export * from './table.type';
 export * from './translator.type';
 export * from './update-ordering.type';

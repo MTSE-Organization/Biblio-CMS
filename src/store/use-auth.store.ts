@@ -1,8 +1,8 @@
 import { AppConstants } from '@/constants';
-import { ProfileStoreType, ProfileResType } from '@/types';
+import { AuthStoreType, ProfileResType } from '@/types';
 import { io, Socket } from 'socket.io-client';
 import { create } from 'zustand';
-const useAuthStore = create<ProfileStoreType>((set, get) => ({
+const useAuthStore = create<AuthStoreType>((set, get) => ({
   profile: null,
   isAuthenticated: false,
   loading: true,
