@@ -2,7 +2,7 @@
 
 import { AvatarField } from '@/components/form';
 import List from '@/components/list';
-import ListItem from '@/components/list/ListItem';
+import ListItem from '@/components/list/list-item';
 import { storageKeys } from '@/constants';
 import { useNavigate, useQueryParams } from '@/hooks';
 import { logger } from '@/logger';

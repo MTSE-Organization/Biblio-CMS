@@ -79,3 +79,5 @@ export const CMD_CONFIRM_REFUNDED = 'CMD_CONFIRM_REFUNDED';
 
 export const REVIEW_HIDDEN = 0;
 export const REVIEW_VISIBLE = 1;
+
+export const NOTIFICATION_TYPE_ORDER = 1;
