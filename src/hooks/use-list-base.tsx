@@ -222,7 +222,7 @@ export default function useListBase<
         if (res.result) {
           notify.success(`Xoá ${objectName} thành công`);
           close();
-          queryClient.invalidateQueries({ queryKey: [`${queryKey}-list`] });
+          // queryClient.invalidateQueries({ queryKey: [`${queryKey}-list`] });
           listQuery.refetch();
         } else {
           notify.error(`Xoá ${objectName} thất bại`);

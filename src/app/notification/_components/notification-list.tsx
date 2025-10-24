@@ -57,9 +57,8 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
   useEffect(() => {
     socket?.on('notification', (data) => {
       listQuery.refetch();
-      handlers.invalidateQueries();
-
       countUnreadNotificationQuery.refetch();
+      handlers.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
       });
@@ -70,9 +69,8 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
     if (unreadCount) {
       await readAllNotificationMutation.mutateAsync();
       listQuery.refetch();
-      handlers.invalidateQueries();
-
       countUnreadNotificationQuery.refetch();
+      handlers.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
       });
@@ -84,10 +82,7 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
       onSuccess: (res) => {
         if (res.result) {
           notify.success('Xóa tất cả thông báo thành công');
-          listQuery.refetch();
           handlers.invalidateQueries();
-
-          countUnreadNotificationQuery.refetch();
           queryClient.invalidateQueries({
             queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
           });

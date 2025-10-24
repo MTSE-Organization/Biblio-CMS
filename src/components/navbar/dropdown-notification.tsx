@@ -63,10 +63,6 @@ export default function DropDownNotification() {
     });
   }, [socket]);
 
-  useEffect(() => {
-    if (open) notificationListQuery.refetch();
-  }, [open]);
-
   const handleReadAllNotification = async () => {
     if (unreadCount) {
       await readAllNotificationMutation.mutateAsync();
@@ -134,7 +130,10 @@ export default function DropDownNotification() {
                 </List>
               </div>
             ) : (
-              <NoData className='min-h-full' content='Không có thông báo nào' />
+              <NoData
+                className='min-h-[50vh]'
+                content='Không có thông báo nào'
+              />
             )}
           </motion.div>
         )}
