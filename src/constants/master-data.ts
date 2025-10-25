@@ -492,7 +492,8 @@ export const queryKeys = {
   TRANSLATOR: 'translator',
   COUPON: 'coupon',
   ORDER: 'order',
-  REVIEW: 'review'
+  REVIEW: 'review',
+  NOTIFICATION: 'notification'
 };
 
 export const productVariantConditions = [
