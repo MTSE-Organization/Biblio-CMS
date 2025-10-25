@@ -1,12 +1,13 @@
 'use client';
-
 import NoficationItem from '@/app/notification/_components/notification-item';
 import NotificationItemSkeleton from '@/app/notification/_components/notification-item-skeleton';
 import { Button } from '@/components/form';
 import { PageWrapper } from '@/components/layout';
 import ListPageWrapper from '@/components/layout/list-page-wrapper';
 import List from '@/components/list';
+import { CircleLoading } from '@/components/loading';
 import { NoData } from '@/components/no-data';
+import Pagination from '@/components/pagination';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +31,7 @@ import { useAuthStore } from '@/store';
 import { NotificationResType, NotificationSearchType } from '@/types';
 import { notify } from '@/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCheck, Info, Trash } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -37,7 +39,7 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
   const { socket } = useAuthStore();
   const queryClient = useQueryClient();
 
-  const { data, loading, listQuery, handlers } = useListBase<
+  const { data, loading, listQuery, handlers, pagination } = useListBase<
     NotificationResType,
     NotificationSearchType
   >({
@@ -56,8 +58,8 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
 
   useEffect(() => {
     socket?.on('notification', (data) => {
-      listQuery.refetch();
-      countUnreadNotificationQuery.refetch();
+      // listQuery.refetch();
+      // countUnreadNotificationQuery.refetch();
       handlers.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
@@ -68,8 +70,8 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
   const handleReadAllNotification = async () => {
     if (unreadCount) {
       await readAllNotificationMutation.mutateAsync();
-      listQuery.refetch();
-      countUnreadNotificationQuery.refetch();
+      // listQuery.refetch();
+      // countUnreadNotificationQuery.refetch();
       handlers.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
@@ -151,7 +153,7 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
               </div>
             </div>
             <Separator />
-            <List className='flex h-full max-h-[75vh] flex-col overflow-y-auto'>
+            <List className='relative flex h-full max-h-[75vh] flex-col overflow-y-auto'>
               {data.map((notification) => (
                 <NoficationItem
                   onDeleteClick={() =>
@@ -161,6 +163,27 @@ export default function NotificationList({ queryKey }: { queryKey: string }) {
                   notification={notification}
                 />
               ))}
+              <div className='my-2'>
+                <Pagination
+                  totalPages={pagination.total}
+                  currentPage={pagination.current}
+                  changePagination={(page) => handlers.changePagination(page)}
+                />
+              </div>
+              <AnimatePresence>
+                {loading ||
+                  (listQuery.isFetching && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'linear' }}
+                      className='absolute inset-0 top-[55px] z-50 flex items-start justify-center bg-white/70 pt-5'
+                    >
+                      <CircleLoading className='stroke-dodger-blue size-8' />
+                    </motion.div>
+                  ))}
+              </AnimatePresence>
             </List>
           </div>
         ) : (
