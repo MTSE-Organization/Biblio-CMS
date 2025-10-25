@@ -33,7 +33,7 @@ import { Info, Trash } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function NoficationItem({
+export default function NotificationItem({
   notification,
   onDeleteClick
 }: {
@@ -70,7 +70,7 @@ export default function NoficationItem({
       className={cn(
         'flex items-center justify-between pr-8 not-last:border-b',
         {
-          'cursor-pointer bg-gray-100 transition-all duration-200 ease-linear hover:bg-gray-50':
+          'cursor-pointer bg-zinc-50 transition-all duration-200 ease-linear hover:bg-zinc-100':
             !notification.seen
         }
       )}

@@ -105,7 +105,27 @@ export default function DropDownNotification() {
             <div className='z-2 before:absolute before:-top-4 before:left-0 before:h-4 before:w-full before:bg-transparent'></div>
             <div className='absolute -top-3.5 right-9.5 border-r-15 border-b-15 border-l-15 border-r-transparent border-b-white border-l-transparent'></div>
             {loading ? (
-              [...Array(5)].map((_, i) => <NotificationItemSkeleton key={i} />)
+              <>
+                <div className='flex items-center justify-between px-4'>
+                  <span>Thông báo</span>
+                  <Button
+                    variant={'ghost'}
+                    className='pr-0! transition-all duration-200 ease-linear hover:text-gray-400'
+                  >
+                    Đọc tất cả
+                    <CheckCheck />
+                  </Button>
+                </div>
+                <Separator />
+                {[...Array(5)].map((_, i) => (
+                  <NotificationItemSkeleton key={i} />
+                ))}
+                <Separator />
+                <Button
+                  variant={'ghost'}
+                  className='skeleton mx-auto block w-full rounded-none! bg-gray-100'
+                ></Button>
+              </>
             ) : notificationList.length > 0 ? (
               <div className='max-h-[80vh]'>
                 <div className='flex items-center justify-between px-4'>
@@ -120,14 +140,23 @@ export default function DropDownNotification() {
                   </Button>
                 </div>
                 <Separator />
-                <List className='flex h-full max-h-[75vh] flex-col overflow-y-auto rounded-md'>
-                  {notificationList.map((notification) => (
+                <List className='flex h-full max-h-[75vh] min-h-[45vh] flex-col justify-evenly overflow-y-auto rounded-md'>
+                  {notificationList.slice(0, 4).map((notification) => (
                     <NoficationItem
                       key={notification.id}
                       notification={notification}
                     />
                   ))}
                 </List>
+                <Separator />
+                <Link href={route.notification.getList.path}>
+                  <Button
+                    variant='ghost'
+                    className='mx-auto block w-full rounded-none hover:bg-zinc-50'
+                  >
+                    Xem tất cả
+                  </Button>
+                </Link>
               </div>
             ) : (
               <NoData
