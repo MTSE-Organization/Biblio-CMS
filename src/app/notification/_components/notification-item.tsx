@@ -22,11 +22,7 @@ import { cn } from '@/lib';
 import { useMarkReadNotificationMutation } from '@/queries';
 import route from '@/routes';
 import { NotificationResType } from '@/types';
-import {
-  generateNotificationTemplate,
-  generatePath,
-  renderImageUrl
-} from '@/utils';
+import { generatePath, renderImageUrl } from '@/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatDate } from 'date-fns';
 import { Info, Trash } from 'lucide-react';
@@ -45,16 +41,16 @@ export default function NotificationItem({
 
   const handleMarkReadNotification = async (id: string) => {
     await markReadNotificationMutation.mutateAsync(id);
-    queryClient.refetchQueries({
-      queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
-    });
+    // queryClient.refetchQueries({
+    //   queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
+    // });
     queryClient.invalidateQueries({
       queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
     });
 
-    queryClient.refetchQueries({
-      queryKey: [`${queryKeys.NOTIFICATION}-list`]
-    });
+    // queryClient.refetchQueries({
+    //   queryKey: [`${queryKeys.NOTIFICATION}-list`]
+    // });
     queryClient.invalidateQueries({
       queryKey: [`${queryKeys.NOTIFICATION}-list`]
     });
@@ -80,7 +76,7 @@ export default function NotificationItem({
         className='flex flex-1 gap-x-4 p-4'
         href={generatePath(link, { id: data.orderId })}
       >
-        <div className='h-18 w-12'>
+        <div className='h-18 w-12 shrink-0'>
           <Image
             src={renderImageUrl(notification.imageUrl)}
             width={52}
@@ -94,7 +90,7 @@ export default function NotificationItem({
           />
         </div>
         <div className='flex flex-col justify-between'>
-          <h3>{generateNotificationTemplate(notification.type)}</h3>
+          <h3>{notification.content}</h3>
           <span className='text-xs text-gray-400'>
             {formatDate(notification.createdDate, DATE_TIME_FORMAT)}
           </span>

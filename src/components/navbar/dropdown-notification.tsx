@@ -20,14 +20,8 @@ import {
 } from '@/queries';
 import route from '@/routes';
 import { useAuthStore } from '@/store';
-import { NotificationResType } from '@/types';
-import {
-  formatDate,
-  generateNotificationTemplate,
-  generatePath,
-  notify,
-  renderImageUrl
-} from '@/utils';
+import { AccountResType, NotificationResType } from '@/types';
+import { formatDate, generatePath, notify, renderImageUrl } from '@/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, CheckCheck } from 'lucide-react';
@@ -49,9 +43,9 @@ export default function DropDownNotification() {
   const loading = notificationListQuery.isLoading;
 
   useEffect(() => {
-    socket?.on('notification', (data) => {
+    socket?.on('notification', (data: NotificationResType) => {
       logger.info('🚀 ~ DropDownNotification ~ data:', data);
-      notify.info('Bạn có thông báo mới !');
+      notify.info(data.title || 'Bạn có thông báo mới !');
       notificationListQuery.refetch();
       countUnreadNotificationQuery.refetch();
       queryClient.invalidateQueries({
@@ -102,7 +96,7 @@ export default function DropDownNotification() {
             transition={{ duration: 0.2, ease: 'linear' }}
             className='absolute top-full -right-10 mt-4 w-120 rounded-md bg-white shadow-[0px_0px_10px_8px] shadow-gray-200'
           >
-            <div className='z-2 before:absolute before:-top-4 before:left-0 before:h-4 before:w-full before:bg-transparent'></div>
+            <div className='z-2 before:absolute before:-top-10 before:left-0 before:h-10 before:w-full before:bg-transparent'></div>
             <div className='absolute -top-3.5 right-9.5 border-r-15 border-b-15 border-l-15 border-r-transparent border-b-white border-l-transparent'></div>
             {loading ? (
               <>
@@ -140,7 +134,7 @@ export default function DropDownNotification() {
                   </Button>
                 </div>
                 <Separator />
-                <List className='flex h-full max-h-[75vh] min-h-[45vh] flex-col justify-evenly overflow-y-auto rounded-md'>
+                <List className='flex h-full max-h-[75vh] min-h-[40vh] flex-col overflow-y-auto rounded-md'>
                   {notificationList.slice(0, 4).map((notification) => (
                     <NoficationItem
                       key={notification.id}
@@ -181,12 +175,12 @@ function NoficationItem({
 
   const handleMarkReadNotification = async (id: string) => {
     await markReadNotificationMutation.mutateAsync(id);
-    queryClient.refetchQueries({
-      queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
-    });
-    queryClient.invalidateQueries({
-      queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
-    });
+    // queryClient.refetchQueries({
+    //   queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
+    // });
+    // queryClient.invalidateQueries({
+    //   queryKey: [`count-unread-${queryKeys.NOTIFICATION}`]
+    // });
 
     queryClient.refetchQueries({
       queryKey: [`${queryKeys.NOTIFICATION}-list`]
@@ -199,12 +193,14 @@ function NoficationItem({
     notification.type === NOTIFICATION_TYPE_ORDER
       ? route.order.savePage.path
       : route.product.savePage.path;
-  const data = JSON.parse(notification.data) as { orderId: string };
+  const data = JSON.parse(notification.data) as {
+    orderId: string;
+  } & { customer: AccountResType };
 
   return (
     <ListItem
       className={cn('not-last:border-b', {
-        'cursor-pointer bg-gray-100 transition-all duration-200 ease-linear hover:bg-gray-50':
+        'cursor-pointer bg-gray-100 transition-all duration-200 ease-linear hover:bg-zinc-200':
           !notification.seen
       })}
     >
@@ -213,7 +209,7 @@ function NoficationItem({
         className='flex gap-x-4 p-4'
         href={generatePath(link, { id: data.orderId })}
       >
-        <div className='h-18 w-12'>
+        <div className='h-18 w-12 shrink-0'>
           <Image
             src={renderImageUrl(notification.imageUrl)}
             width={52}
@@ -227,7 +223,7 @@ function NoficationItem({
           />
         </div>
         <div className='flex flex-col justify-between'>
-          <h3>{generateNotificationTemplate(notification.type)}</h3>
+          <h3>{notification.title}</h3>
           <span className='text-xs text-gray-400'>
             {formatDate(notification.createdDate, DATE_TIME_FORMAT)}
           </span>
