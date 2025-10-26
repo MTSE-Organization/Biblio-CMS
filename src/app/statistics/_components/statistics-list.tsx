@@ -68,6 +68,7 @@ export default function StatisticsList() {
             <TopSellerProductList />
           </Col>
         </Row>
+        <Separator className='my-2' />
         {/* Top view product */}
         <Row className='mb-0 px-4'>
           <Col gutter={0}>
