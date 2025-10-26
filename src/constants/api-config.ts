@@ -36,6 +36,11 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/account/statistics/new-customer`,
       method: 'GET',
       headers: baseHeader
+    },
+    getAccountStatistics: {
+      baseUrl: `${AppConstants.apiUrl}v1/account/statistics/daily`,
+      method: 'GET',
+      headers: baseHeader
     }
   },
   auth: {
@@ -539,6 +544,16 @@ const apiConfig = defineApiConfig({
     },
     revenue: {
       baseUrl: `${AppConstants.apiUrl}v1/order/revenue`,
+      method: 'GET',
+      headers: baseHeader
+    },
+    getStatusRatio: {
+      baseUrl: `${AppConstants.apiUrl}v1/order/statistics/order-status`,
+      method: 'GET',
+      headers: baseHeader
+    },
+    getRevenueStatistics: {
+      baseUrl: `${AppConstants.apiUrl}v1/order/statistics/revenue`,
       method: 'GET',
       headers: baseHeader
     }

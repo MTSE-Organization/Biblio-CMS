@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useTopDiscountProductListQuery } from '@/queries';
 import { formatMoney, renderImageUrl } from '@/utils';
 import type { ProductAutoType } from '@/types';
-import { Eye } from 'lucide-react';
 
 export default function TopDiscountProductList() {
   const { data, isLoading } = useTopDiscountProductListQuery({ enabled: true });

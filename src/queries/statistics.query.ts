@@ -15,3 +15,24 @@ export const useCountNewCustomerQuery = () => {
     queryFn: () => orderApiRequest.getNewCustomerCount()
   });
 };
+
+export const useGetOrderStatusRatioQuery = () => {
+  return useQuery({
+    queryKey: [`${queryKeys.STATISTICS}-order-status-ratio`],
+    queryFn: () => orderApiRequest.getStatusRatio()
+  });
+};
+
+export const useRevenueStatisticsQuery = () => {
+  return useQuery({
+    queryKey: [`${queryKeys.STATISTICS}-revenue-list`],
+    queryFn: () => orderApiRequest.getRevenueStatistics()
+  });
+};
+
+export const useGetStatusRatioQuery = () => {
+  return useQuery({
+    queryKey: [`${queryKeys.ORDER}-ratio`],
+    queryFn: () => orderApiRequest.getStatusRatio()
+  });
+};
