@@ -29,7 +29,7 @@ export default function ReviewItem({ review }: { review: ReviewResType }) {
         <StarRating value={review?.rate} size={15} showValue={false} />
         <p className='mt-2'>{review?.content}</p>
       </div>
-      <ToolTip title={isHidden ? 'Hiện' : 'Ẩn'}>
+      {/* <ToolTip title={isHidden ? 'Hiện' : 'Ẩn'}>
         <Button variant={'ghost'} className='ml-auto p-0!'>
           {isHidden ? (
             <AiOutlineEyeInvisible className='text-dodger-blue size-5' />
@@ -37,7 +37,7 @@ export default function ReviewItem({ review }: { review: ReviewResType }) {
             <AiOutlineEye className='text-dodger-blue size-5' />
           )}
         </Button>
-      </ToolTip>
+      </ToolTip> */}
     </div>
   );
 }

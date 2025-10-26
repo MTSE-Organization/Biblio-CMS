@@ -34,7 +34,7 @@ export default function ReviewModal({
     options: {
       objectName: 'đánh giá',
       queryKey: queryKeys.REVIEW,
-      excludeFromQueryFilter: ['page', 'status', 'size']
+      excludeFromQueryFilter: ['page', 'status', 'size', 'name']
     },
     override: (handlers) => {
       handlers.additionalParams = () => ({
