@@ -21,8 +21,8 @@ export default function LoginForm() {
   const navigate = useNavigate(false);
   const { setAuthenticated, setLoading } = useAuthStore();
   const defaultValues: LoginBodyType = {
-    email: 'admin@example.com',
-    password: 'admin1236545'
+    email: '',
+    password: ''
   };
 
   const onSubmit = async (values: LoginBodyType) => {

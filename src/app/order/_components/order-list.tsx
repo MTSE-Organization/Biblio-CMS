@@ -18,6 +18,7 @@ import { cn } from '@/lib';
 import route from '@/routes';
 import { orderSearchSchema } from '@/schemaValidations';
 import {
+  AccountResType,
   Column,
   OptionType,
   OrderResType,
@@ -113,7 +114,8 @@ export default function OrderList({ queryKey }: { queryKey: string }) {
     },
     {
       title: 'Người mua',
-      dataIndex: ['account', 'fullName']
+      dataIndex: ['account', 'fullName'],
+      width: 300
     },
     {
       title: 'Phương thức thanh toán',
@@ -153,7 +155,7 @@ export default function OrderList({ queryKey }: { queryKey: string }) {
     },
     handlers.renderStatusColumn({
       statusOptions: orderStatuses,
-      columnProps: { width: 300 }
+      columnProps: { width: 300, fixed: true }
     })
     // handlers.renderActionColumn({
     //   actions: {
@@ -172,7 +174,17 @@ export default function OrderList({ queryKey }: { queryKey: string }) {
         value: item.value.toString()
       }))
     },
-    // { key: 'accountId', placeholder: 'Người mua' },
+    {
+      key: 'accountId',
+      placeholder: 'Người mua',
+      type: FieldTypes.AUTOCOMPLETE,
+      mappingData: (item: AccountResType) => ({
+        label: item.fullName,
+        value: item.id
+      }),
+      apiConfig: apiConfig.account.getList,
+      searchParams: ['fullName']
+    },
     {
       key: 'paymentMethod',
       placeholder: 'Phương thức thanh toán',
