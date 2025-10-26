@@ -4,6 +4,7 @@ import { useAccountStatisticsQuery } from '@/queries';
 import { AccountStatisticsResType } from '@/types';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import {
   CartesianGrid,
   Label,
@@ -16,7 +17,11 @@ import {
 } from 'recharts';
 
 export default function CustomerChart() {
-  const { data, isLoading } = useAccountStatisticsQuery();
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    rootMargin: '100px'
+  });
+  const { data, isLoading } = useAccountStatisticsQuery({ enabled: inView });
   const items = data?.data?.items || [];
   const today = dayjs();
   const startOfMonth = today.startOf('month');
@@ -41,7 +46,7 @@ export default function CustomerChart() {
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
 
   return (
-    <div className='h-[500px] w-full rounded-lg bg-white p-6 shadow'>
+    <div className='h-[500px] w-full rounded-lg bg-white p-6 shadow' ref={ref}>
       <h2 className='mb-4 text-lg font-semibold'>
         Số lượng khách hàng mới {today.format('MM/YYYY')}
       </h2>
@@ -63,7 +68,7 @@ export default function CustomerChart() {
               value='Ngày trong tháng'
               offset={-5}
               position='insideBottom'
-              style={{ fill: '#555', fontSize: 12 }}
+              style={{ fill: '#555', fontSize: 14 }}
             />
           </XAxis>
 
@@ -75,13 +80,13 @@ export default function CustomerChart() {
               value='Số lượng'
               angle={-90}
               position='insideLeft'
-              style={{ textAnchor: 'middle', fill: '#555', fontSize: 12 }}
+              style={{ textAnchor: 'middle', fill: '#555', fontSize: 14 }}
             />
           </YAxis>
 
           <Tooltip
             cursor={{
-              stroke: '#00b894',
+              stroke: '#1678ff',
               strokeWidth: 1
             }}
             formatter={(value: number) => [value, 'Số lượng']}
@@ -91,7 +96,7 @@ export default function CustomerChart() {
           <Line
             type='monotone'
             dataKey='total'
-            stroke='#00b894'
+            stroke='#1678ff'
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 5 }}

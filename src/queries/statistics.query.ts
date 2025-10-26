@@ -16,23 +16,21 @@ export const useCountNewCustomerQuery = () => {
   });
 };
 
-export const useGetOrderStatusRatioQuery = () => {
+export const useOrderStatusRatioQuery = () => {
   return useQuery({
     queryKey: [`${queryKeys.STATISTICS}-order-status-ratio`],
     queryFn: () => orderApiRequest.getStatusRatio()
   });
 };
 
-export const useRevenueStatisticsQuery = () => {
+export const useRevenueStatisticsQuery = ({
+  enabled
+}: {
+  enabled: boolean;
+}) => {
   return useQuery({
     queryKey: [`${queryKeys.STATISTICS}-revenue-list`],
-    queryFn: () => orderApiRequest.getRevenueStatistics()
-  });
-};
-
-export const useGetStatusRatioQuery = () => {
-  return useQuery({
-    queryKey: [`${queryKeys.ORDER}-ratio`],
-    queryFn: () => orderApiRequest.getStatusRatio()
+    queryFn: () => orderApiRequest.getRevenueStatistics(),
+    enabled
   });
 };

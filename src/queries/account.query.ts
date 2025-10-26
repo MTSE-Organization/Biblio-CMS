@@ -59,9 +59,14 @@ export const useDeleteAccountMutation = () => {
   });
 };
 
-export const useAccountStatisticsQuery = () => {
+export const useAccountStatisticsQuery = ({
+  enabled
+}: {
+  enabled: boolean;
+}) => {
   return useQuery({
     queryKey: [`${queryKeys.ACCOUNT}-statistics`],
-    queryFn: () => accountApiRequest.getAccountStatistics()
+    queryFn: () => accountApiRequest.getAccountStatistics(),
+    enabled
   });
 };

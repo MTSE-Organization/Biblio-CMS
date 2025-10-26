@@ -569,6 +569,11 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/review/summary/:productId`,
       method: 'GET',
       headers: baseHeader
+    },
+    getTopReviewList: {
+      baseUrl: `${AppConstants.apiUrl}v1/review/top-review`,
+      method: 'GET',
+      headers: baseHeader
     }
   },
   notification: {
@@ -601,6 +606,20 @@ const apiConfig = defineApiConfig({
       baseUrl: `${AppConstants.apiUrl}v1/notification/delete/:id`,
       method: 'DELETE',
       headers: baseHeader
+    }
+  },
+  favorite: {
+    getTopFavoriteList: {
+      baseUrl: `${AppConstants.apiUrl}v1/favorite-product/top-favorite`,
+      headers: baseHeader,
+      method: 'GET'
+    }
+  },
+  viewedProduct: {
+    getTopViewedList: {
+      baseUrl: `${AppConstants.apiUrl}v1/viewed-product/top-viewed`,
+      headers: baseHeader,
+      method: 'GET'
     }
   }
 });

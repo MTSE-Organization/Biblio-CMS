@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { useGetOrderStatusRatioQuery } from '@/queries';
+import { useOrderStatusRatioQuery } from '@/queries';
 import { orderStatuses } from '@/constants';
 
 export default function StatusRatioPieChart() {
-  const { data, isLoading } = useGetOrderStatusRatioQuery();
+  const { data, isLoading } = useOrderStatusRatioQuery();
   const orderStatusRatio = data?.data?.status || [];
 
   const chartData = orderStatusRatio

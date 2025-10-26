@@ -13,9 +13,15 @@ import {
 import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { RevenueResType } from '@/types';
+import { useInView } from 'react-intersection-observer';
 
 export default function RevenueChart() {
-  const { data, isLoading } = useRevenueStatisticsQuery();
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    rootMargin: '100px'
+  });
+
+  const { data, isLoading } = useRevenueStatisticsQuery({ enabled: inView });
   const items = data?.data?.items ?? [];
 
   const today = dayjs();
@@ -38,7 +44,7 @@ export default function RevenueChart() {
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
 
   return (
-    <div className='h-[500px] w-full rounded-lg bg-white p-6 shadow'>
+    <div className='h-[500px] w-full rounded-lg bg-white p-6 shadow' ref={ref}>
       <h2 className='mb-4 text-lg font-semibold'>
         Doanh thu tháng {today.format('MM/YYYY')}
       </h2>
@@ -60,7 +66,7 @@ export default function RevenueChart() {
               value='Ngày trong tháng'
               offset={-5}
               position='insideBottom'
-              style={{ fill: '#555', fontSize: 12 }}
+              style={{ fill: '#555', fontSize: 14 }}
             />
           </XAxis>
 
@@ -75,13 +81,13 @@ export default function RevenueChart() {
               value='Doanh thu (VND)'
               angle={-90}
               position='insideLeft'
-              style={{ textAnchor: 'middle', fill: '#555', fontSize: 12 }}
+              style={{ textAnchor: 'middle', fill: '#555', fontSize: 14 }}
             />
           </YAxis>
 
           <Tooltip
             cursor={{
-              stroke: '#00b894',
+              stroke: '#1678ff',
               strokeWidth: 1
             }}
             formatter={(value: number) => [
@@ -97,7 +103,7 @@ export default function RevenueChart() {
           <Line
             type='monotone'
             dataKey='total'
-            stroke='#00b894'
+            stroke='#1678ff'
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 5 }}
