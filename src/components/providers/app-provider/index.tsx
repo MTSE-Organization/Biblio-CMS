@@ -13,29 +13,44 @@ export default function AppProvider({
 }) {
   const accessToken = getData(storageKeys.ACCESS_TOKEN);
   const profileQuery = useProfileQuery();
-  const { setProfile, isAuthenticated, setLoading, connectSocket } =
+  const { setProfile, setLoading, connectSocket, socket, disconnectSocket } =
     useAuthStore();
 
-  useEffect(
-    () => setLoading(profileQuery.isLoading || profileQuery.isFetching),
-    [profileQuery.isFetching, profileQuery.isLoading, setLoading]
-  );
+  useEffect(() => {
+    setLoading(profileQuery.isLoading || profileQuery.isFetching);
+  }, [profileQuery.isFetching, profileQuery.isLoading, setLoading]);
 
   useEffect(() => {
     if (!accessToken) return;
-    const handleGetProfile = async () => {
-      const res = await profileQuery.refetch();
-      if (res.data?.data) {
-        setProfile(res.data.data);
+    profileQuery.refetch().then((res) => {
+      if (res.data?.data) setProfile(res.data.data);
+    });
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const s = connectSocket(accessToken);
+
+    const pingInterval = setInterval(() => {
+      if (s.connected) {
+        s.emit('ping', { message: 'ping from client' });
       }
+    }, 30 * 1000);
+
+    const handleUnload = () => {
+      console.log('Disconnect socket before unload');
+      s.disconnect();
     };
 
-    handleGetProfile();
+    window.addEventListener('beforeunload', handleUnload);
 
-    connectSocket(accessToken);
-    const interval = setInterval(() => connectSocket(accessToken), 50 * 1000);
-    return () => clearInterval(interval);
-  }, [accessToken, isAuthenticated]);
+    return () => {
+      clearInterval(pingInterval);
+      window.removeEventListener('beforeunload', handleUnload);
+      s.disconnect();
+    };
+  }, [accessToken]);
 
   return <>{children}</>;
 }

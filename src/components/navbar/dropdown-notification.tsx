@@ -30,7 +30,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function DropDownNotification() {
-  const { socket } = useAuthStore();
+  const { socket, profile } = useAuthStore();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const notificationListQuery = useNotificationListQuery({ enabled: open });
@@ -56,6 +56,12 @@ export default function DropDownNotification() {
       });
     });
   }, [socket]);
+
+  useEffect(() => {
+    if (profile && open) {
+      countUnreadNotificationQuery.refetch();
+    }
+  }, [profile, open]);
 
   const handleReadAllNotification = async () => {
     if (unreadCount) {
