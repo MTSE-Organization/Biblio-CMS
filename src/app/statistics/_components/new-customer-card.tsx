@@ -8,7 +8,7 @@ export default function NewCustomerCard() {
   const newCustomerCount = data?.data?.totalAccounts || 0;
 
   return (
-    <div className='flex min-h-35 flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-gray-300 hover:shadow-md'>
+    <div className='flex min-h-45 flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-gray-300 hover:shadow-md'>
       <h3 className='mb-2 text-lg font-medium text-gray-600'>Khách hàng mới</h3>
 
       {isLoading ? (

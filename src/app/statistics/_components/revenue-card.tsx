@@ -8,7 +8,7 @@ export default function RevenueCard() {
   const revenue = data?.data;
 
   return (
-    <div className='flex min-h-35 flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-gray-300 hover:shadow-md'>
+    <div className='flex min-h-45 flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-gray-300 hover:shadow-md'>
       <h3 className='mb-2 text-lg font-medium text-gray-600'>
         Doanh thu tháng này
       </h3>
