@@ -9,4 +9,6 @@ export type AddressResType = {
   latitude: number;
   isDefault: boolean;
   accountId: string;
+  receiverName: string;
+  phoneNumber: string;
 };
